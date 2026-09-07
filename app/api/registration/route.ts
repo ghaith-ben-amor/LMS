@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { RegistrationFormData } from "@/src/data/delegates";
 import { deleteDelegate, getAllDelegates, registerDelegate, getDelegateByEmail } from "@/src/data/delegates";
+import { sendInvitationEmail } from "@/src/lib/mailer";
 
 export async function GET() {
   try {
@@ -80,6 +81,9 @@ export async function POST(request: Request) {
       tshirt_size: body.tshirt_size,
     } satisfies RegistrationFormData);
     
+    // Trigger automated HTML invitation pass email
+    const mailResult = await sendInvitationEmail(delegate);
+
     return NextResponse.json(
       { 
         success: true, 
@@ -88,10 +92,13 @@ export async function POST(request: Request) {
           full_name: delegate.full_name,
           email: delegate.email,
           created_at: delegate.created_at,
-        } 
+        },
+        email_sent: mailResult.success,
+        email_simulated: mailResult.simulated || false,
       },
       { status: 201 }
     );
+
     
   } catch (error) {
     console.error("Registration error:", error);
