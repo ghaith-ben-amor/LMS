@@ -6,7 +6,9 @@ import {
   RefreshCw, Search, Trash2, Users, Utensils, Shirt, Download,
   ArrowLeft, Calendar, Plus, Pencil, Check, X, GripVertical,
   ChevronDown, ChevronUp, Clock, MapPin, User as UserIcon, ChevronLeft, ChevronRight,
+  Lock, LogOut, Eye, EyeOff, ShieldCheck,
 } from "lucide-react";
+
 import Button from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
 
@@ -330,8 +332,171 @@ function DayLabelPicker({
 
 // ─── Main Component ─────────────────────────────────────────────────────────
 
+// ─── Admin Login Form Component ─────────────────────────────────────────────
+
+function AdminLoginForm({ onLoginSuccess }: { onLoginSuccess: () => void }) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPass, setShowPass] = useState(false);
+  const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setIsSubmitting(true);
+
+    try {
+      const res = await fetch("/api/admin/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || "Invalid email or password");
+      } else {
+        onLoginSuccess();
+      }
+    } catch (err) {
+      setError("Unable to connect to authentication server");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-[#050507] text-ivory flex items-center justify-center p-4">
+      {/* Ambient background glow */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-96 h-96 bg-amber-500/10 rounded-full blur-[120px]" />
+        <div className="absolute bottom-1/4 left-1/3 w-80 h-80 bg-blue-600/10 rounded-full blur-[120px]" />
+      </div>
+
+      <div className="w-full max-w-md relative z-10">
+        <div className="rounded-3xl border border-white/10 bg-[#0c0a12]/90 p-8 sm:p-10 shadow-2xl backdrop-blur-xl">
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-500/20 to-blue-600/20 border border-amber-400/30 text-amber-400 mb-4 shadow-lg shadow-amber-500/10">
+              <Lock size={28} />
+            </div>
+            <h1 className="font-serif text-3xl font-extrabold text-ivory tracking-tight">
+              Admin Portal
+            </h1>
+            <p className="text-xs font-mono tracking-widest text-ivory-dark uppercase mt-2">
+              LMS 2K26 Control Center
+            </p>
+          </div>
+
+          {error && (
+            <div className="mb-6 rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-xs text-red-300 flex items-center gap-3">
+              <span className="font-bold">Error:</span> {error}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-ivory-dark mb-2">
+                Admin Email
+              </label>
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="ghaithbenaomr@gmail.com"
+                className="w-full rounded-xl border border-white/10 bg-obsidian-surface/90 px-4 py-3 text-sm text-ivory placeholder:text-ivory-dark/50 outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400/40 transition"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-ivory-dark mb-2">
+                Password
+              </label>
+              <div className="relative">
+                <input
+                  type={showPass ? "text" : "password"}
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full rounded-xl border border-white/10 bg-obsidian-surface/90 px-4 py-3 pr-11 text-sm text-ivory placeholder:text-ivory-dark/50 outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400/40 transition"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPass(!showPass)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-ivory-dark hover:text-ivory transition cursor-pointer"
+                >
+                  {showPass ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full mt-2 flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 px-6 py-3.5 text-xs font-extrabold uppercase tracking-widest text-obsidian shadow-lg shadow-amber-500/20 hover:from-amber-400 hover:to-amber-500 transition cursor-pointer disabled:opacity-50"
+            >
+              {isSubmitting ? (
+                <RefreshCw className="animate-spin" size={16} />
+              ) : (
+                <>
+                  <ShieldCheck size={16} />
+                  <span>Authenticate & Access</span>
+                </>
+              )}
+            </button>
+          </form>
+
+          <div className="mt-8 pt-6 border-t border-white/5 text-center">
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2 text-xs text-ivory-muted hover:text-gold transition"
+            >
+              <ArrowLeft size={12} /> Return to Homepage
+            </Link>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Main Component ─────────────────────────────────────────────────────────
+
 export default function AdminPage() {
+  const [authenticated, setAuthenticated] = useState<boolean | null>(null);
   const [activeTab, setActiveTab] = useState<Tab>("delegates");
+
+  useEffect(() => {
+    fetch("/api/admin/check")
+      .then((res) => res.json())
+      .then((data) => setAuthenticated(!!data.authenticated))
+      .catch(() => setAuthenticated(false));
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/admin/logout", { method: "POST" });
+    } catch (e) {
+      // ignore
+    }
+    setAuthenticated(false);
+  };
+
+  if (authenticated === null) {
+    return (
+      <div className="min-h-screen bg-[#050507] text-ivory flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <RefreshCw className="animate-spin text-amber-400" size={28} />
+          <p className="text-xs font-mono tracking-widest text-ivory-dark uppercase">Verifying Admin Session...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!authenticated) {
+    return <AdminLoginForm onLoginSuccess={() => setAuthenticated(true)} />;
+  }
 
   return (
     <main className="min-h-screen bg-[#050507] text-ivory px-4 py-8 sm:px-6 lg:px-8">
@@ -354,6 +519,16 @@ export default function AdminPage() {
             <h1 className="font-serif text-4xl sm:text-5xl text-ivory font-extrabold">
               Admin Dashboard
             </h1>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <button
+              onClick={handleLogout}
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-red-500/30 bg-red-500/10 text-red-400 text-xs font-bold uppercase tracking-wider hover:bg-red-500/20 transition cursor-pointer"
+            >
+              <LogOut size={14} />
+              <span>Sign Out</span>
+            </button>
           </div>
         </header>
 
@@ -381,6 +556,7 @@ export default function AdminPage() {
     </main>
   );
 }
+
 
 // ─── Delegates Tab ──────────────────────────────────────────────────────────
 

@@ -1,10 +1,19 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
+import { verifyToken } from "@/src/lib/auth";
 import { getAllDelegates } from "@/src/data/delegates";
 import { sendInvitationEmail } from "@/src/lib/mailer";
 
 export async function POST(request: Request) {
   try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get("lms_admin_session")?.value;
+    if (!verifyToken(token)) {
+      return NextResponse.json({ error: "Unauthorized admin access" }, { status: 401 });
+    }
+
     const body = await request.json();
+
     const id = Number(body.id);
 
     if (!Number.isInteger(id) || id < 1) {

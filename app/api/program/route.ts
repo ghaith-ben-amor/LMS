@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
+import { verifyToken } from "@/src/lib/auth";
 import {
   getAllAgendaItems,
   getAgendaItem,
@@ -8,6 +10,13 @@ import {
   reorderAgendaItems,
   AgendaItemInput,
 } from "@/src/data/agenda";
+
+// Helper to check admin authorization
+async function isAuthorizedAdmin() {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("lms_admin_session")?.value;
+  return verifyToken(token);
+}
 
 // ─── GET /api/program ─────────────────────────────────────────────────────
 export async function GET() {
@@ -24,6 +33,10 @@ export async function GET() {
 // Body: AgendaItemInput
 export async function POST(request: Request) {
   try {
+    if (!(await isAuthorizedAdmin())) {
+      return NextResponse.json({ error: "Unauthorized admin access" }, { status: 401 });
+    }
+
     const body = await request.json();
 
     const dayLabel = typeof body.day_label === "string" ? body.day_label.trim() : "";
@@ -64,6 +77,10 @@ export async function POST(request: Request) {
 // Body: { id, ...fields } OR { reorder: [id1, id2, ...] }
 export async function PUT(request: Request) {
   try {
+    if (!(await isAuthorizedAdmin())) {
+      return NextResponse.json({ error: "Unauthorized admin access" }, { status: 401 });
+    }
+
     const body = await request.json();
 
     // Bulk reorder
@@ -94,6 +111,10 @@ export async function PUT(request: Request) {
 // Body: { id }
 export async function DELETE(request: Request) {
   try {
+    if (!(await isAuthorizedAdmin())) {
+      return NextResponse.json({ error: "Unauthorized admin access" }, { status: 401 });
+    }
+
     const body = await request.json();
     const id = Number(body.id);
 
@@ -111,4 +132,5 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ error: "Could not delete agenda item" }, { status: 500 });
   }
 }
+
 
