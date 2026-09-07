@@ -1,14 +1,34 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { programSchedule, DaySchedule, ScheduleItem } from "@/data/program";
+import { programSchedule as staticSchedule, DaySchedule, ScheduleItem } from "@/data/program";
 import Badge from "./ui/Badge";
 import { Clock, MapPin, User, Calendar } from "lucide-react";
 
 export const Program = () => {
   const [activeDayIndex, setActiveDayIndex] = useState(0);
-  const currentDay: DaySchedule = programSchedule[activeDayIndex];
+  const [scheduleData, setScheduleData] = useState<DaySchedule[]>(staticSchedule);
+
+  useEffect(() => {
+    const fetchProgram = async () => {
+      try {
+        const res = await fetch("/api/program", { cache: "no-store" });
+        if (res.ok) {
+          const json = await res.json();
+          if (json.schedule && Array.isArray(json.schedule) && json.schedule.length === 3) {
+            setScheduleData(json.schedule);
+          }
+        }
+      } catch (err) {
+        console.warn("Could not load dynamic program schedule, using fallback:", err);
+      }
+    };
+
+    fetchProgram();
+  }, []);
+
+  const currentDay: DaySchedule = scheduleData[activeDayIndex] || staticSchedule[activeDayIndex];
 
   return (
     <section id="program" className="py-24 sm:py-32 bg-[#050507] relative overflow-hidden">
@@ -35,7 +55,7 @@ export const Program = () => {
 
         {/* Day Switcher Tabs */}
         <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 mb-14">
-          {programSchedule.map((day, idx) => {
+          {scheduleData.map((day, idx) => {
             const isActive = activeDayIndex === idx;
             return (
               <button
@@ -81,51 +101,57 @@ export const Program = () => {
 
             {/* Event Timeline List */}
             <div className="space-y-6">
-              {currentDay.events.map((item: ScheduleItem, i: number) => (
-                <motion.div
-                  key={item.id}
-                  initial={{ opacity: 0, x: -15 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.4, delay: i * 0.05 }}
-                  className="group relative rounded-2xl bg-obsidian-card/70 border border-amber-500/10 p-5 sm:p-6 hover:border-amber-500/40 hover:bg-obsidian-surface transition-all flex flex-col md:flex-row md:items-center gap-6"
-                >
-                  {/* Time Badge */}
-                  <div className="flex-shrink-0 flex items-center md:flex-col md:items-start gap-3 w-32">
-                    <span className="font-serif text-2xl sm:text-3xl font-extrabold text-gradient-gold">
-                      {item.time}
-                    </span>
-                    {item.duration && (
-                      <span className="inline-flex items-center gap-1 text-[0.7rem] text-ivory-dark font-medium uppercase tracking-wider">
-                        <Clock size={12} className="text-amber-400" />
-                        {item.duration}
+              {currentDay.events.length === 0 ? (
+                <p className="text-center text-ivory-dark py-8 text-sm">
+                  No sessions scheduled for this day yet.
+                </p>
+              ) : (
+                currentDay.events.map((item: ScheduleItem, i: number) => (
+                  <motion.div
+                    key={item.id}
+                    initial={{ opacity: 0, x: -15 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.4, delay: i * 0.05 }}
+                    className="group relative rounded-2xl bg-obsidian-card/70 border border-amber-500/10 p-5 sm:p-6 hover:border-amber-500/40 hover:bg-obsidian-surface transition-all flex flex-col md:flex-row md:items-center gap-6"
+                  >
+                    {/* Time Badge */}
+                    <div className="flex-shrink-0 flex items-center md:flex-col md:items-start gap-3 w-32">
+                      <span className="font-serif text-2xl sm:text-3xl font-extrabold text-gradient-gold">
+                        {item.time}
                       </span>
-                    )}
-                  </div>
-
-                  {/* Event Information */}
-                  <div className="flex-grow space-y-2">
-                    <h4 className="font-serif text-xl sm:text-2xl font-bold text-ivory group-hover:text-gold transition-colors">
-                      {item.activity}
-                    </h4>
-                    <p className="text-xs sm:text-sm text-ivory-muted font-light leading-relaxed">
-                      {item.description}
-                    </p>
-
-                    <div className="flex flex-wrap gap-4 pt-2 text-xs font-semibold">
-                      <span className="inline-flex items-center gap-1.5 text-amber-400/90">
-                        <MapPin size={14} />
-                        {item.location}
-                      </span>
-                      {item.speaker && (
-                        <span className="inline-flex items-center gap-1.5 text-rose-300">
-                          <User size={14} />
-                          {item.speaker}
+                      {item.duration && (
+                        <span className="inline-flex items-center gap-1 text-[0.7rem] text-ivory-dark font-medium uppercase tracking-wider">
+                          <Clock size={12} className="text-amber-400" />
+                          {item.duration}
                         </span>
                       )}
                     </div>
-                  </div>
-                </motion.div>
-              ))}
+
+                    {/* Event Information */}
+                    <div className="flex-grow space-y-2">
+                      <h4 className="font-serif text-xl sm:text-2xl font-bold text-ivory group-hover:text-gold transition-colors">
+                        {item.activity}
+                      </h4>
+                      <p className="text-xs sm:text-sm text-ivory-muted font-light leading-relaxed">
+                        {item.description}
+                      </p>
+
+                      <div className="flex flex-wrap gap-4 pt-2 text-xs font-semibold">
+                        <span className="inline-flex items-center gap-1.5 text-amber-400/90">
+                          <MapPin size={14} />
+                          {item.location}
+                        </span>
+                        {item.speaker && (
+                          <span className="inline-flex items-center gap-1.5 text-rose-300">
+                            <User size={14} />
+                            {item.speaker}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </motion.div>
+                ))
+              )}
             </div>
           </motion.div>
         </AnimatePresence>
