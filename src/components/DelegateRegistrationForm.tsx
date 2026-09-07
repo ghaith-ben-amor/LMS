@@ -43,7 +43,12 @@ export default function DelegateRegistrationForm() {
         }),
       });
 
-      const result = await response.json();
+      let result: any = {};
+      try {
+        result = await response.json();
+      } catch (parseErr) {
+        result = { error: "Server response error. Please try again." };
+      }
       if (!response.ok) throw new Error(result.error || "Registration failed. Please try again.");
 
       setIsSuccess(true);
