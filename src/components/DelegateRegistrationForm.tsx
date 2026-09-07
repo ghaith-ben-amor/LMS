@@ -2,10 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import Button from "./ui/Button";
-import { CheckCircle2, AlertCircle, Shirt } from "lucide-react";
-
-type TshirtSize = "XXS" | "XS" | "S" | "M" | "L" | "XL" | "XXL";
-const tshirtSizes: TshirtSize[] = ["XXS", "XS", "S", "M", "L", "XL", "XXL"];
+import { CheckCircle2, AlertCircle } from "lucide-react";
 
 const POSITIONS = ["Newbie", "Oldie", "MM", "LCVP", "LCP"];
 const DEPARTMENTS = ["OGT", "OGV", "IGT", "IGV", "MKT", "TM", "F&L", "BD&EWA"];
@@ -20,7 +17,6 @@ const initialForm = {
   dietary_restrictions: "",
   emergency_contact_name: "",
   emergency_contact_phone: "",
-  tshirt_size: "" as TshirtSize | "",
 };
 
 export default function DelegateRegistrationForm() {
@@ -45,7 +41,7 @@ export default function DelegateRegistrationForm() {
     try {
       const finalOrg = showDepartment
         ? (formData.department ? `Department: ${formData.department}` : "")
-        : formData.organization;
+        : "";
 
       const response = await fetch("/api/registration", {
         method: "POST",
@@ -59,7 +55,6 @@ export default function DelegateRegistrationForm() {
           dietary_restrictions: formData.dietary_restrictions,
           emergency_contact_name: formData.emergency_contact_name,
           emergency_contact_phone: formData.emergency_contact_phone,
-          tshirt_size: formData.tshirt_size || undefined,
         }),
       });
 
@@ -187,50 +182,34 @@ export default function DelegateRegistrationForm() {
           </div>
         </div>
 
-        {/* Dynamic Organization / Department Replacement */}
-        <div className="sm:col-span-2">
-          {showDepartment ? (
-            <div>
-              <label className={`${labelClass} flex items-center justify-between`}>
-                <span>Department *</span>
-                <span className="text-[0.65rem] text-amber-400 font-normal">Select your AIESEC Department</span>
-              </label>
-              <div className="grid grid-cols-4 sm:grid-cols-8 gap-2">
-                {DEPARTMENTS.map((dept) => {
-                  const isSelected = formData.department === dept;
-                  return (
-                    <button
-                      key={dept}
-                      type="button"
-                      onClick={() => updateField("department", isSelected ? "" : dept)}
-                      className={`rounded-xl border py-2.5 text-xs font-bold uppercase transition-all cursor-pointer text-center ${
-                        isSelected
-                          ? "border-amber-400 bg-amber-500 text-obsidian shadow-md shadow-amber-500/30 font-extrabold"
-                          : "border-amber-500/20 bg-obsidian-surface/60 text-ivory-muted hover:border-amber-500/50 hover:text-ivory"
-                      }`}
-                    >
-                      {dept}
-                    </button>
-                  );
-                })}
-              </div>
+        {/* Dynamic Department Selector (shown when position is not Newbie and not LCP) */}
+        {showDepartment && (
+          <div className="sm:col-span-2">
+            <label className={`${labelClass} flex items-center justify-between`}>
+              <span>Department *</span>
+              <span className="text-[0.65rem] text-amber-400 font-normal">Select your AIESEC Department</span>
+            </label>
+            <div className="grid grid-cols-4 sm:grid-cols-8 gap-2">
+              {DEPARTMENTS.map((dept) => {
+                const isSelected = formData.department === dept;
+                return (
+                  <button
+                    key={dept}
+                    type="button"
+                    onClick={() => updateField("department", isSelected ? "" : dept)}
+                    className={`rounded-xl border py-2.5 text-xs font-bold uppercase transition-all cursor-pointer text-center ${
+                      isSelected
+                        ? "border-amber-400 bg-amber-500 text-obsidian shadow-md shadow-amber-500/30 font-extrabold"
+                        : "border-amber-500/20 bg-obsidian-surface/60 text-ivory-muted hover:border-amber-500/50 hover:text-ivory"
+                    }`}
+                  >
+                    {dept}
+                  </button>
+                );
+              })}
             </div>
-          ) : (
-            <div>
-              <label htmlFor="organization" className={labelClass}>
-                Organization / Entity
-              </label>
-              <input
-                id="organization"
-                name="organization"
-                value={formData.organization}
-                onChange={(e) => updateField("organization", e.target.value)}
-                className={inputClass}
-                placeholder="AIESEC Local Committee / Organization"
-              />
-            </div>
-          )}
-        </div>
+          </div>
+        )}
 
 
         <div className="sm:col-span-2">
@@ -278,33 +257,6 @@ export default function DelegateRegistrationForm() {
         </div>
       </div>
 
-      {/* T-Shirt Size Selector */}
-      <div className="pt-2">
-        <label className={`${labelClass} flex items-center gap-2`}>
-          <Shirt size={14} className="text-gold" />
-          <span>Select T-Shirt Size</span>
-        </label>
-        <div className="grid grid-cols-4 gap-2 sm:grid-cols-7">
-          {tshirtSizes.map((size) => {
-            const isSelected = formData.tshirt_size === size;
-            return (
-              <button
-                key={size}
-                type="button"
-                onClick={() => updateField("tshirt_size", isSelected ? "" : size)}
-                className={`rounded-xl border py-2.5 text-xs font-bold uppercase transition-all cursor-pointer ${
-                  isSelected
-                    ? "border-amber-400 bg-amber-500 text-obsidian shadow-md shadow-amber-500/20"
-                    : "border-amber-500/20 bg-obsidian-surface/60 text-ivory-muted hover:border-amber-500/50 hover:text-ivory"
-                }`}
-                aria-pressed={isSelected}
-              >
-                {size}
-              </button>
-            );
-          })}
-        </div>
-      </div>
 
       {/* Submit Button */}
       <div className="pt-4">

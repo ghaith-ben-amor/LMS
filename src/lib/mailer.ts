@@ -139,11 +139,6 @@ export function generateInvitationHtml(delegate: Delegate): string {
                     <td style="color: #94a3b8;">Position:</td>
                     <td style="color: #f8fafc;">${escapeHtml(delegate.position)}</td>
                   </tr>` : ""}
-                  ${delegate.tshirt_size ? `
-                  <tr>
-                    <td style="color: #94a3b8;">T-Shirt Size:</td>
-                    <td style="color: #a78bfa; font-weight: 700;">${escapeHtml(delegate.tshirt_size)}</td>
-                  </tr>` : ""}
                   <tr>
                     <td style="color: #94a3b8;">Registration Date:</td>
                     <td style="color: #cbd5e1;">${registeredDate}</td>
@@ -335,11 +330,6 @@ export function generateAdminNotificationHtml(delegate: Delegate): string {
                     <td style="color: #94a3b8;">Position:</td>
                     <td style="color: #f8fafc;">${escapeHtml(delegate.position)}</td>
                   </tr>` : ""}
-                  ${delegate.tshirt_size ? `
-                  <tr>
-                    <td style="color: #94a3b8;">T-Shirt Size:</td>
-                    <td style="color: #a78bfa; font-weight: 700;">${escapeHtml(delegate.tshirt_size)}</td>
-                  </tr>` : ""}
                   ${delegate.dietary_restrictions ? `
                   <tr>
                     <td style="color: #94a3b8;">Dietary Notes:</td>
@@ -395,7 +385,7 @@ export async function sendAdminNotificationEmail(delegate: Delegate): Promise<Ma
       to: adminEmail,
       subject: `🚨 New Registration Alert: ${delegate.full_name} (#LMS-2026-${String(delegate.id).padStart(4, "0")})`,
       html: htmlContent,
-      text: `New Registration Alert!\n\nName: ${delegate.full_name}\nEmail: ${delegate.email}\nOrganization: ${delegate.organization || "N/A"}\nT-Shirt: ${delegate.tshirt_size || "N/A"}\n\nView at https://lms-2026.vercel.app/admin`,
+      text: `New Registration Alert!\n\nName: ${delegate.full_name}\nEmail: ${delegate.email}\nOrganization: ${delegate.organization || "N/A"}\n\nView at https://lms-2026.vercel.app/admin`,
     });
 
     console.log(`[Mailer] Admin notification email successfully sent to ${adminEmail}. Message ID: ${info.messageId}`);

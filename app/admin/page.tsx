@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState, useCallback, useRef } from "react";
 import Link from "next/link";
 import {
-  RefreshCw, Search, Trash2, Users, Utensils, Shirt, Download,
+  RefreshCw, Search, Trash2, Users, Utensils, Download,
   ArrowLeft, Calendar, Plus, Pencil, Check, X, GripVertical,
   ChevronDown, ChevronUp, Clock, MapPin, User as UserIcon, ChevronLeft, ChevronRight,
   Lock, LogOut, Eye, EyeOff, ShieldCheck, Building, UtensilsCrossed, TrendingUp,
@@ -23,7 +23,6 @@ type Delegate = {
   position?: string;
   phone?: string;
   dietary_restrictions?: string;
-  tshirt_size?: string;
   created_at: string;
 };
 
@@ -609,11 +608,11 @@ function DelegatesTab() {
 
   const exportCSV = () => {
     if (!delegates.length) return;
-    const headers = ["ID", "Full Name", "Email", "Phone", "Organization", "Position", "Dietary", "T-Shirt", "Date"];
+    const headers = ["ID", "Full Name", "Email", "Phone", "Organization", "Position", "Dietary", "Date"];
     const rows = delegates.map((d) => [
       d.id, `"${d.full_name}"`, `"${d.email}"`, `"${d.phone || ""}"`,
       `"${d.organization || ""}"`, `"${d.position || ""}"`,
-      `"${d.dietary_restrictions || ""}"`, `"${d.tshirt_size || ""}"`,
+      `"${d.dietary_restrictions || ""}"`,
       `"${new Date(d.created_at).toLocaleDateString()}"`,
     ]);
     const csv = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
@@ -630,18 +629,6 @@ function DelegatesTab() {
   const uniqueOrgs = useMemo(() => {
     const orgs = new Set(delegates.map((d) => d.organization?.trim().toLowerCase()).filter(Boolean));
     return orgs.size;
-  }, [delegates]);
-
-  const tshirtStats = useMemo(() => {
-    const sizes = ["XXS", "XS", "S", "M", "L", "XL", "XXL"];
-    const counts: Record<string, number> = {};
-    sizes.forEach((s) => (counts[s] = 0));
-    delegates.forEach((d) => {
-      if (d.tshirt_size && counts[d.tshirt_size] !== undefined) {
-        counts[d.tshirt_size]++;
-      }
-    });
-    return counts;
   }, [delegates]);
 
   const dietaryCount = useMemo(() => {
@@ -728,38 +715,7 @@ function DelegatesTab() {
         </div>
       </section>
 
-      {/* ─── T-Shirt Size Distribution Bar Chart ─── */}
-      <section className="rounded-2xl border border-amber-500/20 bg-[#0e0c14]/90 p-5 sm:p-6 backdrop-blur-xl shadow-lg">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <Shirt size={18} className="text-amber-400" />
-            <h3 className="text-xs font-bold uppercase tracking-wider text-ivory">T-Shirt Size Distribution</h3>
-          </div>
-          <span className="text-xs text-ivory-dark font-mono">{totalCount} Total Registrations</span>
-        </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-7 gap-3">
-          {Object.entries(tshirtStats).map(([size, count]) => {
-            const pct = totalCount > 0 ? Math.round((count / totalCount) * 100) : 0;
-            return (
-              <div key={size} className="rounded-xl border border-white/5 bg-white/[0.02] p-3 text-center">
-                <div className="flex items-center justify-between text-xs font-bold text-ivory mb-1.5">
-                  <span className="text-amber-400 font-mono">{size}</span>
-                  <span className="font-mono text-ivory-muted">{count}</span>
-                </div>
-                {/* Progress bar */}
-                <div className="w-full bg-white/10 rounded-full h-1.5 overflow-hidden">
-                  <div
-                    className="bg-gradient-to-r from-amber-500 to-amber-300 h-full rounded-full transition-all duration-500"
-                    style={{ width: `${pct}%` }}
-                  />
-                </div>
-                <span className="text-[0.65rem] text-ivory-dark mt-1.5 block font-mono">{pct}%</span>
-              </div>
-            );
-          })}
-        </div>
-      </section>
 
       {/* Table */}
       <section className="glass-card rounded-3xl border border-amber-500/20 overflow-hidden shadow-2xl">
@@ -799,16 +755,15 @@ function DelegatesTab() {
                 <th className="px-6 py-4">Delegate Details</th>
                 <th className="px-6 py-4">Organization</th>
                 <th className="px-6 py-4">Contact Info</th>
-                <th className="px-6 py-4">T-Shirt</th>
                 <th className="px-6 py-4">Registered Date</th>
                 <th className="px-6 py-4 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/[0.06]">
               {isLoading ? (
-                <tr><td colSpan={6} className="px-6 py-12 text-center text-ivory-muted font-light">Loading registrations...</td></tr>
+                <tr><td colSpan={5} className="px-6 py-12 text-center text-ivory-muted font-light">Loading registrations...</td></tr>
               ) : filteredDelegates.length === 0 ? (
-                <tr><td colSpan={6} className="px-6 py-12 text-center text-ivory-muted font-light">No registrations found.</td></tr>
+                <tr><td colSpan={5} className="px-6 py-12 text-center text-ivory-muted font-light">No registrations found.</td></tr>
               ) : (
                 filteredDelegates.map((d) => (
                   <tr key={d.id} className="transition hover:bg-white/[0.03]">
@@ -820,9 +775,6 @@ function DelegatesTab() {
                     <td className="px-6 py-4">
                       <p className="text-ivory">{d.email}</p>
                       <p className="text-xs text-ivory-dark mt-0.5">{d.phone || "No phone"}</p>
-                    </td>
-                    <td className="px-6 py-4 font-bold text-gold">
-                      {d.tshirt_size ? <Badge variant="gold">{d.tshirt_size}</Badge> : "—"}
                     </td>
                     <td className="px-6 py-4 text-xs text-ivory-dark font-mono">
                       {new Date(d.created_at).toLocaleDateString()}

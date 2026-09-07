@@ -19,7 +19,6 @@ export interface Delegate {
   dietary_restrictions?: string;
   emergency_contact_name?: string;
   emergency_contact_phone?: string;
-  tshirt_size?: string;
   created_at: string;
 }
 
@@ -32,7 +31,6 @@ export interface RegistrationFormData {
   dietary_restrictions?: string;
   emergency_contact_name?: string;
   emergency_contact_phone?: string;
-  tshirt_size?: "XXS" | "XS" | "S" | "M" | "L" | "XL" | "XXL";
 }
 
 // ─── Upstash Redis / Vercel KV Singleton ───────────────────────────────────
@@ -80,7 +78,6 @@ function getDb() {
         dietary_restrictions TEXT,
         emergency_contact_name TEXT,
         emergency_contact_phone TEXT,
-        tshirt_size TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
       );
     `);
@@ -113,7 +110,6 @@ export async function registerDelegate(data: RegistrationFormData): Promise<Dele
       dietary_restrictions: data.dietary_restrictions,
       emergency_contact_name: data.emergency_contact_name,
       emergency_contact_phone: data.emergency_contact_phone,
-      tshirt_size: data.tshirt_size,
       created_at: new Date().toISOString(),
     };
 
@@ -126,8 +122,8 @@ export async function registerDelegate(data: RegistrationFormData): Promise<Dele
   const db = getDb();
   if (db) {
     const stmt = db.prepare(`
-      INSERT INTO delegates (full_name, email, organization, position, phone, dietary_restrictions, emergency_contact_name, emergency_contact_phone, tshirt_size)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+      INSERT INTO delegates (full_name, email, organization, position, phone, dietary_restrictions, emergency_contact_name, emergency_contact_phone)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?);
     `);
 
     const result = stmt.run(
@@ -138,8 +134,7 @@ export async function registerDelegate(data: RegistrationFormData): Promise<Dele
       data.phone || null,
       data.dietary_restrictions || null,
       data.emergency_contact_name || null,
-      data.emergency_contact_phone || null,
-      data.tshirt_size || null
+      data.emergency_contact_phone || null
     );
 
     const row = db.prepare("SELECT * FROM delegates WHERE id = ?").get(result.lastInsertRowid) as Delegate;
@@ -157,7 +152,6 @@ export async function registerDelegate(data: RegistrationFormData): Promise<Dele
     dietary_restrictions: data.dietary_restrictions,
     emergency_contact_name: data.emergency_contact_name,
     emergency_contact_phone: data.emergency_contact_phone,
-    tshirt_size: data.tshirt_size,
     created_at: new Date().toISOString(),
   };
   memoryStore.unshift(newDelegate);
@@ -226,11 +220,6 @@ export async function deleteDelegate(id: number): Promise<boolean> {
     return true;
   }
   return false;
-}
-
-export async function getDelegatesByTshirtSize(size: "XXS" | "XS" | "S" | "M" | "L" | "XL" | "XXL"): Promise<Delegate[]> {
-  const all = await getAllDelegates();
-  return all.filter((d) => d.tshirt_size === size);
 }
 
 export default getDb();

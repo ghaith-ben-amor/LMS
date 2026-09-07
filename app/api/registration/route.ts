@@ -67,10 +67,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const allowedSizes = ["XXS", "XS", "S", "M", "L", "XL", "XXL"];
-    if (body.tshirt_size && !allowedSizes.includes(body.tshirt_size)) {
-      return NextResponse.json({ error: "Invalid t-shirt size" }, { status: 400 });
-    }
+    
 
     // Check if delegate already exists with this email
     const existingDelegate = await getDelegateByEmail(email);
@@ -91,7 +88,6 @@ export async function POST(request: Request) {
       dietary_restrictions: typeof body.dietary_restrictions === "string" ? body.dietary_restrictions.trim() : undefined,
       emergency_contact_name: typeof body.emergency_contact_name === "string" ? body.emergency_contact_name.trim() : undefined,
       emergency_contact_phone: typeof body.emergency_contact_phone === "string" ? body.emergency_contact_phone.trim() : undefined,
-      tshirt_size: body.tshirt_size,
     } satisfies RegistrationFormData);
 
     
