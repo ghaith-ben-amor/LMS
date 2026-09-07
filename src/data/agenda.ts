@@ -1,0 +1,238 @@
+/**
+ * Agenda / Program Data Handler
+ * Persists agenda items in SQLite (same pattern as delegates.ts)
+ * Falls back to the static program.ts data when SQLite is unavailable.
+ */
+
+import path from "path";
+import { programSchedule } from "./program";
+
+export interface AgendaItem {
+  id: number;
+  day_label: string; // e.g. "DAY 01"
+  day_date: string;  // e.g. "March 15, 2026"
+  time: string;      // e.g. "08:00"
+  activity: string;
+  description: string;
+  location: string;
+  duration?: string;
+  speaker?: string;
+  sort_order: number;
+  created_at: string;
+}
+
+export interface AgendaItemInput {
+  day_label: string;
+  day_date: string;
+  time: string;
+  activity: string;
+  description: string;
+  location: string;
+  duration?: string;
+  speaker?: string;
+  sort_order?: number;
+}
+
+// ─── In-memory fallback ────────────────────────────────────────────────────
+// Seeded from the static program.ts data so the site works even without SQLite.
+let memoryIdCounter = 1000;
+let memoryItems: AgendaItem[] | null = null;
+
+function buildMemorySeed(): AgendaItem[] {
+  const items: AgendaItem[] = [];
+  let order = 0;
+  programSchedule.forEach((day) => {
+    day.events.forEach((ev) => {
+      items.push({
+        id: order + 1,
+        day_label: day.day,
+        day_date: day.date,
+        time: ev.time,
+        activity: ev.activity,
+        description: ev.description,
+        location: ev.location,
+        duration: ev.duration,
+        speaker: ev.speaker,
+        sort_order: order,
+        created_at: new Date().toISOString(),
+      });
+      order++;
+    });
+  });
+  memoryIdCounter = order + 1;
+  return items;
+}
+
+function getMemoryItems(): AgendaItem[] {
+  if (!memoryItems) memoryItems = buildMemorySeed();
+  return memoryItems;
+}
+
+// ─── SQLite singleton ──────────────────────────────────────────────────────
+let agendaDb: any = null;
+let useMemory = false;
+let seeded = false;
+
+function getDb() {
+  if (agendaDb || useMemory) return agendaDb;
+
+  try {
+    const Database = require("better-sqlite3");
+    let dbPath = process.env.DATABASE_URL
+      ? process.env.DATABASE_URL.replace("delegates.db", "agenda.db")
+      : "./agenda.db";
+
+    if (process.env.VERCEL || process.env.NODE_ENV === "production") {
+      dbPath = path.join("/tmp", "agenda.db");
+    }
+
+    const db = new Database(dbPath);
+    db.exec(`
+      CREATE TABLE IF NOT EXISTS agenda_items (
+        id          INTEGER PRIMARY KEY AUTOINCREMENT,
+        day_label   TEXT NOT NULL,
+        day_date    TEXT NOT NULL,
+        time        TEXT NOT NULL,
+        activity    TEXT NOT NULL,
+        description TEXT NOT NULL DEFAULT '',
+        location    TEXT NOT NULL DEFAULT '',
+        duration    TEXT,
+        speaker     TEXT,
+        sort_order  INTEGER NOT NULL DEFAULT 0,
+        created_at  DATETIME DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
+    agendaDb = db;
+
+    // Seed from static data on first run (only if table is empty)
+    if (!seeded) {
+      seeded = true;
+      const count = (db.prepare("SELECT COUNT(*) as c FROM agenda_items").get() as { c: number }).c;
+      if (count === 0) {
+        const insert = db.prepare(`
+          INSERT INTO agenda_items (day_label, day_date, time, activity, description, location, duration, speaker, sort_order)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `);
+        let order = 0;
+        const seedAll = db.transaction(() => {
+          programSchedule.forEach((day) => {
+            day.events.forEach((ev) => {
+              insert.run(day.day, day.date, ev.time, ev.activity, ev.description, ev.location, ev.duration || null, ev.speaker || null, order++);
+            });
+          });
+        });
+        seedAll();
+      }
+    }
+
+    return agendaDb;
+  } catch (err) {
+    console.warn("Agenda SQLite init failed, using memory fallback:", err);
+    useMemory = true;
+    return null;
+  }
+}
+
+// ─── Public API ────────────────────────────────────────────────────────────
+
+export function getAllAgendaItems(): AgendaItem[] {
+  const db = getDb();
+  if (db) {
+    return db.prepare("SELECT * FROM agenda_items ORDER BY sort_order ASC, day_label ASC, time ASC").all() as AgendaItem[];
+  }
+  return [...getMemoryItems()].sort((a, b) => a.sort_order - b.sort_order);
+}
+
+export function getAgendaItem(id: number): AgendaItem | null {
+  const db = getDb();
+  if (db) {
+    return (db.prepare("SELECT * FROM agenda_items WHERE id = ?").get(id) as AgendaItem) || null;
+  }
+  return getMemoryItems().find((i) => i.id === id) || null;
+}
+
+export function createAgendaItem(data: AgendaItemInput): AgendaItem {
+  const db = getDb();
+  const sortOrder = data.sort_order ?? Date.now();
+
+  if (db) {
+    const stmt = db.prepare(`
+      INSERT INTO agenda_items (day_label, day_date, time, activity, description, location, duration, speaker, sort_order)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `);
+    const result = stmt.run(
+      data.day_label, data.day_date, data.time, data.activity,
+      data.description, data.location,
+      data.duration || null, data.speaker || null, sortOrder
+    );
+    return db.prepare("SELECT * FROM agenda_items WHERE id = ?").get(result.lastInsertRowid) as AgendaItem;
+  }
+
+  const newItem: AgendaItem = {
+    id: memoryIdCounter++,
+    ...data,
+    duration: data.duration,
+    speaker: data.speaker,
+    sort_order: sortOrder,
+    created_at: new Date().toISOString(),
+  };
+  getMemoryItems().push(newItem);
+  return newItem;
+}
+
+export function updateAgendaItem(id: number, data: Partial<AgendaItemInput>): AgendaItem | null {
+  const db = getDb();
+
+  if (db) {
+    const existing = db.prepare("SELECT * FROM agenda_items WHERE id = ?").get(id) as AgendaItem | undefined;
+    if (!existing) return null;
+
+    const merged = { ...existing, ...data };
+    db.prepare(`
+      UPDATE agenda_items
+      SET day_label=?, day_date=?, time=?, activity=?, description=?, location=?, duration=?, speaker=?, sort_order=?
+      WHERE id=?
+    `).run(
+      merged.day_label, merged.day_date, merged.time, merged.activity,
+      merged.description, merged.location,
+      merged.duration || null, merged.speaker || null, merged.sort_order, id
+    );
+    return db.prepare("SELECT * FROM agenda_items WHERE id = ?").get(id) as AgendaItem;
+  }
+
+  const mem = getMemoryItems();
+  const idx = mem.findIndex((i) => i.id === id);
+  if (idx === -1) return null;
+  mem[idx] = { ...mem[idx], ...data } as AgendaItem;
+  return mem[idx];
+}
+
+export function deleteAgendaItem(id: number): boolean {
+  const db = getDb();
+  if (db) {
+    const result = db.prepare("DELETE FROM agenda_items WHERE id = ?").run(id);
+    return result.changes > 0;
+  }
+  const mem = getMemoryItems();
+  const idx = mem.findIndex((i) => i.id === id);
+  if (idx !== -1) { mem.splice(idx, 1); return true; }
+  return false;
+}
+
+export function reorderAgendaItems(orderedIds: number[]): void {
+  const db = getDb();
+  if (db) {
+    const update = db.prepare("UPDATE agenda_items SET sort_order=? WHERE id=?");
+    const tx = db.transaction(() => {
+      orderedIds.forEach((id, index) => update.run(index, id));
+    });
+    tx();
+    return;
+  }
+  const mem = getMemoryItems();
+  orderedIds.forEach((id, index) => {
+    const item = mem.find((i) => i.id === id);
+    if (item) item.sort_order = index;
+  });
+}

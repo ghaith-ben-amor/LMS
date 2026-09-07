@@ -1,80 +1,112 @@
-import { NextResponse } from "next";
+import { NextResponse } from "next/server";
 import {
-  getDynamicProgramSchedule,
-  saveProgramEvent,
-  deleteProgramEvent,
-  resetProgramScheduleToDefault,
-} from "@/src/data/program";
+  getAllAgendaItems,
+  getAgendaItem,
+  createAgendaItem,
+  updateAgendaItem,
+  deleteAgendaItem,
+  reorderAgendaItems,
+  AgendaItemInput,
+} from "@/src/data/agenda";
 
+// ─── GET /api/program ─────────────────────────────────────────────────────
 export async function GET() {
   try {
-    const schedule = getDynamicProgramSchedule();
-    return NextResponse.json({ schedule });
+    const items = getAllAgendaItems();
+    return NextResponse.json({ items });
   } catch (error) {
-    console.error("Could not load program agenda:", error);
-    return NextResponse.json({ error: "Could not load program agenda" }, { status: 500 });
+    console.error("Agenda GET error:", error);
+    return NextResponse.json({ error: "Could not load agenda" }, { status: 500 });
   }
 }
 
+// ─── POST /api/program ────────────────────────────────────────────────────
+// Body: AgendaItemInput
 export async function POST(request: Request) {
   try {
     const body = await request.json();
 
-    const activity = typeof body.activity === "string" ? body.activity.trim() : "";
+    const dayLabel = typeof body.day_label === "string" ? body.day_label.trim() : "";
+    const dayDate = typeof body.day_date === "string" ? body.day_date.trim() : "";
     const time = typeof body.time === "string" ? body.time.trim() : "";
+    const activity = typeof body.activity === "string" ? body.activity.trim() : "";
+    const description = typeof body.description === "string" ? body.description.trim() : "";
     const location = typeof body.location === "string" ? body.location.trim() : "";
-    const dayNumber = Number(body.day_number) || 1;
 
-    if (!activity || !time || !location) {
+    if (!dayLabel || !time || !activity) {
       return NextResponse.json(
-        { error: "Time, activity title, and location are required." },
+        { error: "day_label, time, and activity are required" },
         { status: 400 }
       );
     }
 
-    const savedItem = saveProgramEvent({
-      id: typeof body.id === "string" ? body.id : undefined,
-      day_number: dayNumber,
+    const input: AgendaItemInput = {
+      day_label: dayLabel,
+      day_date: dayDate,
       time,
       activity,
-      description: typeof body.description === "string" ? body.description.trim() : "",
+      description,
       location,
-      duration: typeof body.duration === "string" ? body.duration.trim() : undefined,
-      speaker: typeof body.speaker === "string" ? body.speaker.trim() : undefined,
-    });
+      duration: typeof body.duration === "string" ? body.duration.trim() || undefined : undefined,
+      speaker: typeof body.speaker === "string" ? body.speaker.trim() || undefined : undefined,
+      sort_order: typeof body.sort_order === "number" ? body.sort_order : undefined,
+    };
 
-    const updatedSchedule = getDynamicProgramSchedule();
-    return NextResponse.json({ success: true, item: savedItem, schedule: updatedSchedule }, { status: 200 });
+    const item = createAgendaItem(input);
+    return NextResponse.json({ item }, { status: 201 });
   } catch (error) {
-    console.error("Save agenda error:", error);
-    return NextResponse.json({ error: "Failed to save agenda session." }, { status: 500 });
+    console.error("Agenda POST error:", error);
+    return NextResponse.json({ error: "Could not create agenda item" }, { status: 500 });
   }
 }
 
+// ─── PUT /api/program ─────────────────────────────────────────────────────
+// Body: { id, ...fields } OR { reorder: [id1, id2, ...] }
+export async function PUT(request: Request) {
+  try {
+    const body = await request.json();
+
+    // Bulk reorder
+    if (Array.isArray(body.reorder)) {
+      reorderAgendaItems(body.reorder as number[]);
+      return NextResponse.json({ success: true });
+    }
+
+    const id = Number(body.id);
+    if (!Number.isInteger(id) || id < 1) {
+      return NextResponse.json({ error: "Valid id is required" }, { status: 400 });
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { id: _id, ...rest } = body;
+    const updated = updateAgendaItem(id, rest as Partial<AgendaItemInput>);
+    if (!updated) {
+      return NextResponse.json({ error: "Agenda item not found" }, { status: 404 });
+    }
+    return NextResponse.json({ item: updated });
+  } catch (error) {
+    console.error("Agenda PUT error:", error);
+    return NextResponse.json({ error: "Could not update agenda item" }, { status: 500 });
+  }
+}
+
+// ─── DELETE /api/program ──────────────────────────────────────────────────
+// Body: { id }
 export async function DELETE(request: Request) {
   try {
     const body = await request.json();
-    const id = typeof body.id === "string" ? body.id : "";
+    const id = Number(body.id);
 
-    if (!id) {
-      return NextResponse.json({ error: "Session ID is required." }, { status: 400 });
+    if (!Number.isInteger(id) || id < 1) {
+      return NextResponse.json({ error: "Valid id is required" }, { status: 400 });
     }
 
-    deleteProgramEvent(id);
-    const updatedSchedule = getDynamicProgramSchedule();
-    return NextResponse.json({ success: true, schedule: updatedSchedule });
+    if (!deleteAgendaItem(id)) {
+      return NextResponse.json({ error: "Agenda item not found" }, { status: 404 });
+    }
+    return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Delete agenda error:", error);
-    return NextResponse.json({ error: "Failed to delete agenda session." }, { status: 500 });
-  }
-}
-
-export async function PUT() {
-  try {
-    const defaultSchedule = resetProgramScheduleToDefault();
-    return NextResponse.json({ success: true, schedule: defaultSchedule });
-  } catch (error) {
-    console.error("Reset agenda error:", error);
-    return NextResponse.json({ error: "Failed to reset agenda." }, { status: 500 });
+    console.error("Agenda DELETE error:", error);
+    return NextResponse.json({ error: "Could not delete agenda item" }, { status: 500 });
   }
 }
