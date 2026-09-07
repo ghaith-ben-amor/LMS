@@ -266,3 +266,143 @@ export async function sendInvitationEmail(delegate: Delegate): Promise<MailResul
     };
   }
 }
+
+/**
+ * Generates HTML notification email template for the Admin when a new delegate registers
+ */
+export function generateAdminNotificationHtml(delegate: Delegate): string {
+  const passCode = `LMS-2026-${String(delegate.id).padStart(4, "0")}`;
+  const registeredDate = new Date(delegate.created_at || Date.now()).toLocaleString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>New Delegate Registration Alert</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #0b0f19; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #e2e8f0;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #0b0f19; padding: 40px 10px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="100%" style="max-width: 600px; background-color: #111827; border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.6);">
+          
+          <!-- Header -->
+          <tr>
+            <td style="background: linear-gradient(135deg, #1e1b4b 0%, #31103f 100%); padding: 30px; text-align: center; border-bottom: 2px solid #f59e0b;">
+              <span style="background: rgba(245, 158, 11, 0.2); border: 1px solid rgba(245, 158, 11, 0.4); color: #fbbf24; padding: 4px 14px; border-radius: 12px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px;">ADMIN NOTIFICATION</span>
+              <h1 style="margin: 12px 0 4px 0; font-size: 24px; font-weight: 800; color: #ffffff;">
+                🚨 New Delegate Registered!
+              </h1>
+              <p style="margin: 0; font-size: 13px; color: #94a3b8;">LMS 2K26 Control Center</p>
+            </td>
+          </tr>
+
+          <!-- Details Table -->
+          <tr>
+            <td style="padding: 30px;">
+              <div style="background: #1e293b; border-radius: 14px; padding: 20px; border: 1px solid rgba(255,255,255,0.08);">
+                <h3 style="margin: 0 0 16px 0; font-size: 16px; color: #38bdf8; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px;">
+                  Registrant Details (${passCode})
+                </h3>
+                <table role="presentation" width="100%" style="font-size: 14px; line-height: 1.8;">
+                  <tr>
+                    <td style="color: #94a3b8; width: 35%;">Full Name:</td>
+                    <td style="color: #f8fafc; font-weight: 700;">${escapeHtml(delegate.full_name)}</td>
+                  </tr>
+                  <tr>
+                    <td style="color: #94a3b8;">Email:</td>
+                    <td style="color: #60a5fa;"><a href="mailto:${escapeHtml(delegate.email)}" style="color: #60a5fa; text-decoration: none;">${escapeHtml(delegate.email)}</a></td>
+                  </tr>
+                  ${delegate.phone ? `
+                  <tr>
+                    <td style="color: #94a3b8;">Phone:</td>
+                    <td style="color: #f8fafc;">${escapeHtml(delegate.phone)}</td>
+                  </tr>` : ""}
+                  ${delegate.organization ? `
+                  <tr>
+                    <td style="color: #94a3b8;">Organization:</td>
+                    <td style="color: #f8fafc;">${escapeHtml(delegate.organization)}</td>
+                  </tr>` : ""}
+                  ${delegate.position ? `
+                  <tr>
+                    <td style="color: #94a3b8;">Position:</td>
+                    <td style="color: #f8fafc;">${escapeHtml(delegate.position)}</td>
+                  </tr>` : ""}
+                  ${delegate.tshirt_size ? `
+                  <tr>
+                    <td style="color: #94a3b8;">T-Shirt Size:</td>
+                    <td style="color: #a78bfa; font-weight: 700;">${escapeHtml(delegate.tshirt_size)}</td>
+                  </tr>` : ""}
+                  ${delegate.dietary_restrictions ? `
+                  <tr>
+                    <td style="color: #94a3b8;">Dietary Notes:</td>
+                    <td style="color: #f87171;">${escapeHtml(delegate.dietary_restrictions)}</td>
+                  </tr>` : ""}
+                  ${delegate.emergency_contact_name ? `
+                  <tr>
+                    <td style="color: #94a3b8;">Emergency Contact:</td>
+                    <td style="color: #cbd5e1;">${escapeHtml(delegate.emergency_contact_name)} (${escapeHtml(delegate.emergency_contact_phone || "N/A")})</td>
+                  </tr>` : ""}
+                  <tr>
+                    <td style="color: #94a3b8;">Timestamp:</td>
+                    <td style="color: #94a3b8;">${registeredDate}</td>
+                  </tr>
+                </table>
+              </div>
+
+              <div style="text-align: center; margin-top: 25px;">
+                <a href="https://lms-2026.vercel.app/admin" target="_blank" style="display: inline-block; background: linear-gradient(135deg, #f59e0b, #d97706); color: #000000; font-weight: 800; text-decoration: none; padding: 12px 28px; border-radius: 10px; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">
+                  Open Admin Dashboard →
+                </a>
+              </div>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+  `;
+}
+
+/**
+ * Sends an email notification to the Admin when a new delegate registers
+ */
+export async function sendAdminNotificationEmail(delegate: Delegate): Promise<MailResult> {
+  try {
+    const transporter = getTransporter();
+    const adminEmail = process.env.ADMIN_EMAIL || "ghaithbenaomr@gmail.com";
+
+    if (!transporter) {
+      console.warn(`[Mailer] SMTP not set. Simulated admin notification for ${delegate.full_name}`);
+      return { success: false, simulated: true, error: "SMTP not configured" };
+    }
+
+    const fromAddress = process.env.SMTP_FROM || `LMS 2K26 System <ghaithbenaomr@gmail.com>`;
+    const htmlContent = generateAdminNotificationHtml(delegate);
+
+    const info = await transporter.sendMail({
+      from: fromAddress,
+      to: adminEmail,
+      subject: `🚨 New Registration Alert: ${delegate.full_name} (#LMS-2026-${String(delegate.id).padStart(4, "0")})`,
+      html: htmlContent,
+      text: `New Registration Alert!\n\nName: ${delegate.full_name}\nEmail: ${delegate.email}\nOrganization: ${delegate.organization || "N/A"}\nT-Shirt: ${delegate.tshirt_size || "N/A"}\n\nView at https://lms-2026.vercel.app/admin`,
+    });
+
+    console.log(`[Mailer] Admin notification email successfully sent to ${adminEmail}. Message ID: ${info.messageId}`);
+    return { success: true, messageId: info.messageId };
+  } catch (error: any) {
+    console.error(`[Mailer] Failed to send admin notification email:`, error);
+    return { success: false, error: error?.message || "Failed to send email" };
+  }
+}
+

@@ -3,7 +3,8 @@ import { cookies } from "next/headers";
 import { verifyToken } from "@/src/lib/auth";
 import type { RegistrationFormData } from "@/src/data/delegates";
 import { deleteDelegate, getAllDelegates, registerDelegate, getDelegateByEmail } from "@/src/data/delegates";
-import { sendInvitationEmail } from "@/src/lib/mailer";
+import { sendInvitationEmail, sendAdminNotificationEmail } from "@/src/lib/mailer";
+
 
 export async function GET() {
   try {
@@ -94,8 +95,14 @@ export async function POST(request: Request) {
     } satisfies RegistrationFormData);
 
     
-    // Trigger automated HTML invitation pass email
+    // Trigger automated HTML invitation pass email (to delegate)
     const mailResult = await sendInvitationEmail(delegate);
+
+    // Trigger admin notification email alert (to admin)
+    void sendAdminNotificationEmail(delegate).catch((err) => {
+      console.error("[Mailer] Admin notification email dispatch error:", err);
+    });
+
 
     return NextResponse.json(
       { 

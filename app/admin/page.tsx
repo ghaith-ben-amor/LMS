@@ -6,8 +6,9 @@ import {
   RefreshCw, Search, Trash2, Users, Utensils, Shirt, Download,
   ArrowLeft, Calendar, Plus, Pencil, Check, X, GripVertical,
   ChevronDown, ChevronUp, Clock, MapPin, User as UserIcon, ChevronLeft, ChevronRight,
-  Lock, LogOut, Eye, EyeOff, ShieldCheck,
+  Lock, LogOut, Eye, EyeOff, ShieldCheck, Building, UtensilsCrossed, TrendingUp,
 } from "lucide-react";
+
 
 import Button from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
@@ -403,7 +404,7 @@ function AdminLoginForm({ onLoginSuccess }: { onLoginSuccess: () => void }) {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="ghaithbenaomr@gmail.com"
+                placeholder="admin@gmail.com"
                 className="w-full rounded-xl border border-white/10 bg-obsidian-surface/90 px-4 py-3 text-sm text-ivory placeholder:text-ivory-dark/50 outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400/40 transition"
               />
             </div>
@@ -624,32 +625,145 @@ function DelegatesTab() {
     document.body.removeChild(link);
   };
 
-  const dietaryCount = delegates.filter((d) => d.dietary_restrictions).length;
-  const sizedCount = delegates.filter((d) => d.tshirt_size).length;
+  const totalCount = delegates.length;
+
+  const uniqueOrgs = useMemo(() => {
+    const orgs = new Set(delegates.map((d) => d.organization?.trim().toLowerCase()).filter(Boolean));
+    return orgs.size;
+  }, [delegates]);
+
+  const tshirtStats = useMemo(() => {
+    const sizes = ["XXS", "XS", "S", "M", "L", "XL", "XXL"];
+    const counts: Record<string, number> = {};
+    sizes.forEach((s) => (counts[s] = 0));
+    delegates.forEach((d) => {
+      if (d.tshirt_size && counts[d.tshirt_size] !== undefined) {
+        counts[d.tshirt_size]++;
+      }
+    });
+    return counts;
+  }, [delegates]);
+
+  const dietaryCount = useMemo(() => {
+    return delegates.filter((d) => d.dietary_restrictions && d.dietary_restrictions.trim().length > 0).length;
+  }, [delegates]);
+
+  const latestRegistrant = useMemo(() => {
+    if (!delegates.length) return null;
+    return delegates[0];
+  }, [delegates]);
 
   return (
     <div className="space-y-8">
-      {/* Stats */}
-      <section className="grid gap-4 sm:grid-cols-3">
-        {[
-          { icon: <Users size={24} />, label: "Total Delegates", value: delegates.length, color: "amber" },
-          { icon: <Utensils size={24} />, label: "Dietary Requirements", value: dietaryCount, color: "rose" },
-          { icon: <Shirt size={24} />, label: "T-Shirts Selected", value: sizedCount, color: "amber" },
-        ].map(({ icon, label, value, color }) => (
-          <div key={label} className="glass-card p-6 rounded-2xl border border-amber-500/20 flex items-center gap-4">
-            <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${color === "rose" ? "bg-rose-950/40 border border-rose-500/30 text-rose-300" : "bg-amber-500/10 border border-amber-500/30 text-gold"}`}>
-              {icon}
-            </div>
-            <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-ivory-muted">{label}</p>
-              <strong className="font-serif text-3xl font-extrabold text-ivory">{value}</strong>
+      {/* ─── Statistics Analytics Dashboard ─── */}
+      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Stat Card 1: Total Delegates */}
+        <div className="rounded-2xl border border-amber-500/20 bg-[#0e0c14]/90 p-5 backdrop-blur-xl relative overflow-hidden group hover:border-amber-500/40 transition shadow-lg">
+          <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-amber-500/10 rounded-full blur-xl group-hover:bg-amber-500/20 transition" />
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-[0.7rem] font-bold uppercase tracking-wider text-ivory-muted">Total Registrations</span>
+            <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-400/20 text-amber-400">
+              <Users size={18} />
             </div>
           </div>
-        ))}
+          <div className="flex items-baseline gap-2">
+            <span className="font-serif text-3xl sm:text-4xl font-extrabold text-ivory">{totalCount}</span>
+            <span className="text-xs font-semibold text-emerald-400 flex items-center gap-0.5">
+              <TrendingUp size={12} /> Active
+            </span>
+          </div>
+          <p className="text-[0.7rem] text-ivory-dark mt-2">Registered delegates for LMS 2K26</p>
+        </div>
+
+        {/* Stat Card 2: Organizations */}
+        <div className="rounded-2xl border border-amber-500/20 bg-[#0e0c14]/90 p-5 backdrop-blur-xl relative overflow-hidden group hover:border-blue-500/40 transition shadow-lg">
+          <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-blue-500/10 rounded-full blur-xl group-hover:bg-blue-500/20 transition" />
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-[0.7rem] font-bold uppercase tracking-wider text-ivory-muted">Organizations</span>
+            <div className="p-2.5 rounded-xl bg-blue-500/10 border border-blue-400/20 text-blue-400">
+              <Building size={18} />
+            </div>
+          </div>
+          <div className="flex items-baseline gap-2">
+            <span className="font-serif text-3xl sm:text-4xl font-extrabold text-ivory">{uniqueOrgs}</span>
+            <span className="text-xs text-ivory-dark">Represented</span>
+          </div>
+          <p className="text-[0.7rem] text-ivory-dark mt-2">Unique entities & universities</p>
+        </div>
+
+        {/* Stat Card 3: Dietary Needs */}
+        <div className="rounded-2xl border border-amber-500/20 bg-[#0e0c14]/90 p-5 backdrop-blur-xl relative overflow-hidden group hover:border-rose-500/40 transition shadow-lg">
+          <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-rose-500/10 rounded-full blur-xl group-hover:bg-rose-500/20 transition" />
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-[0.7rem] font-bold uppercase tracking-wider text-ivory-muted">Dietary Requirements</span>
+            <div className="p-2.5 rounded-xl bg-rose-500/10 border border-rose-400/20 text-rose-400">
+              <UtensilsCrossed size={18} />
+            </div>
+          </div>
+          <div className="flex items-baseline gap-2">
+            <span className="font-serif text-3xl sm:text-4xl font-extrabold text-ivory">{dietaryCount}</span>
+            <span className="text-xs text-rose-400 font-semibold">Special Notes</span>
+          </div>
+          <p className="text-[0.7rem] text-ivory-dark mt-2">Delegates needing custom meals</p>
+        </div>
+
+        {/* Stat Card 4: Latest Activity */}
+        <div className="rounded-2xl border border-amber-500/20 bg-[#0e0c14]/90 p-5 backdrop-blur-xl relative overflow-hidden group hover:border-purple-500/40 transition shadow-lg">
+          <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-purple-500/10 rounded-full blur-xl group-hover:bg-purple-500/20 transition" />
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-[0.7rem] font-bold uppercase tracking-wider text-ivory-muted">Latest Registrant</span>
+            <div className="p-2.5 rounded-xl bg-purple-500/10 border border-purple-400/20 text-purple-400">
+              <Clock size={18} />
+            </div>
+          </div>
+          {latestRegistrant ? (
+            <div>
+              <p className="font-bold text-sm text-ivory truncate">{latestRegistrant.full_name}</p>
+              <p className="text-[0.75rem] text-purple-300 truncate mt-0.5">{latestRegistrant.organization || latestRegistrant.email}</p>
+            </div>
+          ) : (
+            <p className="text-xs text-ivory-dark italic">No registrations yet</p>
+          )}
+          <p className="text-[0.7rem] text-ivory-dark mt-2">Real-time registration feed</p>
+        </div>
+      </section>
+
+      {/* ─── T-Shirt Size Distribution Bar Chart ─── */}
+      <section className="rounded-2xl border border-amber-500/20 bg-[#0e0c14]/90 p-5 sm:p-6 backdrop-blur-xl shadow-lg">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <Shirt size={18} className="text-amber-400" />
+            <h3 className="text-xs font-bold uppercase tracking-wider text-ivory">T-Shirt Size Distribution</h3>
+          </div>
+          <span className="text-xs text-ivory-dark font-mono">{totalCount} Total Registrations</span>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-7 gap-3">
+          {Object.entries(tshirtStats).map(([size, count]) => {
+            const pct = totalCount > 0 ? Math.round((count / totalCount) * 100) : 0;
+            return (
+              <div key={size} className="rounded-xl border border-white/5 bg-white/[0.02] p-3 text-center">
+                <div className="flex items-center justify-between text-xs font-bold text-ivory mb-1.5">
+                  <span className="text-amber-400 font-mono">{size}</span>
+                  <span className="font-mono text-ivory-muted">{count}</span>
+                </div>
+                {/* Progress bar */}
+                <div className="w-full bg-white/10 rounded-full h-1.5 overflow-hidden">
+                  <div
+                    className="bg-gradient-to-r from-amber-500 to-amber-300 h-full rounded-full transition-all duration-500"
+                    style={{ width: `${pct}%` }}
+                  />
+                </div>
+                <span className="text-[0.65rem] text-ivory-dark mt-1.5 block font-mono">{pct}%</span>
+              </div>
+            );
+          })}
+        </div>
       </section>
 
       {/* Table */}
       <section className="glass-card rounded-3xl border border-amber-500/20 overflow-hidden shadow-2xl">
+
         <div className="flex flex-col gap-4 border-b border-white/10 p-6 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h2 className="font-serif text-2xl text-ivory font-bold">Registered Delegate Roster</h2>
