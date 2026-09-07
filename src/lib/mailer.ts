@@ -68,24 +68,25 @@ export function generateInvitationHtml(delegate: Delegate): string {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LMS 2K26 Official Invitation Pass</title>
 </head>
-<body style="margin: 0; padding: 0; background-color: #0b0f19; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #e2e8f0;">
-  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #0b0f19; padding: 40px 10px;">
+<body style="margin: 0; padding: 0; background-color: #050507; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #F9F6F0;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #050507; padding: 40px 10px;">
     <tr>
       <td align="center">
         <!-- Main Container -->
-        <table role="presentation" width="100%" style="max-width: 600px; background-color: #111827; border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.6);">
+        <table role="presentation" width="100%" style="max-width: 600px; background-color: #0D0B10; border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 24px; overflow: hidden; box-shadow: 0 25px 60px rgba(0,0,0,0.8), 0 0 40px rgba(122, 28, 40, 0.25);">
           
-          <!-- Banner Header -->
+          <!-- Banner Header (Masquerade Theme) -->
           <tr>
-            <td style="background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #31103f 100%); padding: 35px 30px; text-align: center; border-bottom: 2px solid #3b82f6;">
+            <td style="background: linear-gradient(135deg, #1f070b 0%, #4a0e17 50%, #0d0b10 100%); padding: 40px 30px; text-align: center; border-bottom: 1px solid rgba(212, 175, 55, 0.4);">
               <table role="presentation" width="100%">
                 <tr>
                   <td align="center">
-                    <span style="display: inline-block; background: linear-gradient(90deg, #3b82f6, #8b5cf6); padding: 4px 16px; border-radius: 20px; font-size: 11px; font-weight: 700; letter-spacing: 2px; color: #ffffff; text-transform: uppercase; margin-bottom: 12px;">Official Delegate Pass</span>
-                    <h1 style="margin: 8px 0 0 0; font-size: 32px; font-weight: 900; letter-spacing: 3px; color: #ffffff; text-shadow: 0 0 20px rgba(59,130,246,0.5);">
-                      LMS <span style="color: #60a5fa;">2K26</span>
+                    <div style="font-size: 36px; line-height: 1; margin-bottom: 10px; filter: drop-shadow(0 0 10px rgba(212,175,55,0.4));">🎭</div>
+                    <span style="display: inline-block; background: linear-gradient(135deg, rgba(212,175,55,0.2) 0%, rgba(122,28,40,0.4) 100%); border: 1px solid rgba(212, 175, 55, 0.5); padding: 5px 18px; border-radius: 20px; font-size: 11px; font-weight: 700; letter-spacing: 2.5px; color: #F7E4BE; text-transform: uppercase; margin-bottom: 14px;">Official Delegate Pass</span>
+                    <h1 style="margin: 8px 0 0 0; font-family: Georgia, 'Times New Roman', serif; font-size: 36px; font-weight: 900; letter-spacing: 4px; color: #F7E4BE; text-shadow: 0 2px 15px rgba(212, 175, 55, 0.4);">
+                      LMS <span style="color: #D4AF37;">2K26</span>
                     </h1>
-                    <p style="margin: 6px 0 0 0; font-size: 13px; color: #94a3b8; letter-spacing: 1px;">LOCAL MOTIVATION SEMINAR</p>
+                    <p style="margin: 8px 0 0 0; font-size: 12px; color: #C5C0B6; letter-spacing: 2px; text-transform: uppercase;">LOCAL MOTIVATION SEMINAR • MASQUERADE EDITION</p>
                   </td>
                 </tr>
               </table>
@@ -95,11 +96,11 @@ export function generateInvitationHtml(delegate: Delegate): string {
           <!-- Welcome Message -->
           <tr>
             <td style="padding: 35px 35px 20px 35px;">
-              <h2 style="margin: 0 0 12px 0; font-size: 22px; font-weight: 700; color: #f8fafc;">
-                Welcome, <span style="color: #38bdf8;">${escapeHtml(delegate.full_name)}</span>! 🎉
+              <h2 style="margin: 0 0 12px 0; font-family: Georgia, 'Times New Roman', serif; font-size: 24px; font-weight: 700; color: #F9F6F0;">
+                Greetings, <span style="color: #F7E4BE; border-bottom: 1px dashed #D4AF37;">${escapeHtml(delegate.full_name)}</span> 🎉
               </h2>
-              <p style="margin: 0; font-size: 15px; line-height: 1.6; color: #cbd5e1;">
-                Congratulations! Your registration for <strong>LMS 2K26</strong> has been officially confirmed. We are thrilled to welcome you as a distinguished delegate.
+              <p style="margin: 0; font-size: 15px; line-height: 1.7; color: #C5C0B6;">
+                Congratulations! Your registration for <strong style="color: #F7E4BE;">LMS 2K26</strong> has been officially confirmed. We are honored to welcome you as a distinguished delegate.
               </p>
             </td>
           </tr>
@@ -107,41 +108,41 @@ export function generateInvitationHtml(delegate: Delegate): string {
           <!-- VIP PASS BADGE CARD -->
           <tr>
             <td style="padding: 10px 35px 25px 35px;">
-              <div style="background: linear-gradient(145deg, #1e293b, #0f172a); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 16px; padding: 25px; box-shadow: inset 0 1px 1px rgba(255,255,255,0.1);">
+              <div style="background: linear-gradient(145deg, #15121A 0%, #0D0B10 100%); border: 1px solid rgba(212, 175, 55, 0.4); border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.05);">
                 
                 <!-- Badge Top Header -->
-                <table role="presentation" width="100%" style="margin-bottom: 15px; border-bottom: 1px dashed rgba(255,255,255,0.15); padding-bottom: 12px;">
+                <table role="presentation" width="100%" style="margin-bottom: 16px; border-bottom: 1px dashed rgba(212, 175, 55, 0.3); padding-bottom: 14px;">
                   <tr>
-                    <td style="font-size: 11px; font-weight: 700; color: #38bdf8; text-transform: uppercase; letter-spacing: 1.5px;">DELEGATE PASS CODE</td>
-                    <td align="right" style="font-family: monospace; font-size: 14px; font-weight: 700; color: #fbbf24; background: rgba(251, 191, 36, 0.1); padding: 4px 10px; border-radius: 6px; border: 1px solid rgba(251, 191, 36, 0.2);">
+                    <td style="font-size: 11px; font-weight: 700; color: #D4AF37; text-transform: uppercase; letter-spacing: 2px;">DELEGATE PASS CODE</td>
+                    <td align="right" style="font-family: monospace; font-size: 14px; font-weight: 800; color: #050507; background: linear-gradient(135deg, #F7E4BE 0%, #D4AF37 100%); padding: 5px 14px; border-radius: 8px; box-shadow: 0 2px 10px rgba(212,175,55,0.3);">
                       ${passCode}
                     </td>
                   </tr>
                 </table>
 
                 <!-- Delegate Info Table -->
-                <table role="presentation" width="100%" style="font-size: 14px; line-height: 1.8;">
+                <table role="presentation" width="100%" style="font-size: 14px; line-height: 1.9;">
                   <tr>
-                    <td style="color: #94a3b8; width: 35%;">Full Name:</td>
-                    <td style="color: #f8fafc; font-weight: 600;">${escapeHtml(delegate.full_name)}</td>
+                    <td style="color: #8E887D; width: 35%;">Full Name:</td>
+                    <td style="color: #F9F6F0; font-weight: 700;">${escapeHtml(delegate.full_name)}</td>
                   </tr>
                   <tr>
-                    <td style="color: #94a3b8;">Email Address:</td>
-                    <td style="color: #f8fafc;">${escapeHtml(delegate.email)}</td>
+                    <td style="color: #8E887D;">Email Address:</td>
+                    <td style="color: #F9F6F0;">${escapeHtml(delegate.email)}</td>
                   </tr>
                   ${delegate.organization ? `
                   <tr>
-                    <td style="color: #94a3b8;">Organization:</td>
-                    <td style="color: #f8fafc;">${escapeHtml(delegate.organization)}</td>
+                    <td style="color: #8E887D;">Organization:</td>
+                    <td style="color: #F7E4BE; font-weight: 600;">${escapeHtml(delegate.organization)}</td>
                   </tr>` : ""}
                   ${delegate.position ? `
                   <tr>
-                    <td style="color: #94a3b8;">Position:</td>
-                    <td style="color: #f8fafc;">${escapeHtml(delegate.position)}</td>
+                    <td style="color: #8E887D;">Role / Position:</td>
+                    <td style="color: #F7E4BE; font-weight: 600;">${escapeHtml(delegate.position)}</td>
                   </tr>` : ""}
                   <tr>
-                    <td style="color: #94a3b8;">Registration Date:</td>
-                    <td style="color: #cbd5e1;">${registeredDate}</td>
+                    <td style="color: #8E887D;">Registered Date:</td>
+                    <td style="color: #C5C0B6;">${registeredDate}</td>
                   </tr>
                 </table>
 
@@ -152,24 +153,24 @@ export function generateInvitationHtml(delegate: Delegate): string {
           <!-- EVENT DETAILS GRID -->
           <tr>
             <td style="padding: 0 35px 25px 35px;">
-              <h3 style="margin: 0 0 14px 0; font-size: 16px; font-weight: 700; color: #f8fafc; text-transform: uppercase; letter-spacing: 1px;">
+              <h3 style="margin: 0 0 14px 0; font-family: Georgia, 'Times New Roman', serif; font-size: 15px; font-weight: 700; color: #D4AF37; text-transform: uppercase; letter-spacing: 1.5px;">
                 Event Details
               </h3>
               
               <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
                 <tr>
                   <td width="50%" style="padding-right: 8px;">
-                    <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 14px;">
-                      <div style="font-size: 11px; color: #38bdf8; font-weight: 700; text-transform: uppercase; margin-bottom: 4px;">📅 Dates</div>
-                      <div style="font-size: 13px; color: #f8fafc; font-weight: 600;">March 15 – 17, 2026</div>
-                      <div style="font-size: 11px; color: #94a3b8; margin-top: 2px;">3 Unforgettable Days</div>
+                    <div style="background: rgba(21, 18, 26, 0.8); border: 1px solid rgba(212, 175, 55, 0.2); border-radius: 14px; padding: 16px;">
+                      <div style="font-size: 11px; color: #D4AF37; font-weight: 700; text-transform: uppercase; margin-bottom: 4px;">📅 Dates</div>
+                      <div style="font-size: 13px; color: #F9F6F0; font-weight: 700;">March 15 – 17, 2026</div>
+                      <div style="font-size: 11px; color: #8E887D; margin-top: 2px;">3 Unforgettable Days</div>
                     </div>
                   </td>
                   <td width="50%" style="padding-left: 8px;">
-                    <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 14px;">
-                      <div style="font-size: 11px; color: #a78bfa; font-weight: 700; text-transform: uppercase; margin-bottom: 4px;">📍 Venue</div>
-                      <div style="font-size: 13px; color: #f8fafc; font-weight: 600;">Hasdrubal Hall</div>
-                      <div style="font-size: 11px; color: #94a3b8; margin-top: 2px;">Golden Tulip Resort</div>
+                    <div style="background: rgba(21, 18, 26, 0.8); border: 1px solid rgba(212, 175, 55, 0.2); border-radius: 14px; padding: 16px;">
+                      <div style="font-size: 11px; color: #D4AF37; font-weight: 700; text-transform: uppercase; margin-bottom: 4px;">📍 Venue</div>
+                      <div style="font-size: 13px; color: #F9F6F0; font-weight: 700;">Hasdrubal Hall</div>
+                      <div style="font-size: 11px; color: #8E887D; margin-top: 2px;">Golden Tulip Resort</div>
                     </div>
                   </td>
                 </tr>
@@ -180,7 +181,7 @@ export function generateInvitationHtml(delegate: Delegate): string {
           <!-- CALL TO ACTION BUTTON -->
           <tr>
             <td align="center" style="padding: 10px 35px 35px 35px;">
-              <a href="https://lms-2026.vercel.app" target="_blank" style="display: inline-block; background: linear-gradient(135deg, #2563eb, #7c3aed); color: #ffffff; text-decoration: none; font-weight: 700; font-size: 15px; padding: 14px 36px; border-radius: 12px; box-shadow: 0 10px 25px rgba(37,99,235,0.4); text-transform: uppercase; letter-spacing: 1px;">
+              <a href="https://lms-xi-liard.vercel.app" target="_blank" style="display: inline-block; background: linear-gradient(135deg, #D4AF37 0%, #A88726 100%); color: #050507; text-decoration: none; font-weight: 800; font-size: 14px; padding: 16px 40px; border-radius: 14px; box-shadow: 0 10px 30px rgba(212,175,55,0.35); text-transform: uppercase; letter-spacing: 1.5px; border: 1px solid #F7E4BE;">
                 Explore Event Website →
               </a>
             </td>
@@ -188,11 +189,11 @@ export function generateInvitationHtml(delegate: Delegate): string {
 
           <!-- FOOTER -->
           <tr>
-            <td style="background-color: #0b0f19; padding: 25px 35px; border-top: 1px solid rgba(255,255,255,0.08); text-align: center;">
-              <p style="margin: 0 0 6px 0; font-size: 12px; color: #64748b;">
-                Local Motivation Seminar 2026 • Building Tomorrows Leaders
+            <td style="background-color: #050507; padding: 25px 35px; border-top: 1px solid rgba(212, 175, 55, 0.2); text-align: center;">
+              <p style="margin: 0 0 6px 0; font-size: 12px; color: #C5C0B6;">
+                Local Motivation Seminar 2026 • Building Tomorrow's Leaders
               </p>
-              <p style="margin: 0; font-size: 11px; color: #475569;">
+              <p style="margin: 0; font-size: 11px; color: #8E887D;">
                 If you have any questions, please reach out to the organizing team.
               </p>
             </td>
@@ -282,73 +283,73 @@ export function generateAdminNotificationHtml(delegate: Delegate): string {
   <meta charset="UTF-8">
   <title>New Delegate Registration Alert</title>
 </head>
-<body style="margin: 0; padding: 0; background-color: #0b0f19; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #e2e8f0;">
-  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #0b0f19; padding: 40px 10px;">
+<body style="margin: 0; padding: 0; background-color: #050507; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #F9F6F0;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #050507; padding: 40px 10px;">
     <tr>
       <td align="center">
-        <table role="presentation" width="100%" style="max-width: 600px; background-color: #111827; border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.6);">
+        <table role="presentation" width="100%" style="max-width: 600px; background-color: #0D0B10; border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 24px; overflow: hidden; box-shadow: 0 25px 60px rgba(0,0,0,0.8), 0 0 40px rgba(122, 28, 40, 0.25);">
           
           <!-- Header -->
           <tr>
-            <td style="background: linear-gradient(135deg, #1e1b4b 0%, #31103f 100%); padding: 30px; text-align: center; border-bottom: 2px solid #f59e0b;">
-              <span style="background: rgba(245, 158, 11, 0.2); border: 1px solid rgba(245, 158, 11, 0.4); color: #fbbf24; padding: 4px 14px; border-radius: 12px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px;">ADMIN NOTIFICATION</span>
-              <h1 style="margin: 12px 0 4px 0; font-size: 24px; font-weight: 800; color: #ffffff;">
+            <td style="background: linear-gradient(135deg, #1f070b 0%, #4a0e17 50%, #0d0b10 100%); padding: 30px; text-align: center; border-bottom: 1px solid rgba(212, 175, 55, 0.4);">
+              <span style="background: rgba(212, 175, 55, 0.15); border: 1px solid rgba(212, 175, 55, 0.4); color: #F7E4BE; padding: 5px 16px; border-radius: 14px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px;">ADMIN NOTIFICATION</span>
+              <h1 style="margin: 14px 0 4px 0; font-family: Georgia, 'Times New Roman', serif; font-size: 26px; font-weight: 800; color: #F7E4BE; text-shadow: 0 2px 10px rgba(212, 175, 55, 0.3);">
                 🚨 New Delegate Registered!
               </h1>
-              <p style="margin: 0; font-size: 13px; color: #94a3b8;">LMS 2K26 Control Center</p>
+              <p style="margin: 4px 0 0 0; font-size: 12px; color: #C5C0B6; letter-spacing: 1px;">LMS 2K26 CONTROL CENTER</p>
             </td>
           </tr>
 
           <!-- Details Table -->
           <tr>
             <td style="padding: 30px;">
-              <div style="background: #1e293b; border-radius: 14px; padding: 20px; border: 1px solid rgba(255,255,255,0.08);">
-                <h3 style="margin: 0 0 16px 0; font-size: 16px; color: #38bdf8; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px;">
+              <div style="background: linear-gradient(145deg, #15121A 0%, #0D0B10 100%); border-radius: 18px; padding: 22px; border: 1px solid rgba(212, 175, 55, 0.3); box-shadow: inset 0 1px 1px rgba(255,255,255,0.05);">
+                <h3 style="margin: 0 0 16px 0; font-family: Georgia, 'Times New Roman', serif; font-size: 16px; color: #D4AF37; border-bottom: 1px dashed rgba(212, 175, 55, 0.3); padding-bottom: 10px;">
                   Registrant Details (${passCode})
                 </h3>
-                <table role="presentation" width="100%" style="font-size: 14px; line-height: 1.8;">
+                <table role="presentation" width="100%" style="font-size: 14px; line-height: 1.9;">
                   <tr>
-                    <td style="color: #94a3b8; width: 35%;">Full Name:</td>
-                    <td style="color: #f8fafc; font-weight: 700;">${escapeHtml(delegate.full_name)}</td>
+                    <td style="color: #8E887D; width: 35%;">Full Name:</td>
+                    <td style="color: #F9F6F0; font-weight: 700;">${escapeHtml(delegate.full_name)}</td>
                   </tr>
                   <tr>
-                    <td style="color: #94a3b8;">Email:</td>
-                    <td style="color: #60a5fa;"><a href="mailto:${escapeHtml(delegate.email)}" style="color: #60a5fa; text-decoration: none;">${escapeHtml(delegate.email)}</a></td>
+                    <td style="color: #8E887D;">Email:</td>
+                    <td style="color: #F7E4BE;"><a href="mailto:${escapeHtml(delegate.email)}" style="color: #F7E4BE; text-decoration: underline;">${escapeHtml(delegate.email)}</a></td>
                   </tr>
                   ${delegate.phone ? `
                   <tr>
-                    <td style="color: #94a3b8;">Phone:</td>
-                    <td style="color: #f8fafc;">${escapeHtml(delegate.phone)}</td>
+                    <td style="color: #8E887D;">Phone:</td>
+                    <td style="color: #F9F6F0;">${escapeHtml(delegate.phone)}</td>
                   </tr>` : ""}
                   ${delegate.organization ? `
                   <tr>
-                    <td style="color: #94a3b8;">Organization:</td>
-                    <td style="color: #f8fafc;">${escapeHtml(delegate.organization)}</td>
+                    <td style="color: #8E887D;">Organization / Dept:</td>
+                    <td style="color: #F7E4BE; font-weight: 600;">${escapeHtml(delegate.organization)}</td>
                   </tr>` : ""}
                   ${delegate.position ? `
                   <tr>
-                    <td style="color: #94a3b8;">Position:</td>
-                    <td style="color: #f8fafc;">${escapeHtml(delegate.position)}</td>
+                    <td style="color: #8E887D;">Role / Position:</td>
+                    <td style="color: #F7E4BE; font-weight: 600;">${escapeHtml(delegate.position)}</td>
                   </tr>` : ""}
                   ${delegate.dietary_restrictions ? `
                   <tr>
-                    <td style="color: #94a3b8;">Dietary Notes:</td>
-                    <td style="color: #f87171;">${escapeHtml(delegate.dietary_restrictions)}</td>
+                    <td style="color: #8E887D;">Dietary Notes:</td>
+                    <td style="color: #A32B3A; font-weight: 600;">${escapeHtml(delegate.dietary_restrictions)}</td>
                   </tr>` : ""}
                   ${delegate.emergency_contact_name ? `
                   <tr>
-                    <td style="color: #94a3b8;">Emergency Contact:</td>
-                    <td style="color: #cbd5e1;">${escapeHtml(delegate.emergency_contact_name)} (${escapeHtml(delegate.emergency_contact_phone || "N/A")})</td>
+                    <td style="color: #8E887D;">Emergency Contact:</td>
+                    <td style="color: #C5C0B6;">${escapeHtml(delegate.emergency_contact_name)} (${escapeHtml(delegate.emergency_contact_phone || "N/A")})</td>
                   </tr>` : ""}
                   <tr>
-                    <td style="color: #94a3b8;">Timestamp:</td>
-                    <td style="color: #94a3b8;">${registeredDate}</td>
+                    <td style="color: #8E887D;">Timestamp:</td>
+                    <td style="color: #8E887D;">${registeredDate}</td>
                   </tr>
                 </table>
               </div>
 
-              <div style="text-align: center; margin-top: 25px;">
-                <a href="https://lms-2026.vercel.app/admin" target="_blank" style="display: inline-block; background: linear-gradient(135deg, #f59e0b, #d97706); color: #000000; font-weight: 800; text-decoration: none; padding: 12px 28px; border-radius: 10px; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">
+              <div style="text-align: center; margin-top: 28px;">
+                <a href="https://lms-xi-liard.vercel.app/admin" target="_blank" style="display: inline-block; background: linear-gradient(135deg, #D4AF37 0%, #A88726 100%); color: #050507; font-weight: 800; text-decoration: none; padding: 14px 34px; border-radius: 12px; font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; border: 1px solid #F7E4BE; box-shadow: 0 8px 25px rgba(212,175,55,0.3);">
                   Open Admin Dashboard →
                 </a>
               </div>
