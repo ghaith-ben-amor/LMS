@@ -2,149 +2,137 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { partners } from "@/data/partners";
-import { fadeInUp, staggerContainer } from "@/lib/animations";
+import { partners, Partner } from "@/data/partners";
+import Badge from "./ui/Badge";
+import Button from "./ui/Button";
+import { ExternalLink, Award, Sparkles, Star, Tv } from "lucide-react";
 
-const PartnerLogo = ({ partner }: { partner: (typeof partners)[0] }) => {
+const PartnerLogo = ({ partner }: { partner: Partner }) => {
   return (
     <motion.a
       href={partner.website}
       target="_blank"
       rel="noopener noreferrer"
-      variants={fadeInUp}
-      whileHover={{ scale: 1.05 }}
-      className="group relative h-32 md:h-40 bg-gradient-to-br from-black to-burgundy/10 border border-burgundy/30 rounded-lg flex items-center justify-center overflow-hidden"
+      whileHover={{ y: -4, scale: 1.02 }}
+      className="group relative h-28 sm:h-32 rounded-2xl glass-card border border-amber-500/20 hover:border-amber-500/50 flex flex-col items-center justify-center p-4 text-center transition-all overflow-hidden"
     >
-      {/* Placeholder Logo */}
-      <div className="text-center text-gray-600 group-hover:text-gray-500 transition-colors">
-        <div className="text-4xl mb-2">🎭</div>
-        <p className="text-xs">{partner.name}</p>
-      </div>
+      <div className="absolute inset-0 bg-gradient-to-tr from-amber-500/0 via-amber-500/5 to-rose-950/0 opacity-0 group-hover:opacity-100 transition-opacity" />
 
-      {/* Hover effect */}
-      <div className="absolute inset-0 bg-gradient-to-r from-gold/0 to-gold/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      {/* Styled Brand Graphic / Title */}
+      <span className="font-serif text-base sm:text-lg font-bold text-ivory group-hover:text-gold transition-colors tracking-wide">
+        {partner.name}
+      </span>
+
+      <span className="mt-1 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-ivory-dark group-hover:text-amber-400/80 transition-colors flex items-center gap-1">
+        <span>Visit Partner</span>
+        <ExternalLink size={10} />
+      </span>
     </motion.a>
   );
 };
 
-const PartnerCategory = ({
-  category,
-  title,
-  categoryPartners,
-}: {
-  category: string;
-  title: string;
-  categoryPartners: typeof partners;
-}) => {
-  if (categoryPartners.length === 0) return null;
-
-  return (
-    <motion.div
-      variants={staggerContainer}
-      initial="initial"
-      whileInView="animate"
-      viewport={{ once: true }}
-      className="mb-16"
-    >
-      <motion.h3
-        variants={fadeInUp}
-        className="text-2xl md:text-3xl font-bold text-gold mb-8 uppercase tracking-widest"
-      >
-        {title}
-      </motion.h3>
-
-      <motion.div
-        variants={staggerContainer}
-        className={`grid gap-6 ${
-          category === "main"
-            ? "grid-cols-1 md:grid-cols-1 max-w-md"
-            : category === "gold"
-              ? "grid-cols-2 md:grid-cols-3"
-              : "grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
-        }`}
-      >
-        {categoryPartners.map((partner) => (
-          <PartnerLogo key={partner.id} partner={partner} />
-        ))}
-      </motion.div>
-    </motion.div>
-  );
-};
-
-const Partners = () => {
+export const Partners = () => {
   const mainPartners = partners.filter((p) => p.category === "main");
   const goldPartners = partners.filter((p) => p.category === "gold");
   const silverPartners = partners.filter((p) => p.category === "silver");
   const mediaPartners = partners.filter((p) => p.category === "media");
 
   return (
-    <section
-      id="partners"
-      className="py-20 md:py-32 bg-gradient-to-b from-black to-burgundy/5 relative overflow-hidden"
-    >
-      {/* Background Elements */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute top-1/2 right-0 w-96 h-96 bg-gold rounded-full blur-3xl" />
-      </div>
+    <section id="partners" className="py-24 sm:py-32 bg-[#050507] relative overflow-hidden">
+      {/* Background Lighting */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-rose-950/15 rounded-full blur-[160px] pointer-events-none" />
 
-      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
-        <motion.div
-          variants={staggerContainer}
-          initial="initial"
-          whileInView="animate"
-          viewport={{ once: true }}
-          className="text-center mb-16 md:mb-24"
-        >
-          <motion.h2
-            variants={fadeInUp}
-            className="text-5xl md:text-7xl font-bold mb-8 tracking-tight"
-          >
-            <span className="text-white">OUR</span>
-            <br />
-            <span className="text-gold">PARTNERS</span>
-          </motion.h2>
+        <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-20">
+          <Badge variant="gold" size="md" className="mb-4">
+            Collaborations & Sponsors
+          </Badge>
 
-          <motion.p
-            variants={fadeInUp}
-            className="text-gray-400 text-lg max-w-2xl mx-auto"
-          >
-            We're proud to collaborate with organizations that share our vision for
-            leadership and personal development.
-          </motion.p>
+          <h2 className="font-serif text-4xl sm:text-6xl font-extrabold text-ivory tracking-wider mb-6">
+            OUR <span className="text-gradient-gold">PARTNERS</span>
+          </h2>
 
-          <motion.div
-            variants={fadeInUp}
-            className="w-20 h-1 bg-gradient-to-r from-burgundy to-gold mx-auto mt-6"
-          />
-        </motion.div>
+          <div className="w-20 h-1 bg-gradient-to-r from-rose-900 via-amber-400 to-rose-900 mx-auto rounded-full mb-6" />
 
-        {/* Partners by Category */}
-        <div>
-          <PartnerCategory category="main" title="Main Partner" categoryPartners={mainPartners} />
-          <PartnerCategory category="gold" title="Gold Partners" categoryPartners={goldPartners} />
-          <PartnerCategory category="silver" title="Silver Partners" categoryPartners={silverPartners} />
-          <PartnerCategory category="media" title="Media Partners" categoryPartners={mediaPartners} />
+          <p className="text-sm sm:text-base text-ivory-muted leading-relaxed font-light">
+            We are proud to collaborate with global institutions and forward-thinking organizations empowering youth leadership.
+          </p>
         </div>
 
-        {/* Partner CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          viewport={{ once: true }}
-          className="text-center mt-16 md:mt-24"
-        >
-          <p className="text-gray-400 text-lg mb-6">Interested in becoming a partner?</p>
-          <motion.a
-            href="mailto:contact@lms2k26.tn"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="inline-block px-8 py-4 bg-gradient-to-r from-burgundy to-gold text-white rounded-full font-semibold transition-all duration-300 hover:shadow-lg hover:shadow-gold/50"
-          >
-            BECOME A PARTNER
-          </motion.a>
-        </motion.div>
+        {/* Main Organizer Highlight */}
+        {mainPartners.length > 0 && (
+          <div className="mb-16 text-center">
+            <span className="text-xs font-bold uppercase tracking-[0.25em] text-amber-400 block mb-6 flex items-center justify-center gap-2">
+              <Award className="w-4 h-4 text-gold" />
+              <span>Organizer & Main Partner</span>
+            </span>
+            <div className="max-w-md mx-auto">
+              <PartnerLogo partner={mainPartners[0]} />
+            </div>
+          </div>
+        )}
+
+        {/* Gold Partners */}
+        {goldPartners.length > 0 && (
+          <div className="mb-16">
+            <span className="text-xs font-bold uppercase tracking-[0.25em] text-amber-400 block mb-6 text-center flex items-center justify-center gap-2">
+              <Star className="w-4 h-4 text-gold" />
+              <span>Gold Partners</span>
+            </span>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+              {goldPartners.map((p) => (
+                <PartnerLogo key={p.id} partner={p} />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Silver & Media Partners Split */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+          {silverPartners.length > 0 && (
+            <div>
+              <span className="text-xs font-bold uppercase tracking-[0.25em] text-ivory-muted block mb-6 flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-amber-400" />
+                <span>Silver Partners</span>
+              </span>
+              <div className="grid grid-cols-2 gap-4">
+                {silverPartners.map((p) => (
+                  <PartnerLogo key={p.id} partner={p} />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {mediaPartners.length > 0 && (
+            <div>
+              <span className="text-xs font-bold uppercase tracking-[0.25em] text-ivory-muted block mb-6 flex items-center gap-2">
+                <Tv className="w-4 h-4 text-amber-400" />
+                <span>Media Partners</span>
+              </span>
+              <div className="grid grid-cols-2 gap-4">
+                {mediaPartners.map((p) => (
+                  <PartnerLogo key={p.id} partner={p} />
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Partner Call to Action */}
+        <div className="rounded-3xl glass-card border border-amber-500/30 p-8 sm:p-12 text-center max-w-3xl mx-auto space-y-4">
+          <h3 className="font-serif text-2xl sm:text-3xl font-extrabold text-ivory">
+            Partner With LMS 2K26
+          </h3>
+          <p className="text-sm text-ivory-muted max-w-xl mx-auto font-light">
+            Connect your brand with 200+ top Tunisian and international youth leaders. Join our partner ecosystem today.
+          </p>
+          <div className="pt-2">
+            <Button href="mailto:contact@lms2k26.tn" variant="outline" size="md">
+              Become a Partner
+            </Button>
+          </div>
+        </div>
       </div>
     </section>
   );

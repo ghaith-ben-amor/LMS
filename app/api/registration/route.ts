@@ -1,0 +1,103 @@
+import { NextResponse } from "next/server";
+import type { RegistrationFormData } from "@/src/data/delegates";
+import { deleteDelegate, getAllDelegates, registerDelegate, getDelegateByEmail } from "@/src/data/delegates";
+
+export async function GET() {
+  try {
+    return NextResponse.json({ delegates: getAllDelegates() });
+  } catch (error) {
+    console.error("Could not load registrations:", error);
+    return NextResponse.json({ error: "Could not load registrations" }, { status: 500 });
+  }
+}
+
+export async function DELETE(request: Request) {
+  try {
+    const body = await request.json();
+    const id = Number(body.id);
+
+    if (!Number.isInteger(id) || id < 1) {
+      return NextResponse.json({ error: "A valid registration id is required" }, { status: 400 });
+    }
+
+    if (!deleteDelegate(id)) {
+      return NextResponse.json({ error: "Registration not found" }, { status: 404 });
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Could not delete registration:", error);
+    return NextResponse.json({ error: "Could not delete registration" }, { status: 500 });
+  }
+}
+
+export async function POST(request: Request) {
+  try {
+    const body = await request.json();
+
+    const fullName = typeof body.full_name === "string" ? body.full_name.trim() : "";
+    const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!fullName || !email || !emailPattern.test(email)) {
+      return NextResponse.json(
+        { error: "A valid full name and email are required" },
+        { status: 400 }
+      );
+    }
+
+    if (fullName.length > 120 || email.length > 180) {
+      return NextResponse.json(
+        { error: "Full name or email is too long" },
+        { status: 400 }
+      );
+    }
+
+    const allowedSizes = ["XXS", "XS", "S", "M", "L", "XL", "XXL"];
+    if (body.tshirt_size && !allowedSizes.includes(body.tshirt_size)) {
+      return NextResponse.json({ error: "Invalid t-shirt size" }, { status: 400 });
+    }
+
+    // Check if delegate already exists with this email
+    const existingDelegate = getDelegateByEmail(email);
+    if (existingDelegate) {
+      return NextResponse.json(
+        { error: "A delegate with this email is already registered" },
+        { status: 409 }
+      );
+    }
+    
+    // Register the delegate
+    const delegate = registerDelegate({
+      full_name: fullName,
+      email,
+      organization: typeof body.organization === "string" ? body.organization.trim() : undefined,
+      position: typeof body.position === "string" ? body.position.trim() : undefined,
+      phone: typeof body.phone === "string" ? body.phone.trim() : undefined,
+      dietary_restrictions: typeof body.dietary_restrictions === "string" ? body.dietary_restrictions.trim() : undefined,
+      emergency_contact_name: typeof body.emergency_contact_name === "string" ? body.emergency_contact_name.trim() : undefined,
+      emergency_contact_phone: typeof body.emergency_contact_phone === "string" ? body.emergency_contact_phone.trim() : undefined,
+      tshirt_size: body.tshirt_size,
+    } satisfies RegistrationFormData);
+    
+    return NextResponse.json(
+      { 
+        success: true, 
+        delegate: {
+          id: delegate.id,
+          full_name: delegate.full_name,
+          email: delegate.email,
+          created_at: delegate.created_at,
+        } 
+      },
+      { status: 201 }
+    );
+    
+  } catch (error) {
+    console.error("Registration error:", error);
+    return NextResponse.json(
+      { error: "Failed to register delegate. Please try again." },
+      { status: 500 }
+    );
+  }
+}

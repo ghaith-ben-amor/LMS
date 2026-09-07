@@ -1,6 +1,5 @@
 /**
- * Speakers Data
- * Add/update speakers here for easy management
+ * Speakers Data - LMS 2K26 Keynote Speakers & Facilitators
  */
 
 export interface Speaker {
@@ -10,6 +9,7 @@ export interface Speaker {
   organization: string;
   description: string;
   image: string;
+  category: "keynote" | "workshop" | "panelist";
   social?: {
     linkedin?: string;
     twitter?: string;
@@ -24,6 +24,7 @@ export const speakers: Speaker[] = [
     organization: "Global Leadership Institute",
     description: "Renowned expert in transformational leadership with over 15 years of experience mentoring young leaders across the globe.",
     image: "/images/speakers/speaker-01.jpg",
+    category: "keynote",
     social: {
       linkedin: "https://linkedin.com",
       twitter: "https://twitter.com",
@@ -34,8 +35,9 @@ export const speakers: Speaker[] = [
     name: "Ahmed Ben Salah",
     position: "Entrepreneur & Innovator",
     organization: "TechVentures Tunisia",
-    description: "Founder of multiple successful startups. Passionate about empowering the next generation of African leaders.",
+    description: "Founder of multiple successful startups. Passionate about empowering the next generation of African and MENA leaders.",
     image: "/images/speakers/speaker-02.jpg",
+    category: "keynote",
     social: {
       linkedin: "https://linkedin.com",
     },
@@ -45,8 +47,9 @@ export const speakers: Speaker[] = [
     name: "Emma Laurent",
     position: "Personal Development Coach",
     organization: "Transform International",
-    description: "Executive coach specializing in identity, self-discovery, and authentic leadership development.",
-    image: "/images/speakers/speaker-03.jpg",
+    description: "Executive coach specializing in identity, self-discovery, emotional intelligence, and authentic leadership development.",
+    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=80",
+    category: "workshop",
     social: {
       linkedin: "https://linkedin.com",
       twitter: "https://twitter.com",
@@ -57,8 +60,9 @@ export const speakers: Speaker[] = [
     name: "Prof. Karim Bennani",
     position: "Psychology & Behavior",
     organization: "University of Tunis",
-    description: "Behavioral psychologist exploring the science behind personal transformation and authentic self-expression.",
-    image: "/images/speakers/speaker-04.jpg",
+    description: "Behavioral psychologist exploring the neuroscience behind personal transformation and authentic self-expression behind social masks.",
+    image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=800&q=80",
+    category: "panelist",
     social: {
       linkedin: "https://linkedin.com",
     },
@@ -68,8 +72,9 @@ export const speakers: Speaker[] = [
     name: "Lisa Chen",
     position: "Communications Expert",
     organization: "Global Communications Forum",
-    description: "Specialist in authentic communication and leadership presence in the digital age.",
-    image: "/images/speakers/speaker-05.jpg",
+    description: "Specialist in authentic communication, stage presence, and public influence in the digital age.",
+    image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=800&q=80",
+    category: "workshop",
     social: {
       linkedin: "https://linkedin.com",
       twitter: "https://twitter.com",
@@ -80,8 +85,9 @@ export const speakers: Speaker[] = [
     name: "Marcus Williams",
     position: "Youth Empowerment Leader",
     organization: "Future Leaders Initiative",
-    description: "Dedicated to unlocking the potential in young adults and fostering authentic leadership.",
-    image: "/images/speakers/speaker-06.jpg",
+    description: "Dedicated to unlocking youth potential, driving social change, and fostering resilient global mindsets.",
+    image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=800&q=80",
+    category: "panelist",
     social: {
       linkedin: "https://linkedin.com",
     },

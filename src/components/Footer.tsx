@@ -1,186 +1,173 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { eventConfig } from "@/data/event-config";
-import { Heart, Share2, Link as LinkIcon, Mail, Phone } from "lucide-react";
+import { Mail, Phone, MapPin, Globe, Share2, Heart, Sparkles, ArrowUp } from "lucide-react";
 
-const Footer = () => {
+export const Footer = () => {
   const currentYear = new Date().getFullYear();
 
-  return (
-    <footer className="bg-black border-t border-gold/10 py-10 sm:py-12 md:py-16 lg:py-20">
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 md:px-8 lg:px-8">
-        {/* Main Footer Content */}
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 md:gap-8 lg:gap-10 mb-10 sm:mb-12 md:mb-16">
-          {/* Brand */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="col-span-2 sm:col-span-1"
-          >
-            <div className="mb-4">
-              <h3 className="text-lg sm:text-xl md:text-2xl font-bold tracking-widest">
-                <span className="text-white">{eventConfig.event.name}</span>
-              </h3>
-              <p className="text-gold text-xs sm:text-sm font-light mt-2">
-                {eventConfig.event.tagline}
-              </p>
-            </div>
-          </motion.div>
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
-          {/* Quick Links */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            viewport={{ once: true }}
-          >
-            <h4 className="font-bold text-white mb-3 sm:mb-4 uppercase tracking-widest text-xs sm:text-sm">
+  return (
+    <footer className="bg-[#030305] border-t border-amber-500/20 pt-16 sm:pt-20 pb-12 text-ivory relative overflow-hidden">
+      {/* Subtle top glow */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[1px] bg-gradient-to-r from-transparent via-amber-500/50 to-transparent" />
+
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-10 lg:gap-12 pb-16 border-b border-white/10">
+          {/* Column 1: Brand & Tagline */}
+          <div className="md:col-span-1 space-y-4">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-full bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-gold">
+                <Sparkles size={16} />
+              </div>
+              <span className="font-serif text-2xl font-bold tracking-widest text-ivory">
+                LMS <span className="text-amber-400">2K26</span>
+              </span>
+            </div>
+
+            <p className="text-xs sm:text-sm text-ivory-muted leading-relaxed font-light">
+              {eventConfig.event.description}
+            </p>
+
+            <span className="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-amber-400 block pt-2">
+              Organized by AIESEC University
+            </span>
+          </div>
+
+          {/* Column 2: Quick Links */}
+          <div className="space-y-4">
+            <h4 className="text-xs font-bold uppercase tracking-[0.25em] text-gold">
               Navigation
             </h4>
-            <ul className="space-y-2 text-gray-400 text-xs sm:text-sm">
+            <ul className="space-y-2 text-xs sm:text-sm text-ivory-muted">
               <li>
-                <a href="#home" className="hover:text-gold transition-colors hover:translate-x-0.5 inline-block">
+                <a href="#home" className="hover:text-gold transition-colors">
                   Home
                 </a>
               </li>
               <li>
-                <a href="#about" className="hover:text-gold transition-colors hover:translate-x-0.5 inline-block">
-                  About
+                <a href="#about" className="hover:text-gold transition-colors">
+                  About LMS
                 </a>
               </li>
               <li>
-                <a href="#masquerade" className="hover:text-gold transition-colors hover:translate-x-0.5 inline-block">
-                  Masquerade
+                <a href="#masquerade" className="hover:text-gold transition-colors">
+                  The Masquerade
                 </a>
               </li>
               <li>
-                <a href="#program" className="hover:text-gold transition-colors hover:translate-x-0.5 inline-block">
-                  Program
+                <a href="#program" className="hover:text-gold transition-colors">
+                  Program Schedule
                 </a>
               </li>
               <li>
-                <a href="#speakers" className="hover:text-gold transition-colors hover:translate-x-0.5 inline-block">
-                  Speakers
+                <a href="#speakers" className="hover:text-gold transition-colors">
+                  Keynote Speakers
                 </a>
               </li>
               <li>
-                <a href="#venue" className="hover:text-gold transition-colors hover:translate-x-0.5 inline-block">
-                  Venue
-                </a>
-              </li>
-              <li>
-                <a href="#partners" className="hover:text-gold transition-colors hover:translate-x-0.5 inline-block">
-                  Partners
+                <a href="#venue" className="hover:text-gold transition-colors">
+                  Venue & Location
                 </a>
               </li>
             </ul>
-          </motion.div>
+          </div>
 
-          {/* Social Media */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            viewport={{ once: true }}
-          >
-            <h4 className="font-bold text-white mb-3 sm:mb-4 uppercase tracking-widest text-xs sm:text-sm">
-              Follow Us
+          {/* Column 3: Contact & Info */}
+          <div className="space-y-4">
+            <h4 className="text-xs font-bold uppercase tracking-[0.25em] text-gold">
+              Event Details
             </h4>
-            <div className="flex gap-4">
-              <a
-                href={eventConfig.social.instagram}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2 sm:p-2.5 bg-burgundy/20 text-gold rounded-lg hover:bg-gold hover:text-black transition-all duration-300 hover:shadow-lg hover:shadow-gold/30"
-              >
-                <Heart size={16} className="sm:w-5 sm:h-5" />
-              </a>
-              <a
-                href={eventConfig.social.facebook}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2 sm:p-2.5 bg-burgundy/20 text-gold rounded-lg hover:bg-gold hover:text-black transition-all duration-300 hover:shadow-lg hover:shadow-gold/30"
-              >
-                <Share2 size={16} className="sm:w-5 sm:h-5" />
-              </a>
-              <a
-                href={eventConfig.social.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2 sm:p-2.5 bg-burgundy/20 text-gold rounded-lg hover:bg-gold hover:text-black transition-all duration-300 hover:shadow-lg hover:shadow-gold/30"
-              >
-                <LinkIcon size={16} className="sm:w-5 sm:h-5" />
-              </a>
-            </div>
-          </motion.div>
-
-          {/* Contact */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            viewport={{ once: true }}
-          >
-            <h4 className="font-bold text-white mb-3 sm:mb-4 uppercase tracking-widest text-xs sm:text-sm">
-              Contact
-            </h4>
-            <ul className="space-y-2 sm:space-y-3 text-gray-400 text-xs sm:text-sm">
-              <li className="flex items-center gap-2">
-                <Mail size={14} className="text-gold sm:w-4 sm:h-4 flex-shrink-0" />
-                <a
-                  href={`mailto:${eventConfig.contact.email}`}
-                  className="hover:text-gold transition-colors"
-                >
+            <ul className="space-y-3 text-xs sm:text-sm text-ivory-muted">
+              <li className="flex items-start gap-2.5">
+                <MapPin size={16} className="text-gold flex-shrink-0 mt-0.5" />
+                <span>Hammamet, Tunisia</span>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <Mail size={16} className="text-gold flex-shrink-0 mt-0.5" />
+                <a href={`mailto:${eventConfig.contact.email}`} className="hover:text-gold transition-colors">
                   {eventConfig.contact.email}
                 </a>
               </li>
-              <li className="flex items-center gap-2">
-                <Phone size={14} className="text-gold sm:w-4 sm:h-4 flex-shrink-0" />
+              <li className="flex items-start gap-2.5">
+                <Phone size={16} className="text-gold flex-shrink-0 mt-0.5" />
                 <a href={`tel:${eventConfig.contact.phone}`} className="hover:text-gold transition-colors">
                   {eventConfig.contact.phone}
                 </a>
               </li>
             </ul>
-          </motion.div>
-        </div>
-
-        {/* Bottom Section */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          viewport={{ once: true }}
-          className="border-t border-gold/10 pt-6 sm:pt-8 md:pt-12"
-        >
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4 sm:gap-6">
-            <p className="text-gray-500 text-xs sm:text-sm text-center md:text-left">
-              © {currentYear} LMS 2K26 — All Rights Reserved.
-            </p>
-
-            <div className="flex gap-4 sm:gap-6 text-gray-500 text-xs sm:text-sm">
-              <a href="#" className="hover:text-gold transition-colors">
-                Privacy Policy
-              </a>
-              <a href="#" className="hover:text-gold transition-colors">
-                Terms of Service
-              </a>
-            </div>
           </div>
 
-          <motion.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.5 }}
-            viewport={{ once: true }}
-            className="text-gray-600 text-xs text-center mt-4 sm:mt-6 font-light italic"
-          >
-            Behind the Mask, Discover Yourself.
-          </motion.p>
-        </motion.div>
+          {/* Column 4: Social Channels & Back to Top */}
+          <div className="space-y-4">
+            <h4 className="text-xs font-bold uppercase tracking-[0.25em] text-gold">
+              Follow LMS 2K26
+            </h4>
+            <p className="text-xs text-ivory-muted font-light">
+              Join the official conversation on social media.
+            </p>
+
+            <div className="flex gap-3 pt-2">
+              <a
+                href={eventConfig.social.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram"
+                className="w-10 h-10 rounded-full bg-obsidian-surface border border-amber-500/20 text-gold hover:border-gold hover:bg-amber-500/10 flex items-center justify-center transition-all"
+              >
+                <Heart size={18} />
+              </a>
+              <a
+                href={eventConfig.social.facebook}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Facebook"
+                className="w-10 h-10 rounded-full bg-obsidian-surface border border-amber-500/20 text-gold hover:border-gold hover:bg-amber-500/10 flex items-center justify-center transition-all"
+              >
+                <Share2 size={18} />
+              </a>
+              <a
+                href={eventConfig.social.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="LinkedIn"
+                className="w-10 h-10 rounded-full bg-obsidian-surface border border-amber-500/20 text-gold hover:border-gold hover:bg-amber-500/10 flex items-center justify-center transition-all"
+              >
+                <Globe size={18} />
+              </a>
+            </div>
+
+            <button
+              onClick={scrollToTop}
+              className="mt-4 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-amber-400 hover:text-gold transition-colors cursor-pointer"
+            >
+              <span>Back to Top</span>
+              <ArrowUp size={14} />
+            </button>
+          </div>
+        </div>
+
+        {/* Bottom Rights & Links */}
+        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-ivory-dark font-light">
+          <p>© {currentYear} LMS 2K26 — Local Motivation Seminar. All rights reserved.</p>
+          <div className="flex gap-6">
+            <Link href="/" className="hover:text-gold transition-colors">
+              Privacy Policy
+            </Link>
+            <Link href="/" className="hover:text-gold transition-colors">
+              Terms of Service
+            </Link>
+            <Link href="/admin" className="hover:text-gold transition-colors">
+              Admin Portal
+            </Link>
+          </div>
+        </div>
       </div>
     </footer>
   );

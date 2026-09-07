@@ -4,13 +4,18 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { eventConfig } from "@/data/event-config";
 import Countdown from "./Countdown";
+import Badge from "./ui/Badge";
 
 const StatCounter = ({ end, label }: { end: number; label: string }) => {
   const [count, setCount] = useState(0);
 
   useEffect(() => {
     let start = 0;
-    const increment = end / 30;
+    const duration = 1500;
+    const steps = 40;
+    const increment = end / steps;
+    const stepTime = duration / steps;
+
     const timer = setInterval(() => {
       start += increment;
       if (start >= end) {
@@ -19,7 +24,7 @@ const StatCounter = ({ end, label }: { end: number; label: string }) => {
       } else {
         setCount(Math.floor(start));
       }
-    }, 50);
+    }, stepTime);
 
     return () => clearInterval(timer);
   }, [end]);
@@ -30,69 +35,53 @@ const StatCounter = ({ end, label }: { end: number; label: string }) => {
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
       viewport={{ once: true }}
-      className="text-center p-4 sm:p-6 rounded-lg bg-gradient-to-b from-gold/5 to-burgundy/5 border border-gold/10 hover:border-gold/30 transition-all duration-300"
+      className="glass-card p-6 sm:p-8 rounded-2xl text-center group hover:border-amber-500/50 transition-all"
     >
-      <div className="text-4xl sm:text-5xl md:text-6xl font-bold text-gold mb-3">{count}+</div>
-      <p className="text-xs sm:text-sm md:text-base text-gray-300 uppercase tracking-widest font-semibold">
+      <div className="font-serif text-4xl sm:text-5xl md:text-6xl font-extrabold text-gradient-gold mb-2 group-hover:scale-105 transition-transform">
+        {count}+
+      </div>
+      <p className="text-xs sm:text-sm text-ivory-muted uppercase tracking-[0.2em] font-semibold">
         {label}
       </p>
     </motion.div>
   );
 };
 
-const About = () => {
+export const About = () => {
   return (
-    <section id="about" className="py-16 sm:py-20 md:py-32 lg:py-40 bg-black relative overflow-hidden">
-      {/* Background Elements */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute top-0 left-1/2 w-96 h-96 bg-burgundy rounded-full blur-3xl" />
-      </div>
+    <section id="about" className="py-24 sm:py-32 bg-[#050507] relative overflow-hidden">
+      {/* Subtle Background Glow */}
+      <div className="absolute top-1/2 left-0 w-96 h-96 bg-rose-950/20 rounded-full blur-[140px] pointer-events-none" />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-3 sm:px-6 md:px-8 lg:px-8">
-        {/* Section Title */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-          className="text-center mb-12 sm:mb-16 md:mb-20 lg:mb-24"
-        >
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 tracking-tight leading-tight">
-            <span className="text-white">{eventConfig.about.title}</span>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        {/* Section Header */}
+        <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-20">
+          <Badge variant="gold" size="md" className="mb-4">
+            AIESEC University Conference
+          </Badge>
+          
+          <h2 className="font-serif text-3xl sm:text-5xl md:text-6xl font-extrabold text-ivory leading-tight mb-6">
+            MORE THAN AN EVENT.
             <br />
-            <span className="text-gold">{eventConfig.about.subtitle}</span>
+            <span className="text-gradient-gold">A MOMENT TO DISCOVER.</span>
           </h2>
-          <div className="w-16 sm:w-20 md:w-24 h-1 bg-gradient-to-r from-burgundy via-gold to-burgundy mx-auto mt-4 sm:mt-6 rounded-full" />
-        </motion.div>
 
-        {/* Description */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-          viewport={{ once: true }}
-          className="text-center text-gray-300 text-sm sm:text-base md:text-lg lg:text-xl mb-12 sm:mb-16 md:mb-20 max-w-3xl mx-auto leading-relaxed"
-        >
-          {eventConfig.about.description}
-        </motion.p>
+          <div className="w-20 h-1 bg-gradient-to-r from-rose-900 via-amber-400 to-rose-900 mx-auto rounded-full mb-8" />
+
+          <p className="text-sm sm:text-base md:text-lg text-ivory-muted leading-relaxed font-light">
+            {eventConfig.about.description}
+          </p>
+        </div>
 
         {/* Statistics Grid */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          viewport={{ once: true }}
-          className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-6 lg:gap-8 mb-12 sm:mb-16 md:mb-24 lg:mb-32"
-        >
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 mb-20">
           {eventConfig.stats.map((stat, index) => (
             <StatCounter key={index} end={stat.number} label={stat.label} />
           ))}
-        </motion.div>
-
-        {/* Countdown */}
-        <div className="mb-0">
-          <Countdown />
         </div>
+
+        {/* Live Countdown Component */}
+        <Countdown />
       </div>
     </section>
   );

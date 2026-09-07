@@ -1,5 +1,5 @@
 /**
- * LMS Legacy Editions
+ * LMS Legacy Editions Data
  */
 
 export interface LegacyEdition {
@@ -9,7 +9,7 @@ export interface LegacyEdition {
   theme: string;
   description: string;
   image: string;
-  participants?: number;
+  participants: number;
 }
 
 export const legacyEditions: LegacyEdition[] = [
@@ -18,7 +18,7 @@ export const legacyEditions: LegacyEdition[] = [
     year: 2026,
     edition: "LMS 2K26",
     theme: "Behind the Mask",
-    description: "Our flagship masquerade-themed leadership experience bringing together young leaders for transformation and discovery.",
+    description: "Our flagship masquerade-themed leadership experience bringing together young leaders for transformation and discovery in Hammamet.",
     image: "/images/editions/lms-2k26.jpg",
     participants: 200,
   },
@@ -27,8 +27,8 @@ export const legacyEditions: LegacyEdition[] = [
     year: 2025,
     edition: "LMS 2K25",
     theme: "Illuminate",
-    description: "A year focused on finding and sharing your inner light, connecting with authentic purpose.",
-    image: "/images/editions/lms-2k25.jpg",
+    description: "A year focused on finding and sharing your inner light, connecting with authentic purpose and collective leadership impact.",
+    image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=800&q=80",
     participants: 180,
   },
   {
@@ -36,8 +36,8 @@ export const legacyEditions: LegacyEdition[] = [
     year: 2024,
     edition: "LMS 2K24",
     theme: "Nexus",
-    description: "Bringing together leaders to create a network of positive change and innovation.",
-    image: "/images/editions/lms-2k24.jpg",
+    description: "Bringing together visionary youth leaders to create an interconnected network of positive social change and innovation.",
+    image: "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=800&q=80",
     participants: 150,
   },
   {
@@ -45,8 +45,8 @@ export const legacyEditions: LegacyEdition[] = [
     year: 2023,
     edition: "LMS 2K23",
     theme: "Ascend",
-    description: "Our inaugural edition, launching the LMS movement with a focus on personal growth.",
-    image: "/images/editions/lms-2k23.jpg",
+    description: "Our inaugural edition, launching the LMS movement with a focus on personal growth, self-mastery, and community building.",
+    image: "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?auto=format&fit=crop&w=800&q=80",
     participants: 120,
   },
 ];

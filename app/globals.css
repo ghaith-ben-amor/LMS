@@ -1,136 +1,97 @@
-@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=Inter:wght@100;300;400;500;600;700;800;900&display=swap");
-
 @import "tailwindcss";
 
-@theme inline {
-  --color-gold: #d4af37;
-  --color-burgundy: #5c2e3a;
-  --color-ivory: #f5f1e8;
-
-  --font-serif: "Cormorant Garamond", serif;
-  --font-sans: "Inter", sans-serif;
-}
-
+/* LMS 2K26 Design System - Masquerade Theme */
 :root {
-  --background: #000000;
-  --foreground: #ffffff;
-  --gold: #d4af37;
-  --burgundy: #5c2e3a;
-  --ivory: #f5f1e8;
+  --bg-obsidian: #050507;
+  --bg-card: #0D0B10;
+  --bg-surface: #15121A;
   
-  color-scheme: dark;
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+  --burgundy: #7A1C28;
+  --burgundy-dark: #4A0E17;
+  --burgundy-light: #A32B3A;
+  --burgundy-hover: #8C2130;
+  
+  --gold: #D4AF37;
+  --gold-light: #F7E4BE;
+  --gold-champagne: #E6C687;
+  --gold-dark: #A88726;
+  
+  --ivory: #F9F6F0;
+  --ivory-muted: #C5C0B6;
+  --ivory-dark: #8E887D;
 }
 
 html {
   scroll-behavior: smooth;
+  color-scheme: dark;
 }
 
 body {
-  background: #000000;
-  color: #ffffff;
-  font-family: "Inter", sans-serif;
+  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+  background-color: var(--bg-obsidian);
+  color: var(--ivory);
   overflow-x: hidden;
 }
 
-/* Responsive Typography using Tailwind breakpoints */
-@media (min-width: 640px) {
-  html {
-    font-size: 14px;
-  }
-}
-
-@media (min-width: 768px) {
-  html {
-    font-size: 15px;
-  }
-}
-
-@media (min-width: 1024px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-@media (min-width: 1280px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-/* Improved Typography Rendering */
-h1, h2, h3, h4, h5, h6 {
-  letter-spacing: -0.5px;
-}
-
-/* Better Link Styling */
-a {
-  transition: color 0.3s ease;
-}
-
-/* Improved Button Styling */
-button {
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-/* Responsive Padding */
-.section-padding {
-  @apply py-16 sm:py-20 md:py-32 lg:py-40;
-}
-
-/* Better Focus States */
-:focus-visible {
-  outline: 2px solid #d4af37;
-  outline-offset: 2px;
-}
-/* Prevent motion if user prefers reduced motion */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
+/* Typography Headings */
+h1, h2, h3, .font-editorial {
+  font-family: var(--font-serif), "Cinzel", "Cormorant Garamond", Georgia, serif;
 }
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 8px;
 }
-
 ::-webkit-scrollbar-track {
-  background: #1a1a1a;
+  background: #050507;
 }
-
 ::-webkit-scrollbar-thumb {
-  background: #d4af37;
-  border-radius: 5px;
+  background: #2A1017;
+  border-radius: 4px;
+  border: 1px solid rgba(212, 175, 55, 0.2);
 }
-
 ::-webkit-scrollbar-thumb:hover {
-  background: #5c2e3a;
+  background: #7A1C28;
 }
 
-/* Smooth text rendering */
-body {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* Gold Gradient Text */
+.text-gradient-gold {
+  background: linear-gradient(135deg, #F7E4BE 0%, #D4AF37 50%, #E6C687 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-/* Selection color */
-::selection {
-  background-color: #d4af37;
-  color: #000000;
+.text-gradient-burgundy {
+  background: linear-gradient(135deg, #E6C687 0%, #A32B3A 50%, #7A1C28 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-::-moz-selection {
-  background-color: #d4af37;
-  color: #000000;
+/* Velvet Glass Card Base */
+.glass-card {
+  background: linear-gradient(145deg, rgba(13, 11, 16, 0.7) 0%, rgba(21, 18, 26, 0.4) 100%);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(212, 175, 55, 0.15);
+}
+
+.glass-card:hover {
+  border-color: rgba(212, 175, 55, 0.35);
+  box-shadow: 0 10px 30px -10px rgba(122, 28, 40, 0.25);
+}
+
+/* Focus Ring */
+*:focus-visible {
+  outline: 2px solid #D4AF37 !important;
+  outline-offset: 3px !important;
+}
+
+/* Accessibility reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

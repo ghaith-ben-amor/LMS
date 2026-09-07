@@ -1,151 +1,121 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { eventConfig } from "@/data/event-config";
+import Button from "./ui/Button";
+import Badge from "./ui/Badge";
+import { Sparkles } from "lucide-react";
 
-const FinalReveal = () => {
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    setIsVisible(true);
-  }, []);
-
+export const FinalReveal = () => {
   return (
     <section
       id="reveal"
-      className="relative min-h-screen bg-black overflow-hidden flex items-center justify-center py-20"
+      className="relative min-h-[90vh] bg-[#050507] overflow-hidden flex items-center justify-center py-24 border-t border-amber-500/20"
     >
-      {/* Background */}
-      <div className="absolute inset-0">
-        {/* Dark Background with subtle gradient */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black via-burgundy/5 to-black" />
+      {/* Ambient Velvet Lighting & Particle Effects */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-rose-950/25 rounded-full blur-[180px]" />
+        <div className="absolute top-1/3 right-1/4 w-[400px] h-[400px] bg-amber-500/15 rounded-full blur-[140px]" />
 
-        {/* Animated Particles */}
-        <div className="absolute inset-0 opacity-20">
-          {[...Array(30)].map((_, i) => (
+        <div className="absolute inset-0 opacity-30">
+          {[...Array(20)].map((_, i) => (
             <motion.div
               key={i}
-              className="absolute w-1 h-1 bg-gold rounded-full"
+              className="absolute w-1 h-1 bg-amber-300 rounded-full"
               animate={{
-                y: [0, -30, 0],
+                y: [0, -40, 0],
                 opacity: [0, 0.8, 0],
               }}
               transition={{
-                duration: 4 + i * 0.2,
+                duration: 5 + (i % 4),
                 repeat: Infinity,
-                delay: i * 0.1,
+                delay: i * 0.25,
               }}
               style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
+                left: `${(i * 19 + 7) % 95}%`,
+                top: `${(i * 31 + 5) % 90}%`,
               }}
             />
           ))}
         </div>
-
-        {/* Gradient Orbs */}
-        <motion.div
-          animate={{
-            opacity: [0.1, 0.3, 0.1],
-          }}
-          transition={{ duration: 5, repeat: Infinity }}
-          className="absolute top-1/2 left-1/2 w-96 h-96 bg-burgundy rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"
-        />
-        <motion.div
-          animate={{
-            opacity: [0.1, 0.2, 0.1],
-          }}
-          transition={{ duration: 7, repeat: Infinity, delay: 2 }}
-          className="absolute top-1/3 right-0 w-96 h-96 bg-gold rounded-full blur-3xl"
-        />
       </div>
 
-      {/* Content */}
-      <div className="relative z-10 max-w-4xl mx-auto px-4 text-center">
-        {/* Opening Text */}
+      <div className="relative z-10 max-w-4xl mx-auto px-4 text-center space-y-10">
+        <Badge variant="gold" size="md" className="mx-auto">
+          The Grand Reveal
+        </Badge>
+
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="mb-16 md:mb-24"
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+          className="space-y-4"
         >
-          <p className="text-xl md:text-3xl text-gray-400 font-light tracking-wide uppercase mb-8">
+          <p className="text-sm sm:text-base md:text-lg text-ivory-muted uppercase tracking-[0.3em] font-medium">
             You've Seen The Mask
           </p>
 
-          <h2 className="text-5xl md:text-8xl font-bold leading-tight mb-8">
-            <span className="bg-gradient-to-r from-gold via-burgundy to-gold bg-clip-text text-transparent">
-              But Have You Discovered
+          <h2 className="font-serif text-4xl sm:text-6xl md:text-7xl font-extrabold leading-tight">
+            <span className="text-gradient-gold">
+              BUT HAVE YOU DISCOVERED
               <br />
-              What's Behind It?
+              WHAT'S BEHIND IT?
             </span>
           </h2>
-
-          <p className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto">
-            Your journey of transformation awaits at LMS 2K26
-          </p>
         </motion.div>
 
-        {/* Animated Mask Reveal */}
+        {/* Floating Mask Visual */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={isVisible ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
-          transition={{ duration: 1, delay: 0.8, ease: "easeOut" }}
-          className="mb-16 md:mb-24"
+          initial={{ opacity: 0, scale: 0.9 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.9, delay: 0.2 }}
+          viewport={{ once: true }}
+          className="relative w-48 h-48 sm:w-60 sm:h-60 mx-auto my-6"
         >
-          {/* Mask that "disappears" */}
+          <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-rose-950/50 via-amber-500/20 to-transparent blur-2xl animate-pulse-subtle" />
           <motion.div
-            animate={isVisible ? { opacity: 0, scale: 1.2 } : { opacity: 1, scale: 1 }}
-            transition={{ duration: 1.5, delay: 1.5 }}
-            className="w-48 h-48 md:w-64 md:h-64 mx-auto relative"
+            animate={{ y: [0, -10, 0] }}
+            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+            className="relative w-full h-full"
           >
-            <div className="absolute inset-0 rounded-full bg-gradient-to-b from-gold to-burgundy opacity-30 blur-2xl" />
-            <div className="absolute inset-0 border-2 border-gold rounded-full" />
-            <div className="absolute inset-4 border border-burgundy/50 rounded-full" />
+            <Image
+              src="/images/hero_mask.png"
+              alt="LMS 2K26 Reveal Mask"
+              fill
+              className="object-contain"
+            />
           </motion.div>
         </motion.div>
 
         {/* Reveal Message */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ duration: 0.8, delay: 2.5 }}
-          className="space-y-8"
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+          viewport={{ once: true }}
+          className="space-y-6 max-w-2xl mx-auto"
         >
-          <h1 className="text-6xl md:text-8xl font-bold tracking-widest">
-            <span className="text-white">{eventConfig.event.name}</span>
-          </h1>
+          <h3 className="font-serif text-3xl sm:text-5xl font-extrabold text-ivory">
+            {eventConfig.event.name}
+          </h3>
 
-          <p className="text-xl md:text-3xl text-gold font-light leading-relaxed">
+          <p className="text-base sm:text-xl text-amber-200/90 font-light leading-relaxed">
             {eventConfig.event.tagline}
           </p>
 
-          {/* Final CTA */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.8, delay: 3.2 }}
-            className="pt-8"
-          >
-            <motion.a
-              href="#cta"
-              whileHover={{ scale: 1.08, boxShadow: "0 0 30px rgba(212, 175, 55, 0.5)" }}
-              whileTap={{ scale: 0.95 }}
-              className="inline-block px-10 py-5 bg-gradient-to-r from-burgundy via-gold to-burgundy text-white rounded-full font-bold text-lg tracking-wide transition-all duration-300"
+          <div className="pt-6">
+            <Button
+              href="/registration"
+              variant="primary"
+              size="lg"
+              className="px-10 py-5 text-base sm:text-lg shadow-2xl shadow-gold-glow"
             >
-              JOIN LMS 2K26
-            </motion.a>
-
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={isVisible ? { opacity: 1 } : { opacity: 0 }}
-              transition={{ duration: 0.8, delay: 3.8 }}
-              className="text-gray-400 text-sm mt-6"
-            >
-              Be part of something extraordinary. Be part of the transformation.
-            </motion.p>
-          </motion.div>
+              Join LMS 2K26 Now
+            </Button>
+          </div>
         </motion.div>
       </div>
     </section>

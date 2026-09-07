@@ -1,6 +1,5 @@
 /**
- * Partners Data
- * Organize partners by category
+ * Partners & Sponsors Data
  */
 
 export interface Partner {
@@ -8,78 +7,75 @@ export interface Partner {
   name: string;
   category: "main" | "gold" | "silver" | "media";
   logo: string;
-  website?: string;
+  website: string;
 }
 
 export const partners: Partner[] = [
   // Main Partner
   {
     id: "main-1",
-    name: "Main Partner",
+    name: "AIESEC University",
     category: "main",
     logo: "/images/partners/main-partner.png",
-    website: "https://example.com",
+    website: "https://aiesec.org",
   },
-
   // Gold Partners
   {
     id: "gold-1",
-    name: "Gold Partner 1",
+    name: "Global Leadership Forum",
     category: "gold",
-    logo: "/images/partners/gold-partner-01.png",
+    logo: "/images/partners/gold-01.png",
     website: "https://example.com",
   },
   {
     id: "gold-2",
-    name: "Gold Partner 2",
+    name: "Tunisia Tech Ventures",
     category: "gold",
-    logo: "/images/partners/gold-partner-02.png",
+    logo: "/images/partners/gold-02.png",
     website: "https://example.com",
   },
   {
     id: "gold-3",
-    name: "Gold Partner 3",
+    name: "Heritage Resort Hammamet",
     category: "gold",
-    logo: "/images/partners/gold-partner-03.png",
+    logo: "/images/partners/gold-03.png",
     website: "https://example.com",
   },
-
   // Silver Partners
   {
     id: "silver-1",
-    name: "Silver Partner 1",
+    name: "Apex Youth Academy",
     category: "silver",
-    logo: "/images/partners/silver-partner-01.png",
+    logo: "/images/partners/silver-01.png",
     website: "https://example.com",
   },
   {
     id: "silver-2",
-    name: "Silver Partner 2",
+    name: "Vanguard Media Group",
     category: "silver",
-    logo: "/images/partners/silver-partner-02.png",
+    logo: "/images/partners/silver-02.png",
     website: "https://example.com",
   },
   {
     id: "silver-3",
-    name: "Silver Partner 3",
+    name: "Pulse Energy",
     category: "silver",
-    logo: "/images/partners/silver-partner-03.png",
+    logo: "/images/partners/silver-03.png",
     website: "https://example.com",
   },
-
   // Media Partners
   {
     id: "media-1",
-    name: "Media Partner 1",
+    name: "Express FM Tunisia",
     category: "media",
-    logo: "/images/partners/media-partner-01.png",
+    logo: "/images/partners/media-01.png",
     website: "https://example.com",
   },
   {
     id: "media-2",
-    name: "Media Partner 2",
+    name: "Youth Times Africa",
     category: "media",
-    logo: "/images/partners/media-partner-02.png",
+    logo: "/images/partners/media-02.png",
     website: "https://example.com",
   },
 ];
