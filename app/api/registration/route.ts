@@ -5,7 +5,8 @@ import { sendInvitationEmail } from "@/src/lib/mailer";
 
 export async function GET() {
   try {
-    return NextResponse.json({ delegates: getAllDelegates() });
+    const delegates = await getAllDelegates();
+    return NextResponse.json({ delegates });
   } catch (error) {
     console.error("Could not load registrations:", error);
     return NextResponse.json({ error: "Could not load registrations" }, { status: 500 });
@@ -21,7 +22,8 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ error: "A valid registration id is required" }, { status: 400 });
     }
 
-    if (!deleteDelegate(id)) {
+    const deleted = await deleteDelegate(id);
+    if (!deleted) {
       return NextResponse.json({ error: "Registration not found" }, { status: 404 });
     }
 
@@ -60,7 +62,7 @@ export async function POST(request: Request) {
     }
 
     // Check if delegate already exists with this email
-    const existingDelegate = getDelegateByEmail(email);
+    const existingDelegate = await getDelegateByEmail(email);
     if (existingDelegate) {
       return NextResponse.json(
         { error: "A delegate with this email is already registered" },
@@ -69,7 +71,7 @@ export async function POST(request: Request) {
     }
     
     // Register the delegate
-    const delegate = registerDelegate({
+    const delegate = await registerDelegate({
       full_name: fullName,
       email,
       organization: typeof body.organization === "string" ? body.organization.trim() : undefined,
@@ -80,6 +82,7 @@ export async function POST(request: Request) {
       emergency_contact_phone: typeof body.emergency_contact_phone === "string" ? body.emergency_contact_phone.trim() : undefined,
       tshirt_size: body.tshirt_size,
     } satisfies RegistrationFormData);
+
     
     // Trigger automated HTML invitation pass email
     const mailResult = await sendInvitationEmail(delegate);

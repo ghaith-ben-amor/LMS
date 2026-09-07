@@ -12,7 +12,7 @@ import {
 // ─── GET /api/program ─────────────────────────────────────────────────────
 export async function GET() {
   try {
-    const items = getAllAgendaItems();
+    const items = await getAllAgendaItems();
     return NextResponse.json({ items });
   } catch (error) {
     console.error("Agenda GET error:", error);
@@ -52,7 +52,7 @@ export async function POST(request: Request) {
       sort_order: typeof body.sort_order === "number" ? body.sort_order : undefined,
     };
 
-    const item = createAgendaItem(input);
+    const item = await createAgendaItem(input);
     return NextResponse.json({ item }, { status: 201 });
   } catch (error) {
     console.error("Agenda POST error:", error);
@@ -68,7 +68,7 @@ export async function PUT(request: Request) {
 
     // Bulk reorder
     if (Array.isArray(body.reorder)) {
-      reorderAgendaItems(body.reorder as number[]);
+      await reorderAgendaItems(body.reorder as number[]);
       return NextResponse.json({ success: true });
     }
 
@@ -79,7 +79,7 @@ export async function PUT(request: Request) {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { id: _id, ...rest } = body;
-    const updated = updateAgendaItem(id, rest as Partial<AgendaItemInput>);
+    const updated = await updateAgendaItem(id, rest as Partial<AgendaItemInput>);
     if (!updated) {
       return NextResponse.json({ error: "Agenda item not found" }, { status: 404 });
     }
@@ -101,7 +101,8 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ error: "Valid id is required" }, { status: 400 });
     }
 
-    if (!deleteAgendaItem(id)) {
+    const deleted = await deleteAgendaItem(id);
+    if (!deleted) {
       return NextResponse.json({ error: "Agenda item not found" }, { status: 404 });
     }
     return NextResponse.json({ success: true });
@@ -110,3 +111,4 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ error: "Could not delete agenda item" }, { status: 500 });
   }
 }
+

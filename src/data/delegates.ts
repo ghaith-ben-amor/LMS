@@ -1,9 +1,13 @@
 /**
  * Delegate Registration Data Handler
- * Supports local SQLite database (better-sqlite3) with fallback for Vercel Serverless
+ * Supports:
+ * 1. Persistent Cloud KV Storage (Upstash Redis / Vercel KV) for Vercel Serverless deployments
+ * 2. Local SQLite database (better-sqlite3) for local development
+ * 3. In-memory fallback
  */
 
 import path from "path";
+import { Redis } from "@upstash/redis";
 
 export interface Delegate {
   id: number;
@@ -31,7 +35,22 @@ export interface RegistrationFormData {
   tshirt_size?: "XXS" | "XS" | "S" | "M" | "L" | "XL" | "XXL";
 }
 
-// In-Memory Fallback Store (for Vercel Serverless environments if SQLite is read-only)
+// ─── Upstash Redis / Vercel KV Singleton ───────────────────────────────────
+function getRedis(): Redis | null {
+  const url = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
+
+  if (url && token) {
+    try {
+      return new Redis({ url, token });
+    } catch (e) {
+      console.warn("[Delegates] Upstash Redis client init error:", e);
+    }
+  }
+  return null;
+}
+
+// ─── In-Memory Fallback Store ──────────────────────────────────────────────
 const memoryStore: Delegate[] = [];
 let memoryIdCounter = 1;
 
@@ -45,7 +64,6 @@ function getDb() {
     const Database = require("better-sqlite3");
     let targetPath = process.env.DATABASE_URL || "./delegates.db";
 
-    // On Vercel serverless, filesystem outside /tmp is read-only
     if (process.env.VERCEL || process.env.NODE_ENV === "production") {
       targetPath = path.join("/tmp", "delegates.db");
     }
@@ -69,15 +87,43 @@ function getDb() {
     dbInstance = db;
     return dbInstance;
   } catch (error) {
-    console.warn("SQLite initialization failed, falling back to in-memory store:", error);
+    console.warn("[Delegates] SQLite initialization failed, falling back to memory/cloud:", error);
     useMemoryStore = true;
     return null;
   }
 }
 
-export function registerDelegate(data: RegistrationFormData): Delegate {
-  const db = getDb();
+// ─── Public API ────────────────────────────────────────────────────────────
 
+export async function registerDelegate(data: RegistrationFormData): Promise<Delegate> {
+  const redis = getRedis();
+
+  // 1. Upstash Redis / Vercel KV (Cloud Persistent)
+  if (redis) {
+    let items = (await redis.get<Delegate[]>("lms_2026:delegates")) || [];
+    const newId = await redis.incr("lms_2026:delegate_id_counter");
+    
+    const newDelegate: Delegate = {
+      id: newId,
+      full_name: data.full_name,
+      email: data.email,
+      organization: data.organization,
+      position: data.position,
+      phone: data.phone,
+      dietary_restrictions: data.dietary_restrictions,
+      emergency_contact_name: data.emergency_contact_name,
+      emergency_contact_phone: data.emergency_contact_phone,
+      tshirt_size: data.tshirt_size,
+      created_at: new Date().toISOString(),
+    };
+
+    items.unshift(newDelegate);
+    await redis.set("lms_2026:delegates", items);
+    return newDelegate;
+  }
+
+  // 2. SQLite (Local Dev)
+  const db = getDb();
   if (db) {
     const stmt = db.prepare(`
       INSERT INTO delegates (full_name, email, organization, position, phone, dietary_restrictions, emergency_contact_name, emergency_contact_phone, tshirt_size)
@@ -100,7 +146,7 @@ export function registerDelegate(data: RegistrationFormData): Delegate {
     return row;
   }
 
-  // Memory Fallback
+  // 3. Memory Fallback
   const newDelegate: Delegate = {
     id: memoryIdCounter++,
     full_name: data.full_name,
@@ -118,7 +164,15 @@ export function registerDelegate(data: RegistrationFormData): Delegate {
   return newDelegate;
 }
 
-export function getDelegateByEmail(email: string): Delegate | null {
+export async function getDelegateByEmail(email: string): Promise<Delegate | null> {
+  const redis = getRedis();
+
+  if (redis) {
+    const items = (await redis.get<Delegate[]>("lms_2026:delegates")) || [];
+    const found = items.find((d) => d.email.toLowerCase() === email.toLowerCase());
+    return found || null;
+  }
+
   const db = getDb();
   if (db) {
     const stmt = db.prepare("SELECT * FROM delegates WHERE email = ?");
@@ -130,7 +184,14 @@ export function getDelegateByEmail(email: string): Delegate | null {
   return found || null;
 }
 
-export function getAllDelegates(): Delegate[] {
+export async function getAllDelegates(): Promise<Delegate[]> {
+  const redis = getRedis();
+
+  if (redis) {
+    const items = (await redis.get<Delegate[]>("lms_2026:delegates")) || [];
+    return items;
+  }
+
   const db = getDb();
   if (db) {
     const stmt = db.prepare("SELECT * FROM delegates ORDER BY created_at DESC");
@@ -140,7 +201,19 @@ export function getAllDelegates(): Delegate[] {
   return [...memoryStore];
 }
 
-export function deleteDelegate(id: number): boolean {
+export async function deleteDelegate(id: number): Promise<boolean> {
+  const redis = getRedis();
+
+  if (redis) {
+    let items = (await redis.get<Delegate[]>("lms_2026:delegates")) || [];
+    const filtered = items.filter((d) => d.id !== id);
+    if (filtered.length !== items.length) {
+      await redis.set("lms_2026:delegates", filtered);
+      return true;
+    }
+    return false;
+  }
+
   const db = getDb();
   if (db) {
     const result = db.prepare("DELETE FROM delegates WHERE id = ?").run(id);
@@ -155,14 +228,9 @@ export function deleteDelegate(id: number): boolean {
   return false;
 }
 
-export function getDelegatesByTshirtSize(size: "XXS" | "XS" | "S" | "M" | "L" | "XL" | "XXL"): Delegate[] {
-  const db = getDb();
-  if (db) {
-    const stmt = db.prepare("SELECT * FROM delegates WHERE tshirt_size = ? ORDER BY created_at DESC");
-    return stmt.all(size) as Delegate[];
-  }
-
-  return memoryStore.filter((d) => d.tshirt_size === size);
+export async function getDelegatesByTshirtSize(size: "XXS" | "XS" | "S" | "M" | "L" | "XL" | "XXL"): Promise<Delegate[]> {
+  const all = await getAllDelegates();
+  return all.filter((d) => d.tshirt_size === size);
 }
 
 export default getDb();

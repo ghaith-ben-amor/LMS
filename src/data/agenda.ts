@@ -1,10 +1,13 @@
 /**
  * Agenda / Program Data Handler
- * Persists agenda items in SQLite (same pattern as delegates.ts)
- * Falls back to the static program.ts data when SQLite is unavailable.
+ * Supports:
+ * 1. Persistent Cloud KV Storage (Upstash Redis / Vercel KV) for Vercel Serverless deployments
+ * 2. Local SQLite database (better-sqlite3) for local development
+ * 3. In-memory fallback seeded from static program.ts data
  */
 
 import path from "path";
+import { Redis } from "@upstash/redis";
 import { programSchedule } from "./program";
 
 export interface AgendaItem {
@@ -33,12 +36,23 @@ export interface AgendaItemInput {
   sort_order?: number;
 }
 
-// ─── In-memory fallback ────────────────────────────────────────────────────
-// Seeded from the static program.ts data so the site works even without SQLite.
-let memoryIdCounter = 1000;
-let memoryItems: AgendaItem[] | null = null;
+// ─── Upstash Redis / Vercel KV Singleton ───────────────────────────────────
+function getRedis(): Redis | null {
+  const url = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
 
-function buildMemorySeed(): AgendaItem[] {
+  if (url && token) {
+    try {
+      return new Redis({ url, token });
+    } catch (e) {
+      console.warn("[Agenda] Upstash Redis client init error:", e);
+    }
+  }
+  return null;
+}
+
+// ─── Seed Data Helper ──────────────────────────────────────────────────────
+function buildSeedItems(): AgendaItem[] {
   const items: AgendaItem[] = [];
   let order = 0;
   programSchedule.forEach((day) => {
@@ -59,12 +73,18 @@ function buildMemorySeed(): AgendaItem[] {
       order++;
     });
   });
-  memoryIdCounter = order + 1;
   return items;
 }
 
+// ─── In-memory fallback ────────────────────────────────────────────────────
+let memoryIdCounter = 1000;
+let memoryItems: AgendaItem[] | null = null;
+
 function getMemoryItems(): AgendaItem[] {
-  if (!memoryItems) memoryItems = buildMemorySeed();
+  if (!memoryItems) {
+    memoryItems = buildSeedItems();
+    memoryIdCounter = memoryItems.length + 100;
+  }
   return memoryItems;
 }
 
@@ -128,7 +148,7 @@ function getDb() {
 
     return agendaDb;
   } catch (err) {
-    console.warn("Agenda SQLite init failed, using memory fallback:", err);
+    console.warn("[Agenda] SQLite init failed, using memory/cloud:", err);
     useMemory = true;
     return null;
   }
@@ -136,26 +156,64 @@ function getDb() {
 
 // ─── Public API ────────────────────────────────────────────────────────────
 
-export function getAllAgendaItems(): AgendaItem[] {
+export async function getAllAgendaItems(): Promise<AgendaItem[]> {
+  const redis = getRedis();
+
+  // 1. Upstash Redis / Vercel KV (Cloud Persistent)
+  if (redis) {
+    let items = await redis.get<AgendaItem[]>("lms_2026:agenda");
+    if (!items || items.length === 0) {
+      items = buildSeedItems();
+      await redis.set("lms_2026:agenda", items);
+      await redis.set("lms_2026:agenda_id_counter", items.length + 100);
+    }
+    return items.sort((a, b) => a.sort_order - b.sort_order);
+  }
+
+  // 2. SQLite (Local Dev)
   const db = getDb();
   if (db) {
     return db.prepare("SELECT * FROM agenda_items ORDER BY sort_order ASC, day_label ASC, time ASC").all() as AgendaItem[];
   }
+
+  // 3. Memory Fallback
   return [...getMemoryItems()].sort((a, b) => a.sort_order - b.sort_order);
 }
 
-export function getAgendaItem(id: number): AgendaItem | null {
-  const db = getDb();
-  if (db) {
-    return (db.prepare("SELECT * FROM agenda_items WHERE id = ?").get(id) as AgendaItem) || null;
-  }
-  return getMemoryItems().find((i) => i.id === id) || null;
+export async function getAgendaItem(id: number): Promise<AgendaItem | null> {
+  const all = await getAllAgendaItems();
+  return all.find((i) => i.id === id) || null;
 }
 
-export function createAgendaItem(data: AgendaItemInput): AgendaItem {
-  const db = getDb();
+export async function createAgendaItem(data: AgendaItemInput): Promise<AgendaItem> {
   const sortOrder = data.sort_order ?? Date.now();
+  const redis = getRedis();
 
+  if (redis) {
+    let items = (await redis.get<AgendaItem[]>("lms_2026:agenda")) || buildSeedItems();
+    let newId = await redis.incr("lms_2026:agenda_id_counter");
+    if (!newId || isNaN(newId)) newId = Date.now();
+
+    const newItem: AgendaItem = {
+      id: newId,
+      day_label: data.day_label,
+      day_date: data.day_date,
+      time: data.time,
+      activity: data.activity,
+      description: data.description,
+      location: data.location,
+      duration: data.duration,
+      speaker: data.speaker,
+      sort_order: sortOrder,
+      created_at: new Date().toISOString(),
+    };
+
+    items.push(newItem);
+    await redis.set("lms_2026:agenda", items);
+    return newItem;
+  }
+
+  const db = getDb();
   if (db) {
     const stmt = db.prepare(`
       INSERT INTO agenda_items (day_label, day_date, time, activity, description, location, duration, speaker, sort_order)
@@ -181,9 +239,20 @@ export function createAgendaItem(data: AgendaItemInput): AgendaItem {
   return newItem;
 }
 
-export function updateAgendaItem(id: number, data: Partial<AgendaItemInput>): AgendaItem | null {
-  const db = getDb();
+export async function updateAgendaItem(id: number, data: Partial<AgendaItemInput>): Promise<AgendaItem | null> {
+  const redis = getRedis();
 
+  if (redis) {
+    let items = (await redis.get<AgendaItem[]>("lms_2026:agenda")) || buildSeedItems();
+    const idx = items.findIndex((i) => i.id === id);
+    if (idx === -1) return null;
+
+    items[idx] = { ...items[idx], ...data };
+    await redis.set("lms_2026:agenda", items);
+    return items[idx];
+  }
+
+  const db = getDb();
   if (db) {
     const existing = db.prepare("SELECT * FROM agenda_items WHERE id = ?").get(id) as AgendaItem | undefined;
     if (!existing) return null;
@@ -208,19 +277,47 @@ export function updateAgendaItem(id: number, data: Partial<AgendaItemInput>): Ag
   return mem[idx];
 }
 
-export function deleteAgendaItem(id: number): boolean {
+export async function deleteAgendaItem(id: number): Promise<boolean> {
+  const redis = getRedis();
+
+  if (redis) {
+    let items = (await redis.get<AgendaItem[]>("lms_2026:agenda")) || buildSeedItems();
+    const idx = items.findIndex((i) => i.id === id);
+    if (idx === -1) return false;
+
+    items.splice(idx, 1);
+    await redis.set("lms_2026:agenda", items);
+    return true;
+  }
+
   const db = getDb();
   if (db) {
     const result = db.prepare("DELETE FROM agenda_items WHERE id = ?").run(id);
     return result.changes > 0;
   }
+
   const mem = getMemoryItems();
   const idx = mem.findIndex((i) => i.id === id);
-  if (idx !== -1) { mem.splice(idx, 1); return true; }
+  if (idx !== -1) {
+    mem.splice(idx, 1);
+    return true;
+  }
   return false;
 }
 
-export function reorderAgendaItems(orderedIds: number[]): void {
+export async function reorderAgendaItems(orderedIds: number[]): Promise<void> {
+  const redis = getRedis();
+
+  if (redis) {
+    let items = (await redis.get<AgendaItem[]>("lms_2026:agenda")) || buildSeedItems();
+    orderedIds.forEach((id, index) => {
+      const item = items.find((i) => i.id === id);
+      if (item) item.sort_order = index;
+    });
+    await redis.set("lms_2026:agenda", items);
+    return;
+  }
+
   const db = getDb();
   if (db) {
     const update = db.prepare("UPDATE agenda_items SET sort_order=? WHERE id=?");
@@ -230,6 +327,7 @@ export function reorderAgendaItems(orderedIds: number[]): void {
     tx();
     return;
   }
+
   const mem = getMemoryItems();
   orderedIds.forEach((id, index) => {
     const item = mem.find((i) => i.id === id);

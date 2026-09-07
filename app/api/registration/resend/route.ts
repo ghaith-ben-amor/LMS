@@ -11,7 +11,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "A valid registration id is required" }, { status: 400 });
     }
 
-    const delegates = getAllDelegates();
+    const delegates = await getAllDelegates();
+
     const delegate = delegates.find((d) => d.id === id);
 
     if (!delegate) {
