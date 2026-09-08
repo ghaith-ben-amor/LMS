@@ -8,6 +8,11 @@
 
 import path from "path";
 import { Redis } from "@upstash/redis";
+import { getRedisClient } from "@/lib/redis-client";
+
+function getRedis(): Redis | null {
+  return getRedisClient();
+}
 
 export interface Delegate {
   id: number;
@@ -33,24 +38,7 @@ export interface RegistrationFormData {
   emergency_contact_phone?: string;
 }
 
-// ─── Upstash Redis / Vercel KV Singleton ───────────────────────────────────
-function getRedis(): Redis | null {
-  const url = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
 
-  if (url && token) {
-    try {
-      return new Redis({ url, token });
-    } catch (e) {
-      console.warn("[Delegates] Upstash Redis client init error:", e);
-    }
-  } else if (process.env.NODE_ENV === "production" || process.env.VERCEL) {
-    console.warn(
-      "[Delegates] ⚠️ Cloud DB environment variables missing (UPSTASH_REDIS_REST_URL / KV_REST_API_URL). Data stored in /tmp or memory will be lost on server restart!"
-    );
-  }
-  return null;
-}
 
 // ─── In-Memory Fallback Store ──────────────────────────────────────────────
 const memoryStore: Delegate[] = [];
@@ -167,7 +155,7 @@ export async function getDelegateByEmail(email: string): Promise<Delegate | null
 
   if (redis) {
     const items = (await redis.get<Delegate[]>("lms_2026:delegates")) || [];
-    const found = items.find((d) => d.email.toLowerCase() === email.toLowerCase());
+    const found = items.find((d: Delegate) => d.email.toLowerCase() === email.toLowerCase());
     return found || null;
   }
 
@@ -178,7 +166,7 @@ export async function getDelegateByEmail(email: string): Promise<Delegate | null
     return row || null;
   }
 
-  const found = memoryStore.find((d) => d.email.toLowerCase() === email.toLowerCase());
+  const found = memoryStore.find((d: Delegate) => d.email.toLowerCase() === email.toLowerCase());
   return found || null;
 }
 
@@ -204,7 +192,7 @@ export async function deleteDelegate(id: number): Promise<boolean> {
 
   if (redis) {
     let items = (await redis.get<Delegate[]>("lms_2026:delegates")) || [];
-    const filtered = items.filter((d) => d.id !== id);
+    const filtered = items.filter((d: Delegate) => d.id !== id);
     if (filtered.length !== items.length) {
       await redis.set("lms_2026:delegates", filtered);
       return true;

@@ -8,6 +8,7 @@
 
 import path from "path";
 import { Redis } from "@upstash/redis";
+import { getRedisClient } from "@/lib/redis-client";
 import { programSchedule } from "./program";
 
 export interface AgendaItem {
@@ -38,21 +39,7 @@ export interface AgendaItemInput {
 
 // ─── Upstash Redis / Vercel KV Singleton ───────────────────────────────────
 function getRedis(): Redis | null {
-  const url = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
-
-  if (url && token) {
-    try {
-      return new Redis({ url, token });
-    } catch (e) {
-      console.warn("[Agenda] Upstash Redis client init error:", e);
-    }
-  } else if (process.env.NODE_ENV === "production" || process.env.VERCEL) {
-    console.warn(
-      "[Agenda] ⚠️ Cloud DB environment variables missing (UPSTASH_REDIS_REST_URL / KV_REST_API_URL). Data stored in /tmp or memory will be lost on server restart!"
-    );
-  }
-  return null;
+  return getRedisClient();
 }
 
 // ─── Seed Data Helper ──────────────────────────────────────────────────────
