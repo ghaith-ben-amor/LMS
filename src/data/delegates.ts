@@ -97,50 +97,58 @@ export async function registerDelegate(data: RegistrationFormData): Promise<Dele
 
   // 1. Upstash Redis / Vercel KV (Cloud Persistent)
   if (redis) {
-    let items = delegatesCache?.items || (await redis.get<Delegate[]>("lms_2026:delegates")) || [];
-    const maxId = items.length > 0 ? Math.max(...items.map((d) => d.id)) : 0;
-    const newId = maxId + 1;
-    
-    const newDelegate: Delegate = {
-      id: newId,
-      full_name: data.full_name,
-      email: data.email,
-      organization: data.organization,
-      position: data.position,
-      phone: data.phone,
-      dietary_restrictions: data.dietary_restrictions,
-      emergency_contact_name: data.emergency_contact_name,
-      emergency_contact_phone: data.emergency_contact_phone,
-      created_at: new Date().toISOString(),
-    };
+    try {
+      let items = delegatesCache?.items || (await redis.get<Delegate[]>("lms_2026:delegates")) || [];
+      const maxId = items.length > 0 ? Math.max(...items.map((d) => d.id)) : 0;
+      const newId = maxId + 1;
+      
+      const newDelegate: Delegate = {
+        id: newId,
+        full_name: data.full_name,
+        email: data.email,
+        organization: data.organization,
+        position: data.position,
+        phone: data.phone,
+        dietary_restrictions: data.dietary_restrictions,
+        emergency_contact_name: data.emergency_contact_name,
+        emergency_contact_phone: data.emergency_contact_phone,
+        created_at: new Date().toISOString(),
+      };
 
-    items = [newDelegate, ...items];
-    delegatesCache = { items, timestamp: Date.now() };
-    await redis.set("lms_2026:delegates", items);
-    return newDelegate;
+      items = [newDelegate, ...items];
+      delegatesCache = { items, timestamp: Date.now() };
+      await redis.set("lms_2026:delegates", items);
+      return newDelegate;
+    } catch (err) {
+      console.error("[Delegates] Redis register error, falling back to SQLite/memory:", err);
+    }
   }
 
   // 2. SQLite (Local Dev)
   const db = getDb();
   if (db) {
-    const stmt = db.prepare(`
-      INSERT INTO delegates (full_name, email, organization, position, phone, dietary_restrictions, emergency_contact_name, emergency_contact_phone)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?);
-    `);
+    try {
+      const stmt = db.prepare(`
+        INSERT INTO delegates (full_name, email, organization, position, phone, dietary_restrictions, emergency_contact_name, emergency_contact_phone)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+      `);
 
-    const result = stmt.run(
-      data.full_name,
-      data.email,
-      data.organization || null,
-      data.position || null,
-      data.phone || null,
-      data.dietary_restrictions || null,
-      data.emergency_contact_name || null,
-      data.emergency_contact_phone || null
-    );
+      const result = stmt.run(
+        data.full_name,
+        data.email,
+        data.organization || null,
+        data.position || null,
+        data.phone || null,
+        data.dietary_restrictions || null,
+        data.emergency_contact_name || null,
+        data.emergency_contact_phone || null
+      );
 
-    const row = db.prepare("SELECT * FROM delegates WHERE id = ?").get(result.lastInsertRowid) as Delegate;
-    return row;
+      const row = db.prepare("SELECT * FROM delegates WHERE id = ?").get(result.lastInsertRowid) as Delegate;
+      return row;
+    } catch (err) {
+      console.error("[Delegates] SQLite register error:", err);
+    }
   }
 
   // 3. Memory Fallback
@@ -174,14 +182,22 @@ export async function getAllDelegates(): Promise<Delegate[]> {
   const redis = getRedis();
 
   if (redis) {
-    const items = (await redis.get<Delegate[]>("lms_2026:delegates")) || [];
-    delegatesCache = { items, timestamp: Date.now() };
-    return items;
+    try {
+      const items = (await redis.get<Delegate[]>("lms_2026:delegates")) || [];
+      delegatesCache = { items, timestamp: Date.now() };
+      return items;
+    } catch (err) {
+      console.error("[Delegates] Redis getAllDelegates error, falling back:", err);
+    }
   }
 
   const db = getDb();
   if (db) {
-    return db.prepare("SELECT * FROM delegates ORDER BY created_at DESC").all() as Delegate[];
+    try {
+      return db.prepare("SELECT * FROM delegates ORDER BY created_at DESC").all() as Delegate[];
+    } catch (err) {
+      console.error("[Delegates] SQLite getAllDelegates error:", err);
+    }
   }
 
   return [...memoryStore];
@@ -191,20 +207,28 @@ export async function deleteDelegate(id: number): Promise<boolean> {
   const redis = getRedis();
 
   if (redis) {
-    let items = delegatesCache?.items || (await redis.get<Delegate[]>("lms_2026:delegates")) || [];
-    const filtered = items.filter((d: Delegate) => d.id !== id);
-    if (filtered.length !== items.length) {
-      delegatesCache = { items: filtered, timestamp: Date.now() };
-      await redis.set("lms_2026:delegates", filtered);
-      return true;
+    try {
+      let items = delegatesCache?.items || (await redis.get<Delegate[]>("lms_2026:delegates")) || [];
+      const filtered = items.filter((d: Delegate) => d.id !== id);
+      if (filtered.length !== items.length) {
+        delegatesCache = { items: filtered, timestamp: Date.now() };
+        await redis.set("lms_2026:delegates", filtered);
+        return true;
+      }
+      return false;
+    } catch (err) {
+      console.error("[Delegates] Redis deleteDelegate error, falling back:", err);
     }
-    return false;
   }
 
   const db = getDb();
   if (db) {
-    const result = db.prepare("DELETE FROM delegates WHERE id = ?").run(id);
-    return result.changes > 0;
+    try {
+      const result = db.prepare("DELETE FROM delegates WHERE id = ?").run(id);
+      return result.changes > 0;
+    } catch (err) {
+      console.error("[Delegates] SQLite deleteDelegate error:", err);
+    }
   }
 
   const index = memoryStore.findIndex((d) => d.id === id);

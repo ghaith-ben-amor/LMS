@@ -164,20 +164,28 @@ export async function getAllAgendaItems(): Promise<AgendaItem[]> {
 
   // 1. Upstash Redis / Vercel KV (Cloud Persistent)
   if (redis) {
-    let items = await redis.get<AgendaItem[]>("lms_2026:agenda");
-    if (!items || items.length === 0) {
-      items = buildSeedItems();
-      await redis.set("lms_2026:agenda", items);
+    try {
+      let items = await redis.get<AgendaItem[]>("lms_2026:agenda");
+      if (!items || items.length === 0) {
+        items = buildSeedItems();
+        await redis.set("lms_2026:agenda", items);
+      }
+      const sorted = items.sort((a, b) => a.sort_order - b.sort_order);
+      agendaCache = { items: sorted, timestamp: Date.now() };
+      return sorted;
+    } catch (err) {
+      console.error("[Agenda] Redis getAllAgendaItems error, falling back:", err);
     }
-    const sorted = items.sort((a, b) => a.sort_order - b.sort_order);
-    agendaCache = { items: sorted, timestamp: Date.now() };
-    return sorted;
   }
 
   // 2. SQLite (Local Dev)
   const db = getDb();
   if (db) {
-    return db.prepare("SELECT * FROM agenda_items ORDER BY sort_order ASC, day_label ASC, time ASC").all() as AgendaItem[];
+    try {
+      return db.prepare("SELECT * FROM agenda_items ORDER BY sort_order ASC, day_label ASC, time ASC").all() as AgendaItem[];
+    } catch (err) {
+      console.error("[Agenda] SQLite getAllAgendaItems error:", err);
+    }
   }
 
   // 3. Memory Fallback
@@ -194,42 +202,50 @@ export async function createAgendaItem(data: AgendaItemInput): Promise<AgendaIte
   const redis = getRedis();
 
   if (redis) {
-    let items = agendaCache?.items || (await redis.get<AgendaItem[]>("lms_2026:agenda")) || buildSeedItems();
-    const maxId = items.length > 0 ? Math.max(...items.map((i) => i.id)) : 0;
-    const newId = maxId + 1;
+    try {
+      let items = agendaCache?.items || (await redis.get<AgendaItem[]>("lms_2026:agenda")) || buildSeedItems();
+      const maxId = items.length > 0 ? Math.max(...items.map((i) => i.id)) : 0;
+      const newId = maxId + 1;
 
-    const newItem: AgendaItem = {
-      id: newId,
-      day_label: data.day_label,
-      day_date: data.day_date,
-      time: data.time,
-      activity: data.activity,
-      description: data.description,
-      location: data.location,
-      duration: data.duration,
-      speaker: data.speaker,
-      sort_order: sortOrder,
-      created_at: new Date().toISOString(),
-    };
+      const newItem: AgendaItem = {
+        id: newId,
+        day_label: data.day_label,
+        day_date: data.day_date,
+        time: data.time,
+        activity: data.activity,
+        description: data.description,
+        location: data.location,
+        duration: data.duration,
+        speaker: data.speaker,
+        sort_order: sortOrder,
+        created_at: new Date().toISOString(),
+      };
 
-    const updated = [...items, newItem].sort((a, b) => a.sort_order - b.sort_order);
-    agendaCache = { items: updated, timestamp: Date.now() };
-    await redis.set("lms_2026:agenda", updated);
-    return newItem;
+      const updated = [...items, newItem].sort((a, b) => a.sort_order - b.sort_order);
+      agendaCache = { items: updated, timestamp: Date.now() };
+      await redis.set("lms_2026:agenda", updated);
+      return newItem;
+    } catch (err) {
+      console.error("[Agenda] Redis createAgendaItem error, falling back:", err);
+    }
   }
 
   const db = getDb();
   if (db) {
-    const stmt = db.prepare(`
-      INSERT INTO agenda_items (day_label, day_date, time, activity, description, location, duration, speaker, sort_order)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `);
-    const result = stmt.run(
-      data.day_label, data.day_date, data.time, data.activity,
-      data.description, data.location,
-      data.duration || null, data.speaker || null, sortOrder
-    );
-    return db.prepare("SELECT * FROM agenda_items WHERE id = ?").get(result.lastInsertRowid) as AgendaItem;
+    try {
+      const stmt = db.prepare(`
+        INSERT INTO agenda_items (day_label, day_date, time, activity, description, location, duration, speaker, sort_order)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `);
+      const result = stmt.run(
+        data.day_label, data.day_date, data.time, data.activity,
+        data.description, data.location,
+        data.duration || null, data.speaker || null, sortOrder
+      );
+      return db.prepare("SELECT * FROM agenda_items WHERE id = ?").get(result.lastInsertRowid) as AgendaItem;
+    } catch (err) {
+      console.error("[Agenda] SQLite createAgendaItem error:", err);
+    }
   }
 
   const newItem: AgendaItem = {
@@ -248,33 +264,41 @@ export async function updateAgendaItem(id: number, data: Partial<AgendaItemInput
   const redis = getRedis();
 
   if (redis) {
-    let items = agendaCache?.items || (await redis.get<AgendaItem[]>("lms_2026:agenda")) || buildSeedItems();
-    const idx = items.findIndex((i) => i.id === id);
-    if (idx === -1) return null;
+    try {
+      let items = agendaCache?.items || (await redis.get<AgendaItem[]>("lms_2026:agenda")) || buildSeedItems();
+      const idx = items.findIndex((i) => i.id === id);
+      if (idx === -1) return null;
 
-    items[idx] = { ...items[idx], ...data };
-    const updated = [...items].sort((a, b) => a.sort_order - b.sort_order);
-    agendaCache = { items: updated, timestamp: Date.now() };
-    await redis.set("lms_2026:agenda", updated);
-    return items[idx];
+      items[idx] = { ...items[idx], ...data };
+      const updated = [...items].sort((a, b) => a.sort_order - b.sort_order);
+      agendaCache = { items: updated, timestamp: Date.now() };
+      await redis.set("lms_2026:agenda", updated);
+      return items[idx];
+    } catch (err) {
+      console.error("[Agenda] Redis updateAgendaItem error, falling back:", err);
+    }
   }
 
   const db = getDb();
   if (db) {
-    const existing = db.prepare("SELECT * FROM agenda_items WHERE id = ?").get(id) as AgendaItem | undefined;
-    if (!existing) return null;
+    try {
+      const existing = db.prepare("SELECT * FROM agenda_items WHERE id = ?").get(id) as AgendaItem | undefined;
+      if (!existing) return null;
 
-    const merged = { ...existing, ...data };
-    db.prepare(`
-      UPDATE agenda_items
-      SET day_label=?, day_date=?, time=?, activity=?, description=?, location=?, duration=?, speaker=?, sort_order=?
-      WHERE id=?
-    `).run(
-      merged.day_label, merged.day_date, merged.time, merged.activity,
-      merged.description, merged.location,
-      merged.duration || null, merged.speaker || null, merged.sort_order, id
-    );
-    return db.prepare("SELECT * FROM agenda_items WHERE id = ?").get(id) as AgendaItem;
+      const merged = { ...existing, ...data };
+      db.prepare(`
+        UPDATE agenda_items
+        SET day_label=?, day_date=?, time=?, activity=?, description=?, location=?, duration=?, speaker=?, sort_order=?
+        WHERE id=?
+      `).run(
+        merged.day_label, merged.day_date, merged.time, merged.activity,
+        merged.description, merged.location,
+        merged.duration || null, merged.speaker || null, merged.sort_order, id
+      );
+      return db.prepare("SELECT * FROM agenda_items WHERE id = ?").get(id) as AgendaItem;
+    } catch (err) {
+      console.error("[Agenda] SQLite updateAgendaItem error:", err);
+    }
   }
 
   const mem = getMemoryItems();
@@ -288,21 +312,29 @@ export async function deleteAgendaItem(id: number): Promise<boolean> {
   const redis = getRedis();
 
   if (redis) {
-    let items = agendaCache?.items || (await redis.get<AgendaItem[]>("lms_2026:agenda")) || buildSeedItems();
-    const idx = items.findIndex((i) => i.id === id);
-    if (idx === -1) return false;
+    try {
+      let items = agendaCache?.items || (await redis.get<AgendaItem[]>("lms_2026:agenda")) || buildSeedItems();
+      const idx = items.findIndex((i) => i.id === id);
+      if (idx === -1) return false;
 
-    items.splice(idx, 1);
-    const updated = [...items].sort((a, b) => a.sort_order - b.sort_order);
-    agendaCache = { items: updated, timestamp: Date.now() };
-    await redis.set("lms_2026:agenda", updated);
-    return true;
+      items.splice(idx, 1);
+      const updated = [...items].sort((a, b) => a.sort_order - b.sort_order);
+      agendaCache = { items: updated, timestamp: Date.now() };
+      await redis.set("lms_2026:agenda", updated);
+      return true;
+    } catch (err) {
+      console.error("[Agenda] Redis deleteAgendaItem error, falling back:", err);
+    }
   }
 
   const db = getDb();
   if (db) {
-    const result = db.prepare("DELETE FROM agenda_items WHERE id = ?").run(id);
-    return result.changes > 0;
+    try {
+      const result = db.prepare("DELETE FROM agenda_items WHERE id = ?").run(id);
+      return result.changes > 0;
+    } catch (err) {
+      console.error("[Agenda] SQLite deleteAgendaItem error:", err);
+    }
   }
 
   const mem = getMemoryItems();
@@ -318,25 +350,33 @@ export async function reorderAgendaItems(orderedIds: number[]): Promise<void> {
   const redis = getRedis();
 
   if (redis) {
-    let items = agendaCache?.items || (await redis.get<AgendaItem[]>("lms_2026:agenda")) || buildSeedItems();
-    orderedIds.forEach((id, index) => {
-      const item = items.find((i) => i.id === id);
-      if (item) item.sort_order = index;
-    });
-    const sorted = [...items].sort((a, b) => a.sort_order - b.sort_order);
-    agendaCache = { items: sorted, timestamp: Date.now() };
-    await redis.set("lms_2026:agenda", sorted);
-    return;
+    try {
+      let items = agendaCache?.items || (await redis.get<AgendaItem[]>("lms_2026:agenda")) || buildSeedItems();
+      orderedIds.forEach((id, index) => {
+        const item = items.find((i) => i.id === id);
+        if (item) item.sort_order = index;
+      });
+      const sorted = [...items].sort((a, b) => a.sort_order - b.sort_order);
+      agendaCache = { items: sorted, timestamp: Date.now() };
+      await redis.set("lms_2026:agenda", sorted);
+      return;
+    } catch (err) {
+      console.error("[Agenda] Redis reorderAgendaItems error, falling back:", err);
+    }
   }
 
   const db = getDb();
   if (db) {
-    const update = db.prepare("UPDATE agenda_items SET sort_order=? WHERE id=?");
-    const tx = db.transaction(() => {
-      orderedIds.forEach((id, index) => update.run(index, id));
-    });
-    tx();
-    return;
+    try {
+      const update = db.prepare("UPDATE agenda_items SET sort_order=? WHERE id=?");
+      const tx = db.transaction(() => {
+        orderedIds.forEach((id, index) => update.run(index, id));
+      });
+      tx();
+      return;
+    } catch (err) {
+      console.error("[Agenda] SQLite reorderAgendaItems error:", err);
+    }
   }
 
   const mem = getMemoryItems();

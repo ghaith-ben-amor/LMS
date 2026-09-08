@@ -7,7 +7,7 @@ let redisInstance: Redis | null | undefined = undefined;
  * Supports:
  * - UPSTASH_REDIS_REST_URL + UPSTASH_REDIS_REST_TOKEN
  * - KV_REST_API_URL + KV_REST_API_TOKEN (Vercel KV)
- * - REDIS_URL (auto-parses Upstash TCP & REST connection strings like redis://default:token@host:6379 or https://...)
+ * - REDIS_URL (auto-parses Upstash TCP & REST connection strings)
  */
 export function getRedisClient(): Redis | null {
   if (redisInstance !== undefined) return redisInstance;
@@ -17,7 +17,7 @@ export function getRedisClient(): Redis | null {
 
   const redisUrl = process.env.REDIS_URL;
 
-  // Auto-parse REDIS_URL if set in Vercel/Render environment variables
+  // Auto-parse REDIS_URL if set in environment variables
   if (redisUrl) {
     try {
       if (redisUrl.startsWith("http://") || redisUrl.startsWith("https://")) {
@@ -31,7 +31,8 @@ export function getRedisClient(): Redis | null {
         const host = parsed.hostname;
         const pass = parsed.password || (parsed.username !== "default" ? parsed.username : undefined);
 
-        if (host && pass) {
+        // Upstash connection string format: redis://default:token@something.upstash.io:6379
+        if (host && host.includes("upstash.io") && pass) {
           url = url || `https://${host}`;
           token = token || decodeURIComponent(pass);
         }
