@@ -145,9 +145,21 @@ function getDb() {
   }
 }
 
+// ─── Fast In-Memory Cache ──────────────────────────────────────────────────
+let agendaCache: { items: AgendaItem[]; timestamp: number } | null = null;
+const CACHE_TTL_MS = 10000;
+
+export function invalidateAgendaCache() {
+  agendaCache = null;
+}
+
 // ─── Public API ────────────────────────────────────────────────────────────
 
 export async function getAllAgendaItems(): Promise<AgendaItem[]> {
+  if (agendaCache && Date.now() - agendaCache.timestamp < CACHE_TTL_MS) {
+    return agendaCache.items;
+  }
+
   const redis = getRedis();
 
   // 1. Upstash Redis / Vercel KV (Cloud Persistent)
@@ -156,9 +168,10 @@ export async function getAllAgendaItems(): Promise<AgendaItem[]> {
     if (!items || items.length === 0) {
       items = buildSeedItems();
       await redis.set("lms_2026:agenda", items);
-      await redis.set("lms_2026:agenda_id_counter", items.length + 100);
     }
-    return items.sort((a, b) => a.sort_order - b.sort_order);
+    const sorted = items.sort((a, b) => a.sort_order - b.sort_order);
+    agendaCache = { items: sorted, timestamp: Date.now() };
+    return sorted;
   }
 
   // 2. SQLite (Local Dev)
@@ -181,9 +194,9 @@ export async function createAgendaItem(data: AgendaItemInput): Promise<AgendaIte
   const redis = getRedis();
 
   if (redis) {
-    let items = (await redis.get<AgendaItem[]>("lms_2026:agenda")) || buildSeedItems();
-    let newId = await redis.incr("lms_2026:agenda_id_counter");
-    if (!newId || isNaN(newId)) newId = Date.now();
+    let items = agendaCache?.items || (await redis.get<AgendaItem[]>("lms_2026:agenda")) || buildSeedItems();
+    const maxId = items.length > 0 ? Math.max(...items.map((i) => i.id)) : 0;
+    const newId = maxId + 1;
 
     const newItem: AgendaItem = {
       id: newId,
@@ -199,8 +212,9 @@ export async function createAgendaItem(data: AgendaItemInput): Promise<AgendaIte
       created_at: new Date().toISOString(),
     };
 
-    items.push(newItem);
-    await redis.set("lms_2026:agenda", items);
+    const updated = [...items, newItem].sort((a, b) => a.sort_order - b.sort_order);
+    agendaCache = { items: updated, timestamp: Date.now() };
+    await redis.set("lms_2026:agenda", updated);
     return newItem;
   }
 
@@ -234,12 +248,14 @@ export async function updateAgendaItem(id: number, data: Partial<AgendaItemInput
   const redis = getRedis();
 
   if (redis) {
-    let items = (await redis.get<AgendaItem[]>("lms_2026:agenda")) || buildSeedItems();
+    let items = agendaCache?.items || (await redis.get<AgendaItem[]>("lms_2026:agenda")) || buildSeedItems();
     const idx = items.findIndex((i) => i.id === id);
     if (idx === -1) return null;
 
     items[idx] = { ...items[idx], ...data };
-    await redis.set("lms_2026:agenda", items);
+    const updated = [...items].sort((a, b) => a.sort_order - b.sort_order);
+    agendaCache = { items: updated, timestamp: Date.now() };
+    await redis.set("lms_2026:agenda", updated);
     return items[idx];
   }
 
@@ -272,12 +288,14 @@ export async function deleteAgendaItem(id: number): Promise<boolean> {
   const redis = getRedis();
 
   if (redis) {
-    let items = (await redis.get<AgendaItem[]>("lms_2026:agenda")) || buildSeedItems();
+    let items = agendaCache?.items || (await redis.get<AgendaItem[]>("lms_2026:agenda")) || buildSeedItems();
     const idx = items.findIndex((i) => i.id === id);
     if (idx === -1) return false;
 
     items.splice(idx, 1);
-    await redis.set("lms_2026:agenda", items);
+    const updated = [...items].sort((a, b) => a.sort_order - b.sort_order);
+    agendaCache = { items: updated, timestamp: Date.now() };
+    await redis.set("lms_2026:agenda", updated);
     return true;
   }
 
@@ -300,12 +318,14 @@ export async function reorderAgendaItems(orderedIds: number[]): Promise<void> {
   const redis = getRedis();
 
   if (redis) {
-    let items = (await redis.get<AgendaItem[]>("lms_2026:agenda")) || buildSeedItems();
+    let items = agendaCache?.items || (await redis.get<AgendaItem[]>("lms_2026:agenda")) || buildSeedItems();
     orderedIds.forEach((id, index) => {
       const item = items.find((i) => i.id === id);
       if (item) item.sort_order = index;
     });
-    await redis.set("lms_2026:agenda", items);
+    const sorted = [...items].sort((a, b) => a.sort_order - b.sort_order);
+    agendaCache = { items: sorted, timestamp: Date.now() };
+    await redis.set("lms_2026:agenda", sorted);
     return;
   }
 

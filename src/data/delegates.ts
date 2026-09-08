@@ -82,6 +82,14 @@ function getDb() {
   }
 }
 
+// ─── Fast In-Memory Cache ──────────────────────────────────────────────────
+let delegatesCache: { items: Delegate[]; timestamp: number } | null = null;
+const CACHE_TTL_MS = 10000;
+
+export function invalidateDelegatesCache() {
+  delegatesCache = null;
+}
+
 // ─── Public API ────────────────────────────────────────────────────────────
 
 export async function registerDelegate(data: RegistrationFormData): Promise<Delegate> {
@@ -89,8 +97,9 @@ export async function registerDelegate(data: RegistrationFormData): Promise<Dele
 
   // 1. Upstash Redis / Vercel KV (Cloud Persistent)
   if (redis) {
-    let items = (await redis.get<Delegate[]>("lms_2026:delegates")) || [];
-    const newId = await redis.incr("lms_2026:delegate_id_counter");
+    let items = delegatesCache?.items || (await redis.get<Delegate[]>("lms_2026:delegates")) || [];
+    const maxId = items.length > 0 ? Math.max(...items.map((d) => d.id)) : 0;
+    const newId = maxId + 1;
     
     const newDelegate: Delegate = {
       id: newId,
@@ -105,7 +114,8 @@ export async function registerDelegate(data: RegistrationFormData): Promise<Dele
       created_at: new Date().toISOString(),
     };
 
-    items.unshift(newDelegate);
+    items = [newDelegate, ...items];
+    delegatesCache = { items, timestamp: Date.now() };
     await redis.set("lms_2026:delegates", items);
     return newDelegate;
   }
@@ -151,37 +161,27 @@ export async function registerDelegate(data: RegistrationFormData): Promise<Dele
 }
 
 export async function getDelegateByEmail(email: string): Promise<Delegate | null> {
-  const redis = getRedis();
-
-  if (redis) {
-    const items = (await redis.get<Delegate[]>("lms_2026:delegates")) || [];
-    const found = items.find((d: Delegate) => d.email.toLowerCase() === email.toLowerCase());
-    return found || null;
-  }
-
-  const db = getDb();
-  if (db) {
-    const stmt = db.prepare("SELECT * FROM delegates WHERE email = ?");
-    const row = stmt.get(email) as Delegate | undefined;
-    return row || null;
-  }
-
-  const found = memoryStore.find((d: Delegate) => d.email.toLowerCase() === email.toLowerCase());
+  const all = await getAllDelegates();
+  const found = all.find((d: Delegate) => d.email.toLowerCase() === email.toLowerCase());
   return found || null;
 }
 
 export async function getAllDelegates(): Promise<Delegate[]> {
+  if (delegatesCache && Date.now() - delegatesCache.timestamp < CACHE_TTL_MS) {
+    return delegatesCache.items;
+  }
+
   const redis = getRedis();
 
   if (redis) {
     const items = (await redis.get<Delegate[]>("lms_2026:delegates")) || [];
+    delegatesCache = { items, timestamp: Date.now() };
     return items;
   }
 
   const db = getDb();
   if (db) {
-    const stmt = db.prepare("SELECT * FROM delegates ORDER BY created_at DESC");
-    return stmt.all() as Delegate[];
+    return db.prepare("SELECT * FROM delegates ORDER BY created_at DESC").all() as Delegate[];
   }
 
   return [...memoryStore];
@@ -191,9 +191,10 @@ export async function deleteDelegate(id: number): Promise<boolean> {
   const redis = getRedis();
 
   if (redis) {
-    let items = (await redis.get<Delegate[]>("lms_2026:delegates")) || [];
+    let items = delegatesCache?.items || (await redis.get<Delegate[]>("lms_2026:delegates")) || [];
     const filtered = items.filter((d: Delegate) => d.id !== id);
     if (filtered.length !== items.length) {
+      delegatesCache = { items: filtered, timestamp: Date.now() };
       await redis.set("lms_2026:delegates", filtered);
       return true;
     }

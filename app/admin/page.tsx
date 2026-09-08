@@ -876,28 +876,41 @@ function AgendaTab() {
       showMessage("Day, time, and activity title are required.", true);
       return;
     }
-    setIsSaving(true);
+    const isEdit = !!editingItem;
+    const targetId = editingItem?.id;
+    closeModal();
+    showMessage(isEdit ? "Saving update..." : "Adding session...");
+
     try {
       const payload = {
         ...form,
         duration: form.duration || undefined,
         speaker: form.speaker || undefined,
-        ...(editingItem ? { id: editingItem.id } : {}),
+        ...(targetId ? { id: targetId } : {}),
       };
       const res = await fetch("/api/program", {
-        method: editingItem ? "PUT" : "POST",
+        method: isEdit ? "PUT" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Save failed");
-      showMessage(editingItem ? "Agenda item updated!" : "Agenda item added!");
-      closeModal();
-      await loadAgenda();
+
+      if (data.item) {
+        setItems((cur) => {
+          if (isEdit) {
+            return cur.map((i) => (i.id === targetId ? data.item : i));
+          } else {
+            return [...cur, data.item].sort((a, b) => a.sort_order - b.sort_order);
+          }
+        });
+      } else {
+        await loadAgenda();
+      }
+      showMessage(isEdit ? "Agenda item updated!" : "Agenda item added!");
     } catch (e) {
       showMessage(e instanceof Error ? e.message : "Save failed", true);
-    } finally {
-      setIsSaving(false);
+      await loadAgenda();
     }
   };
 

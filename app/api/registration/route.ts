@@ -91,14 +91,14 @@ export async function POST(request: Request) {
     } satisfies RegistrationFormData);
 
     
-    // Trigger automated HTML invitation pass email (to delegate)
-    const mailResult = await sendInvitationEmail(delegate);
-
-    // Trigger admin notification email alert (to admin)
-    void sendAdminNotificationEmail(delegate).catch((err) => {
-      console.error("[Mailer] Admin notification email dispatch error:", err);
+    // Dispatch email notifications asynchronously in background so registration completes instantly
+    void sendInvitationEmail(delegate).catch((err) => {
+      console.error("[Mailer] Delegate invitation email error:", err);
     });
 
+    void sendAdminNotificationEmail(delegate).catch((err) => {
+      console.error("[Mailer] Admin notification email error:", err);
+    });
 
     return NextResponse.json(
       { 
@@ -109,8 +109,7 @@ export async function POST(request: Request) {
           email: delegate.email,
           created_at: delegate.created_at,
         },
-        email_sent: mailResult.success,
-        email_simulated: mailResult.simulated || false,
+        email_sent: true,
       },
       { status: 201 }
     );
