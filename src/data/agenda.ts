@@ -7,8 +7,7 @@
  */
 
 import path from "path";
-import { Redis } from "@upstash/redis";
-import { getRedisClient } from "@/lib/redis-client";
+import { getRedisClient, UnifiedRedis } from "@/lib/redis-client";
 import { programSchedule } from "./program";
 
 export interface AgendaItem {
@@ -38,7 +37,7 @@ export interface AgendaItemInput {
 }
 
 // ─── Upstash Redis / Vercel KV Singleton ───────────────────────────────────
-function getRedis(): Redis | null {
+function getRedis(): UnifiedRedis | null {
   return getRedisClient();
 }
 

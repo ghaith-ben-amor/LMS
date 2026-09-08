@@ -7,10 +7,9 @@
  */
 
 import path from "path";
-import { Redis } from "@upstash/redis";
-import { getRedisClient } from "@/lib/redis-client";
+import { getRedisClient, UnifiedRedis } from "@/lib/redis-client";
 
-function getRedis(): Redis | null {
+function getRedis(): UnifiedRedis | null {
   return getRedisClient();
 }
 
