@@ -47,6 +47,10 @@ function getRedis(): Redis | null {
     } catch (e) {
       console.warn("[Agenda] Upstash Redis client init error:", e);
     }
+  } else if (process.env.NODE_ENV === "production" || process.env.VERCEL) {
+    console.warn(
+      "[Agenda] ⚠️ Cloud DB environment variables missing (UPSTASH_REDIS_REST_URL / KV_REST_API_URL). Data stored in /tmp or memory will be lost on server restart!"
+    );
   }
   return null;
 }
