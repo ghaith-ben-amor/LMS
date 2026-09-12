@@ -80,9 +80,9 @@ export const Gallery = () => {
       </div>
 
       {/* ─── Animated Sliding Track 1: Left to Right Translation (Ultra Slow Marquee) ─── */}
-      <div className="w-full overflow-hidden py-3 mb-4">
+      <div className="w-full overflow-hidden py-4 mb-4 [perspective:1200px]">
         <motion.div
-          className="flex items-center gap-5 sm:gap-6 w-max"
+          className="flex items-center gap-5 sm:gap-7 w-max"
           animate={{ x: ["-33.333%", "0%"] }}
           transition={{
             ease: "linear",
@@ -94,12 +94,12 @@ export const Gallery = () => {
           {track1Images.map((img, idx) => (
             <motion.div
               key={`tr1-${img.id}-${idx}`}
-              whileHover={{ y: -6, scale: 1.02 }}
+              whileHover={{ y: -6, scale: 1.03 }}
               onClick={() => setSelectedImage(img)}
-              className="group relative w-[310px] h-[200px] sm:w-[420px] sm:h-[260px] rounded-[28px] overflow-hidden bg-[#0e0c14] border border-amber-500/20 hover:border-amber-400/80 p-2 shadow-[0_10px_30px_rgba(0,0,0,0.7)] hover:shadow-[0_15px_40px_rgba(212,175,55,0.2)] transition-all duration-500 cursor-pointer flex-shrink-0"
+              className="group relative w-[320px] h-[210px] sm:w-[440px] sm:h-[275px] rounded-[36px] p-2.5 sm:p-3 bg-gradient-to-b from-[#1c1829] via-[#0f0c18] to-[#07050b] border-2 border-amber-500/30 hover:border-amber-400/90 shadow-[inset_0_1px_2px_rgba(255,255,255,0.18),0_16px_40px_rgba(0,0,0,0.9)] hover:shadow-[0_20px_50px_rgba(212,175,55,0.25)] transition-all duration-500 cursor-pointer flex-shrink-0"
             >
-              {/* Inner Curved Image Mask */}
-              <div className="relative w-full h-full rounded-[22px] overflow-hidden">
+              {/* Inner Curved Screen Mask */}
+              <div className="relative w-full h-full rounded-[26px] overflow-hidden bg-black">
                 <Image
                   src={img.image}
                   alt={img.title}
@@ -107,20 +107,26 @@ export const Gallery = () => {
                   className="object-cover group-hover:scale-108 transition-transform duration-700"
                 />
 
-                {/* Dark Vignette Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#09070D]/90 via-black/20 to-transparent opacity-60 group-hover:opacity-85 transition-opacity" />
+                {/* Curved Screen Lens Vignette (Inner Shadow) */}
+                <div className="absolute inset-0 pointer-events-none rounded-[26px] shadow-[inset_0_0_30px_rgba(0,0,0,0.8)] z-10" />
+
+                {/* Glass Reflection Glare Line */}
+                <div className="absolute inset-0 pointer-events-none bg-gradient-to-tr from-transparent via-white/10 to-transparent opacity-50 group-hover:opacity-80 transition-opacity z-10" />
+
+                {/* Dark Bottom Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#08060c]/90 via-black/20 to-transparent opacity-60 group-hover:opacity-85 transition-opacity" />
 
                 {/* Card Header Tag */}
-                <div className="absolute top-3 left-3 z-10">
-                  <span className="px-2.5 py-1 rounded-full text-[0.65rem] font-extrabold uppercase tracking-wider bg-obsidian-surface/80 text-amber-300 border border-amber-500/30 backdrop-blur-md">
+                <div className="absolute top-3 left-3 z-20">
+                  <span className="px-3 py-1 rounded-full text-[0.65rem] font-extrabold uppercase tracking-wider bg-obsidian-surface/90 text-amber-300 border border-amber-500/40 backdrop-blur-md shadow-md">
                     {img.category}
                   </span>
                 </div>
 
                 {/* Card Title & Lightbox Action */}
-                <div className="absolute inset-x-0 bottom-0 p-4 flex items-end justify-between z-10">
+                <div className="absolute inset-x-0 bottom-0 p-4 flex items-end justify-between z-20">
                   <div>
-                    <h4 className="font-serif text-base sm:text-lg font-bold text-ivory drop-shadow-md line-clamp-1">
+                    <h4 className="font-serif text-base sm:text-xl font-bold text-ivory drop-shadow-md line-clamp-1">
                       {img.title}
                     </h4>
                     <p className="text-[0.65rem] text-ivory-dark font-medium mt-0.5">
@@ -139,9 +145,9 @@ export const Gallery = () => {
       </div>
 
       {/* ─── Animated Sliding Track 2: Right to Left Translation (Ultra Slow Marquee) ─── */}
-      <div className="w-full overflow-hidden py-3">
+      <div className="w-full overflow-hidden py-4 [perspective:1200px]">
         <motion.div
-          className="flex items-center gap-5 sm:gap-6 w-max"
+          className="flex items-center gap-5 sm:gap-7 w-max"
           animate={{ x: ["0%", "-33.333%"] }}
           transition={{
             ease: "linear",
@@ -153,12 +159,12 @@ export const Gallery = () => {
           {track2Doubled.map((img, idx) => (
             <motion.div
               key={`tr2-${img.id}-${idx}`}
-              whileHover={{ y: -6, scale: 1.02 }}
+              whileHover={{ y: -6, scale: 1.03 }}
               onClick={() => setSelectedImage(img)}
-              className="group relative w-[310px] h-[200px] sm:w-[420px] sm:h-[260px] rounded-[28px] overflow-hidden bg-[#0e0c14] border border-amber-500/20 hover:border-amber-400/80 p-2 shadow-[0_10px_30px_rgba(0,0,0,0.7)] hover:shadow-[0_15px_40px_rgba(212,175,55,0.2)] transition-all duration-500 cursor-pointer flex-shrink-0"
+              className="group relative w-[320px] h-[210px] sm:w-[440px] sm:h-[275px] rounded-[36px] p-2.5 sm:p-3 bg-gradient-to-b from-[#1c1829] via-[#0f0c18] to-[#07050b] border-2 border-amber-500/30 hover:border-amber-400/90 shadow-[inset_0_1px_2px_rgba(255,255,255,0.18),0_16px_40px_rgba(0,0,0,0.9)] hover:shadow-[0_20px_50px_rgba(212,175,55,0.25)] transition-all duration-500 cursor-pointer flex-shrink-0"
             >
-              {/* Inner Curved Image Mask */}
-              <div className="relative w-full h-full rounded-[22px] overflow-hidden">
+              {/* Inner Curved Screen Mask */}
+              <div className="relative w-full h-full rounded-[26px] overflow-hidden bg-black">
                 <Image
                   src={img.image}
                   alt={img.title}
@@ -166,20 +172,26 @@ export const Gallery = () => {
                   className="object-cover group-hover:scale-108 transition-transform duration-700"
                 />
 
-                {/* Dark Vignette Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#09070D]/90 via-black/20 to-transparent opacity-60 group-hover:opacity-85 transition-opacity" />
+                {/* Curved Screen Lens Vignette (Inner Shadow) */}
+                <div className="absolute inset-0 pointer-events-none rounded-[26px] shadow-[inset_0_0_30px_rgba(0,0,0,0.8)] z-10" />
+
+                {/* Glass Reflection Glare Line */}
+                <div className="absolute inset-0 pointer-events-none bg-gradient-to-tr from-transparent via-white/10 to-transparent opacity-50 group-hover:opacity-80 transition-opacity z-10" />
+
+                {/* Dark Bottom Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#08060c]/90 via-black/20 to-transparent opacity-60 group-hover:opacity-85 transition-opacity" />
 
                 {/* Card Header Tag */}
-                <div className="absolute top-3 left-3 z-10">
-                  <span className="px-2.5 py-1 rounded-full text-[0.65rem] font-extrabold uppercase tracking-wider bg-obsidian-surface/80 text-amber-300 border border-amber-500/30 backdrop-blur-md">
+                <div className="absolute top-3 left-3 z-20">
+                  <span className="px-3 py-1 rounded-full text-[0.65rem] font-extrabold uppercase tracking-wider bg-obsidian-surface/90 text-amber-300 border border-amber-500/40 backdrop-blur-md shadow-md">
                     {img.category}
                   </span>
                 </div>
 
                 {/* Card Title & Lightbox Action */}
-                <div className="absolute inset-x-0 bottom-0 p-4 flex items-end justify-between z-10">
+                <div className="absolute inset-x-0 bottom-0 p-4 flex items-end justify-between z-20">
                   <div>
-                    <h4 className="font-serif text-base sm:text-lg font-bold text-ivory drop-shadow-md line-clamp-1">
+                    <h4 className="font-serif text-base sm:text-xl font-bold text-ivory drop-shadow-md line-clamp-1">
                       {img.title}
                     </h4>
                     <p className="text-[0.65rem] text-ivory-dark font-medium mt-0.5">
