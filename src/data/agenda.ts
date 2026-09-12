@@ -28,10 +28,11 @@ async function ensurePgAgendaTable() {
         location VARCHAR(255) DEFAULT '',
         duration VARCHAR(100),
         speaker VARCHAR(255),
-        sort_order INTEGER DEFAULT 0,
+        sort_order BIGINT DEFAULT 0,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
+    await pool.query(`ALTER TABLE agenda_items ALTER COLUMN sort_order TYPE BIGINT;`).catch(() => {});
     const countRes = await pool.query("SELECT COUNT(*) as c FROM agenda_items");
     if (parseInt(countRes.rows[0].c, 10) === 0) {
       const seedItems = buildSeedItems();
@@ -248,13 +249,17 @@ export async function getAgendaItem(id: number): Promise<AgendaItem | null> {
 }
 
 export async function createAgendaItem(data: AgendaItemInput): Promise<AgendaItem> {
-  const sortOrder = data.sort_order ?? Date.now();
-
   // 1. PostgreSQL
   const pg = getPostgresPool();
   if (pg) {
     try {
       await ensurePgAgendaTable();
+      let sortOrder = data.sort_order;
+      if (sortOrder === undefined) {
+        const maxRes = await pg.query("SELECT COALESCE(MAX(sort_order), 0) + 1 as next_order FROM agenda_items");
+        sortOrder = parseInt(maxRes.rows[0].next_order, 10);
+      }
+
       const res = await pg.query(
         `INSERT INTO agenda_items (day_label, day_date, time, activity, description, location, duration, speaker, sort_order)
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
@@ -270,6 +275,8 @@ export async function createAgendaItem(data: AgendaItemInput): Promise<AgendaIte
       console.error("[Agenda] PostgreSQL createAgendaItem error, falling back:", err);
     }
   }
+
+  const sortOrder = data.sort_order ?? Date.now();
 
   // 2. Redis
   const redis = getRedis();
