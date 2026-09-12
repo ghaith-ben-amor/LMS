@@ -8,7 +8,45 @@
 
 import path from "path";
 import { getRedisClient, UnifiedRedis } from "@/lib/redis-client";
+import { getPostgresPool } from "@/lib/postgres";
 import { programSchedule } from "./program";
+
+let pgAgendaSeeded = false;
+async function ensurePgAgendaTable() {
+  const pool = getPostgresPool();
+  if (!pool || pgAgendaSeeded) return;
+  pgAgendaSeeded = true;
+  try {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS agenda_items (
+        id SERIAL PRIMARY KEY,
+        day_label VARCHAR(100) NOT NULL,
+        day_date VARCHAR(100) NOT NULL,
+        time VARCHAR(50) NOT NULL,
+        activity VARCHAR(255) NOT NULL,
+        description TEXT DEFAULT '',
+        location VARCHAR(255) DEFAULT '',
+        duration VARCHAR(100),
+        speaker VARCHAR(255),
+        sort_order INTEGER DEFAULT 0,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+    const countRes = await pool.query("SELECT COUNT(*) as c FROM agenda_items");
+    if (parseInt(countRes.rows[0].c, 10) === 0) {
+      const seedItems = buildSeedItems();
+      for (const item of seedItems) {
+        await pool.query(
+          `INSERT INTO agenda_items (day_label, day_date, time, activity, description, location, duration, speaker, sort_order)
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+          [item.day_label, item.day_date, item.time, item.activity, item.description, item.location, item.duration || null, item.speaker || null, item.sort_order]
+        );
+      }
+    }
+  } catch (err) {
+    console.warn("[Agenda] Postgres table init error:", err);
+  }
+}
 
 export interface AgendaItem {
   id: number;
@@ -159,9 +197,22 @@ export async function getAllAgendaItems(): Promise<AgendaItem[]> {
     return agendaCache.items;
   }
 
-  const redis = getRedis();
+  // 1. PostgreSQL (Cloud Permanent DB - Supabase / Neon / Render Postgres)
+  const pg = getPostgresPool();
+  if (pg) {
+    try {
+      await ensurePgAgendaTable();
+      const res = await pg.query("SELECT * FROM agenda_items ORDER BY sort_order ASC, day_label ASC, time ASC");
+      const sorted = res.rows as AgendaItem[];
+      agendaCache = { items: sorted, timestamp: Date.now() };
+      return sorted;
+    } catch (err) {
+      console.error("[Agenda] PostgreSQL getAllAgendaItems error, falling back:", err);
+    }
+  }
 
-  // 1. Upstash Redis / Vercel KV (Cloud Persistent)
+  // 2. Upstash Redis / Vercel KV
+  const redis = getRedis();
   if (redis) {
     try {
       let items = await redis.get<AgendaItem[]>("lms_2026:agenda");
@@ -177,7 +228,7 @@ export async function getAllAgendaItems(): Promise<AgendaItem[]> {
     }
   }
 
-  // 2. SQLite (Local Dev)
+  // 3. SQLite (Local Dev)
   const db = getDb();
   if (db) {
     try {
@@ -187,7 +238,7 @@ export async function getAllAgendaItems(): Promise<AgendaItem[]> {
     }
   }
 
-  // 3. Memory Fallback
+  // 4. Memory Fallback
   return [...getMemoryItems()].sort((a, b) => a.sort_order - b.sort_order);
 }
 
@@ -198,8 +249,30 @@ export async function getAgendaItem(id: number): Promise<AgendaItem | null> {
 
 export async function createAgendaItem(data: AgendaItemInput): Promise<AgendaItem> {
   const sortOrder = data.sort_order ?? Date.now();
-  const redis = getRedis();
 
+  // 1. PostgreSQL
+  const pg = getPostgresPool();
+  if (pg) {
+    try {
+      await ensurePgAgendaTable();
+      const res = await pg.query(
+        `INSERT INTO agenda_items (day_label, day_date, time, activity, description, location, duration, speaker, sort_order)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
+        [
+          data.day_label, data.day_date, data.time, data.activity,
+          data.description, data.location,
+          data.duration || null, data.speaker || null, sortOrder
+        ]
+      );
+      invalidateAgendaCache();
+      return res.rows[0] as AgendaItem;
+    } catch (err) {
+      console.error("[Agenda] PostgreSQL createAgendaItem error, falling back:", err);
+    }
+  }
+
+  // 2. Redis
+  const redis = getRedis();
   if (redis) {
     try {
       let items = agendaCache?.items || (await redis.get<AgendaItem[]>("lms_2026:agenda")) || buildSeedItems();
@@ -229,6 +302,7 @@ export async function createAgendaItem(data: AgendaItemInput): Promise<AgendaIte
     }
   }
 
+  // 3. SQLite
   const db = getDb();
   if (db) {
     try {
@@ -260,8 +334,40 @@ export async function createAgendaItem(data: AgendaItemInput): Promise<AgendaIte
 }
 
 export async function updateAgendaItem(id: number, data: Partial<AgendaItemInput>): Promise<AgendaItem | null> {
-  const redis = getRedis();
+  // 1. PostgreSQL
+  const pg = getPostgresPool();
+  if (pg) {
+    try {
+      await ensurePgAgendaTable();
+      const fields: string[] = [];
+      const values: any[] = [];
+      let idx = 1;
+      if (data.day_label !== undefined) { fields.push(`day_label = $${idx++}`); values.push(data.day_label); }
+      if (data.day_date !== undefined) { fields.push(`day_date = $${idx++}`); values.push(data.day_date); }
+      if (data.time !== undefined) { fields.push(`time = $${idx++}`); values.push(data.time); }
+      if (data.activity !== undefined) { fields.push(`activity = $${idx++}`); values.push(data.activity); }
+      if (data.description !== undefined) { fields.push(`description = $${idx++}`); values.push(data.description); }
+      if (data.location !== undefined) { fields.push(`location = $${idx++}`); values.push(data.location); }
+      if (data.duration !== undefined) { fields.push(`duration = $${idx++}`); values.push(data.duration || null); }
+      if (data.speaker !== undefined) { fields.push(`speaker = $${idx++}`); values.push(data.speaker || null); }
+      if (data.sort_order !== undefined) { fields.push(`sort_order = $${idx++}`); values.push(data.sort_order); }
 
+      if (fields.length > 0) {
+        values.push(id);
+        const res = await pg.query(
+          `UPDATE agenda_items SET ${fields.join(", ")} WHERE id = $${idx} RETURNING *`,
+          values
+        );
+        invalidateAgendaCache();
+        return res.rows[0] as AgendaItem;
+      }
+    } catch (err) {
+      console.error("[Agenda] PostgreSQL updateAgendaItem error, falling back:", err);
+    }
+  }
+
+  // 2. Redis
+  const redis = getRedis();
   if (redis) {
     try {
       let items = agendaCache?.items || (await redis.get<AgendaItem[]>("lms_2026:agenda")) || buildSeedItems();
@@ -278,6 +384,7 @@ export async function updateAgendaItem(id: number, data: Partial<AgendaItemInput
     }
   }
 
+  // 3. SQLite
   const db = getDb();
   if (db) {
     try {
@@ -308,8 +415,21 @@ export async function updateAgendaItem(id: number, data: Partial<AgendaItemInput
 }
 
 export async function deleteAgendaItem(id: number): Promise<boolean> {
-  const redis = getRedis();
+  // 1. PostgreSQL
+  const pg = getPostgresPool();
+  if (pg) {
+    try {
+      await ensurePgAgendaTable();
+      const res = await pg.query("DELETE FROM agenda_items WHERE id = $1", [id]);
+      invalidateAgendaCache();
+      return (res.rowCount ?? 0) > 0;
+    } catch (err) {
+      console.error("[Agenda] PostgreSQL deleteAgendaItem error, falling back:", err);
+    }
+  }
 
+  // 2. Redis
+  const redis = getRedis();
   if (redis) {
     try {
       let items = agendaCache?.items || (await redis.get<AgendaItem[]>("lms_2026:agenda")) || buildSeedItems();
@@ -326,6 +446,7 @@ export async function deleteAgendaItem(id: number): Promise<boolean> {
     }
   }
 
+  // 3. SQLite
   const db = getDb();
   if (db) {
     try {
@@ -346,8 +467,23 @@ export async function deleteAgendaItem(id: number): Promise<boolean> {
 }
 
 export async function reorderAgendaItems(orderedIds: number[]): Promise<void> {
-  const redis = getRedis();
+  // 1. PostgreSQL
+  const pg = getPostgresPool();
+  if (pg) {
+    try {
+      await ensurePgAgendaTable();
+      for (let index = 0; index < orderedIds.length; index++) {
+        await pg.query("UPDATE agenda_items SET sort_order = $1 WHERE id = $2", [index, orderedIds[index]]);
+      }
+      invalidateAgendaCache();
+      return;
+    } catch (err) {
+      console.error("[Agenda] PostgreSQL reorderAgendaItems error, falling back:", err);
+    }
+  }
 
+  // 2. Redis
+  const redis = getRedis();
   if (redis) {
     try {
       let items = agendaCache?.items || (await redis.get<AgendaItem[]>("lms_2026:agenda")) || buildSeedItems();
@@ -364,6 +500,7 @@ export async function reorderAgendaItems(orderedIds: number[]): Promise<void> {
     }
   }
 
+  // 3. SQLite
   const db = getDb();
   if (db) {
     try {

@@ -8,9 +8,35 @@
 
 import path from "path";
 import { getRedisClient, UnifiedRedis } from "@/lib/redis-client";
+import { getPostgresPool } from "@/lib/postgres";
 
 function getRedis(): UnifiedRedis | null {
   return getRedisClient();
+}
+
+let pgSeeded = false;
+async function ensurePgDelegatesTable() {
+  const pool = getPostgresPool();
+  if (!pool || pgSeeded) return;
+  pgSeeded = true;
+  try {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS delegates (
+        id SERIAL PRIMARY KEY,
+        full_name VARCHAR(255) NOT NULL,
+        email VARCHAR(255) NOT NULL UNIQUE,
+        organization VARCHAR(255),
+        position VARCHAR(255),
+        phone VARCHAR(100),
+        dietary_restrictions TEXT,
+        emergency_contact_name VARCHAR(255),
+        emergency_contact_phone VARCHAR(100),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+  } catch (err) {
+    console.warn("[Delegates] Postgres table init error:", err);
+  }
 }
 
 export interface Delegate {
@@ -92,9 +118,35 @@ export function invalidateDelegatesCache() {
 // ─── Public API ────────────────────────────────────────────────────────────
 
 export async function registerDelegate(data: RegistrationFormData): Promise<Delegate> {
+  // 1. PostgreSQL (Cloud Permanent DB - Supabase / Neon / Render Postgres)
+  const pg = getPostgresPool();
+  if (pg) {
+    try {
+      await ensurePgDelegatesTable();
+      const res = await pg.query(
+        `INSERT INTO delegates (full_name, email, organization, position, phone, dietary_restrictions, emergency_contact_name, emergency_contact_phone)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
+        [
+          data.full_name,
+          data.email,
+          data.organization || null,
+          data.position || null,
+          data.phone || null,
+          data.dietary_restrictions || null,
+          data.emergency_contact_name || null,
+          data.emergency_contact_phone || null,
+        ]
+      );
+      invalidateDelegatesCache();
+      return res.rows[0] as Delegate;
+    } catch (err) {
+      console.error("[Delegates] PostgreSQL register error, falling back:", err);
+    }
+  }
+
   const redis = getRedis();
 
-  // 1. Upstash Redis / Vercel KV (Cloud Persistent)
+  // 2. Upstash Redis / Vercel KV (Cloud Persistent)
   if (redis) {
     try {
       let items = delegatesCache?.items || (await redis.get<Delegate[]>("lms_2026:delegates")) || [];
@@ -123,7 +175,7 @@ export async function registerDelegate(data: RegistrationFormData): Promise<Dele
     }
   }
 
-  // 2. SQLite (Local Dev)
+  // 3. SQLite (Local Dev)
   const db = getDb();
   if (db) {
     try {
@@ -150,7 +202,7 @@ export async function registerDelegate(data: RegistrationFormData): Promise<Dele
     }
   }
 
-  // 3. Memory Fallback
+  // 4. Memory Fallback
   const newDelegate: Delegate = {
     id: memoryIdCounter++,
     full_name: data.full_name,
@@ -178,8 +230,21 @@ export async function getAllDelegates(): Promise<Delegate[]> {
     return delegatesCache.items;
   }
 
-  const redis = getRedis();
+  // 1. PostgreSQL
+  const pg = getPostgresPool();
+  if (pg) {
+    try {
+      await ensurePgDelegatesTable();
+      const res = await pg.query("SELECT * FROM delegates ORDER BY created_at DESC");
+      delegatesCache = { items: res.rows as Delegate[], timestamp: Date.now() };
+      return res.rows as Delegate[];
+    } catch (err) {
+      console.error("[Delegates] PostgreSQL getAllDelegates error, falling back:", err);
+    }
+  }
 
+  // 2. Redis
+  const redis = getRedis();
   if (redis) {
     try {
       const items = (await redis.get<Delegate[]>("lms_2026:delegates")) || [];
@@ -190,6 +255,7 @@ export async function getAllDelegates(): Promise<Delegate[]> {
     }
   }
 
+  // 3. SQLite
   const db = getDb();
   if (db) {
     try {
@@ -203,8 +269,21 @@ export async function getAllDelegates(): Promise<Delegate[]> {
 }
 
 export async function deleteDelegate(id: number): Promise<boolean> {
-  const redis = getRedis();
+  // 1. PostgreSQL
+  const pg = getPostgresPool();
+  if (pg) {
+    try {
+      await ensurePgDelegatesTable();
+      const res = await pg.query("DELETE FROM delegates WHERE id = $1", [id]);
+      invalidateDelegatesCache();
+      return (res.rowCount ?? 0) > 0;
+    } catch (err) {
+      console.error("[Delegates] PostgreSQL deleteDelegate error, falling back:", err);
+    }
+  }
 
+  // 2. Redis
+  const redis = getRedis();
   if (redis) {
     try {
       let items = delegatesCache?.items || (await redis.get<Delegate[]>("lms_2026:delegates")) || [];
@@ -220,6 +299,7 @@ export async function deleteDelegate(id: number): Promise<boolean> {
     }
   }
 
+  // 3. SQLite
   const db = getDb();
   if (db) {
     try {
