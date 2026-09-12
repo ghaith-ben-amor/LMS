@@ -16,7 +16,7 @@ export const partners: Partner[] = [
     id: "main-1",
     name: "AIESEC University",
     category: "main",
-    logo: "/images/partners/main-partner.png",
+    logo: "/images/aiesec_university_logo.png",
     website: "https://aiesec.org",
   },
   // Gold Partners

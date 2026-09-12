@@ -1,25 +1,42 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { partners, Partner } from "@/data/partners";
 import Badge from "./ui/Badge";
 import Button from "./ui/Button";
 import { ExternalLink, Award, Sparkles, Star, Tv } from "lucide-react";
 
-const PartnerLogo = ({ partner }: { partner: Partner }) => {
+const PartnerLogo = ({ partner, isMain = false }: { partner: Partner; isMain?: boolean }) => {
+  const hasCustomLogo = partner.logo && partner.logo.startsWith("/images/");
+
   return (
     <motion.a
       href={partner.website}
       target="_blank"
       rel="noopener noreferrer"
       whileHover={{ y: -4, scale: 1.02 }}
-      className="group relative h-28 sm:h-32 rounded-2xl glass-card border border-amber-500/20 hover:border-amber-500/50 flex flex-col items-center justify-center p-4 text-center transition-all overflow-hidden"
+      className={`group relative rounded-2xl glass-card border flex flex-col items-center justify-center p-5 text-center transition-all overflow-hidden ${
+        isMain
+          ? "h-48 sm:h-56 border-amber-400/50 bg-gradient-to-b from-[#1C1526] via-[#0E0B14] to-[#07050A] shadow-xl shadow-amber-500/10 hover:border-amber-400"
+          : "h-32 sm:h-36 border-amber-500/20 hover:border-amber-500/50"
+      }`}
     >
-      <div className="absolute inset-0 bg-gradient-to-tr from-amber-500/0 via-amber-500/5 to-rose-950/0 opacity-0 group-hover:opacity-100 transition-opacity" />
+      <div className="absolute inset-0 bg-gradient-to-tr from-amber-500/0 via-amber-500/10 to-rose-950/0 opacity-0 group-hover:opacity-100 transition-opacity" />
 
-      {/* Styled Brand Graphic / Title */}
-      <span className="font-serif text-base sm:text-lg font-bold text-ivory group-hover:text-gold transition-colors tracking-wide">
+      {hasCustomLogo ? (
+        <div className={`relative ${isMain ? "w-24 h-28 sm:w-28 sm:h-32" : "w-12 h-14"} mb-3 transition-transform group-hover:scale-105 drop-shadow-[0_4px_16px_rgba(212,175,55,0.4)]`}>
+          <Image
+            src={partner.logo}
+            alt={partner.name}
+            fill
+            className="object-contain"
+          />
+        </div>
+      ) : null}
+
+      <span className={`font-serif font-bold text-ivory group-hover:text-gold transition-colors tracking-wide ${isMain ? "text-lg sm:text-xl" : "text-sm sm:text-base"}`}>
         {partner.name}
       </span>
 
@@ -68,7 +85,7 @@ export const Partners = () => {
               <span>Organizer & Main Partner</span>
             </span>
             <div className="max-w-md mx-auto">
-              <PartnerLogo partner={mainPartners[0]} />
+              <PartnerLogo partner={mainPartners[0]} isMain={true} />
             </div>
           </div>
         )}
