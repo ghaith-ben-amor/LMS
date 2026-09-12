@@ -25,6 +25,8 @@ async function ensurePgDelegatesTable() {
         id SERIAL PRIMARY KEY,
         full_name VARCHAR(255) NOT NULL,
         email VARCHAR(255) NOT NULL UNIQUE,
+        cin VARCHAR(50),
+        gender VARCHAR(20),
         organization VARCHAR(255),
         position VARCHAR(255),
         phone VARCHAR(100),
@@ -34,6 +36,8 @@ async function ensurePgDelegatesTable() {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
+    await pool.query("ALTER TABLE delegates ADD COLUMN IF NOT EXISTS cin VARCHAR(50);").catch(() => {});
+    await pool.query("ALTER TABLE delegates ADD COLUMN IF NOT EXISTS gender VARCHAR(20);").catch(() => {});
   } catch (err) {
     console.warn("[Delegates] Postgres table init error:", err);
   }
@@ -43,6 +47,8 @@ export interface Delegate {
   id: number;
   full_name: string;
   email: string;
+  cin?: string;
+  gender?: string;
   organization?: string;
   position?: string;
   phone?: string;
@@ -55,6 +61,8 @@ export interface Delegate {
 export interface RegistrationFormData {
   full_name: string;
   email: string;
+  cin?: string;
+  gender?: string;
   organization?: string;
   position?: string;
   phone?: string;
@@ -89,6 +97,8 @@ function getDb() {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         full_name TEXT NOT NULL,
         email TEXT NOT NULL UNIQUE,
+        cin TEXT,
+        gender TEXT,
         organization TEXT,
         position TEXT,
         phone TEXT,
@@ -98,6 +108,8 @@ function getDb() {
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
       );
     `);
+    try { db.exec("ALTER TABLE delegates ADD COLUMN cin TEXT;"); } catch (e) {}
+    try { db.exec("ALTER TABLE delegates ADD COLUMN gender TEXT;"); } catch (e) {}
     dbInstance = db;
     return dbInstance;
   } catch (error) {
@@ -124,11 +136,13 @@ export async function registerDelegate(data: RegistrationFormData): Promise<Dele
     try {
       await ensurePgDelegatesTable();
       const res = await pg.query(
-        `INSERT INTO delegates (full_name, email, organization, position, phone, dietary_restrictions, emergency_contact_name, emergency_contact_phone)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
+        `INSERT INTO delegates (full_name, email, cin, gender, organization, position, phone, dietary_restrictions, emergency_contact_name, emergency_contact_phone)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *`,
         [
           data.full_name,
           data.email,
+          data.cin || null,
+          data.gender || null,
           data.organization || null,
           data.position || null,
           data.phone || null,
@@ -157,6 +171,8 @@ export async function registerDelegate(data: RegistrationFormData): Promise<Dele
         id: newId,
         full_name: data.full_name,
         email: data.email,
+        cin: data.cin,
+        gender: data.gender,
         organization: data.organization,
         position: data.position,
         phone: data.phone,
@@ -180,13 +196,15 @@ export async function registerDelegate(data: RegistrationFormData): Promise<Dele
   if (db) {
     try {
       const stmt = db.prepare(`
-        INSERT INTO delegates (full_name, email, organization, position, phone, dietary_restrictions, emergency_contact_name, emergency_contact_phone)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+        INSERT INTO delegates (full_name, email, cin, gender, organization, position, phone, dietary_restrictions, emergency_contact_name, emergency_contact_phone)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
       `);
 
       const result = stmt.run(
         data.full_name,
         data.email,
+        data.cin || null,
+        data.gender || null,
         data.organization || null,
         data.position || null,
         data.phone || null,
@@ -207,6 +225,8 @@ export async function registerDelegate(data: RegistrationFormData): Promise<Dele
     id: memoryIdCounter++,
     full_name: data.full_name,
     email: data.email,
+    cin: data.cin,
+    gender: data.gender,
     organization: data.organization,
     position: data.position,
     phone: data.phone,

@@ -135,6 +135,16 @@ export function generateInvitationHtml(delegate: Delegate): string {
                     <td style="color: #8E887D;">Organization:</td>
                     <td style="color: #F7E4BE; font-weight: 600;">${escapeHtml(delegate.organization)}</td>
                   </tr>` : ""}
+                  ${delegate.cin ? `
+                  <tr>
+                    <td style="color: #8E887D;">CIN Number:</td>
+                    <td style="color: #F7E4BE; font-weight: 700; font-family: monospace;">${escapeHtml(delegate.cin)}</td>
+                  </tr>` : ""}
+                  ${delegate.gender ? `
+                  <tr>
+                    <td style="color: #8E887D;">Gender:</td>
+                    <td style="color: #F9F6F0;">${escapeHtml(delegate.gender)}</td>
+                  </tr>` : ""}
                   ${delegate.position ? `
                   <tr>
                     <td style="color: #8E887D;">Role / Position:</td>
@@ -320,6 +330,16 @@ export function generateAdminNotificationHtml(delegate: Delegate): string {
                   <tr>
                     <td style="color: #8E887D;">Phone:</td>
                     <td style="color: #F9F6F0;">${escapeHtml(delegate.phone)}</td>
+                  </tr>` : ""}
+                  ${delegate.cin ? `
+                  <tr>
+                    <td style="color: #8E887D;">CIN Number:</td>
+                    <td style="color: #F7E4BE; font-weight: 700; font-family: monospace;">${escapeHtml(delegate.cin)}</td>
+                  </tr>` : ""}
+                  ${delegate.gender ? `
+                  <tr>
+                    <td style="color: #8E887D;">Gender:</td>
+                    <td style="color: #F9F6F0;">${escapeHtml(delegate.gender)}</td>
                   </tr>` : ""}
                   ${delegate.organization ? `
                   <tr>

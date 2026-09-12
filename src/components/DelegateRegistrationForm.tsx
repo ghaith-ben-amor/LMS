@@ -11,6 +11,8 @@ const DEPARTMENTS = ["OGT", "OGV", "IGT", "IGV", "MKT", "TM", "F&L", "BD&EWA"];
 const initialForm = {
   full_name: "",
   email: "",
+  cin: "",
+  gender: "",
   organization: "",
   position: "",
   mm_role: "",
@@ -39,6 +41,14 @@ export default function DelegateRegistrationForm() {
     setMessage("");
 
     try {
+      if (!formData.cin.trim()) {
+        throw new Error("Please enter your CIN Number.");
+      }
+
+      if (!formData.gender) {
+        throw new Error("Please select your Gender.");
+      }
+
       if (!formData.position) {
         throw new Error("Please select your Role / Position.");
       }
@@ -68,6 +78,8 @@ export default function DelegateRegistrationForm() {
         body: JSON.stringify({
           full_name: formData.full_name,
           email: formData.email,
+          cin: formData.cin,
+          gender: formData.gender,
           phone: formData.phone,
           position: finalPosition,
           organization: finalOrg,
@@ -167,6 +179,48 @@ export default function DelegateRegistrationForm() {
             className={inputClass}
             placeholder="+216 98 123 456"
           />
+        </div>
+
+        {/* CIN Number Field */}
+        <div>
+          <label htmlFor="cin" className={labelClass}>
+            CIN Number *
+          </label>
+          <input
+            id="cin"
+            name="cin"
+            required
+            value={formData.cin}
+            onChange={(e) => updateField("cin", e.target.value)}
+            className={inputClass}
+            placeholder="e.g. 12345678"
+          />
+        </div>
+
+        {/* Gender Selection */}
+        <div>
+          <label className={labelClass}>
+            Gender *
+          </label>
+          <div className="grid grid-cols-2 gap-2">
+            {["Male", "Female"].map((g) => {
+              const isSelected = formData.gender === g;
+              return (
+                <button
+                  key={g}
+                  type="button"
+                  onClick={() => updateField("gender", g)}
+                  className={`rounded-xl border py-3 text-xs font-bold transition-all cursor-pointer text-center ${
+                    isSelected
+                      ? "border-amber-400 bg-amber-500 text-obsidian shadow-md shadow-amber-500/30 font-extrabold"
+                      : "border-amber-500/20 bg-obsidian-surface/60 text-ivory-muted hover:border-amber-500/50 hover:text-ivory"
+                  }`}
+                >
+                  {g === "Male" ? "Male" : "Female"}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {/* Position / Role Selector */}

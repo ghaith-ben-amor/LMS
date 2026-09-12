@@ -82,6 +82,8 @@ export async function POST(request: Request) {
     const delegate = await registerDelegate({
       full_name: fullName,
       email,
+      cin: typeof body.cin === "string" ? body.cin.trim() : undefined,
+      gender: typeof body.gender === "string" ? body.gender.trim() : undefined,
       organization: typeof body.organization === "string" ? body.organization.trim() : undefined,
       position: typeof body.position === "string" ? body.position.trim() : undefined,
       phone: typeof body.phone === "string" ? body.phone.trim() : undefined,

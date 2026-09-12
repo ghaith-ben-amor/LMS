@@ -19,6 +19,8 @@ type Delegate = {
   id: number;
   full_name: string;
   email: string;
+  cin?: string;
+  gender?: string;
   organization?: string;
   position?: string;
   phone?: string;
@@ -587,7 +589,7 @@ function DelegatesTab() {
     const q = query.trim().toLowerCase();
     if (!q) return delegates;
     return delegates.filter((d) =>
-      [d.full_name, d.email, d.organization, d.position].some((v) => v?.toLowerCase().includes(q))
+      [d.full_name, d.email, d.cin, d.gender, d.organization, d.position].some((v) => v?.toLowerCase().includes(q))
     );
   }, [delegates, query]);
 
@@ -608,9 +610,9 @@ function DelegatesTab() {
 
   const exportCSV = () => {
     if (!delegates.length) return;
-    const headers = ["ID", "Full Name", "Email", "Phone", "Organization", "Position", "Dietary", "Date"];
+    const headers = ["ID", "Full Name", "Email", "CIN", "Gender", "Phone", "Organization", "Position", "Dietary", "Date"];
     const rows = delegates.map((d) => [
-      d.id, `"${d.full_name}"`, `"${d.email}"`, `"${d.phone || ""}"`,
+      d.id, `"${d.full_name}"`, `"${d.email}"`, `"${d.cin || ""}"`, `"${d.gender || ""}"`, `"${d.phone || ""}"`,
       `"${d.organization || ""}"`, `"${d.position || ""}"`,
       `"${d.dietary_restrictions || ""}"`,
       `"${new Date(d.created_at).toLocaleDateString()}"`,
@@ -753,6 +755,7 @@ function DelegatesTab() {
             <thead>
               <tr className="border-b border-white/10 text-[0.7rem] uppercase tracking-widest text-ivory-dark bg-obsidian-surface/40">
                 <th className="px-6 py-4">Delegate Details</th>
+                <th className="px-6 py-4">CIN / Gender</th>
                 <th className="px-6 py-4">Organization</th>
                 <th className="px-6 py-4">Contact Info</th>
                 <th className="px-6 py-4">Registered Date</th>
@@ -761,15 +764,19 @@ function DelegatesTab() {
             </thead>
             <tbody className="divide-y divide-white/[0.06]">
               {isLoading ? (
-                <tr><td colSpan={5} className="px-6 py-12 text-center text-ivory-muted font-light">Loading registrations...</td></tr>
+                <tr><td colSpan={6} className="px-6 py-12 text-center text-ivory-muted font-light">Loading registrations...</td></tr>
               ) : filteredDelegates.length === 0 ? (
-                <tr><td colSpan={5} className="px-6 py-12 text-center text-ivory-muted font-light">No registrations found.</td></tr>
+                <tr><td colSpan={6} className="px-6 py-12 text-center text-ivory-muted font-light">No registrations found.</td></tr>
               ) : (
                 filteredDelegates.map((d) => (
                   <tr key={d.id} className="transition hover:bg-white/[0.03]">
                     <td className="px-6 py-4">
                       <p className="font-bold text-ivory">{d.full_name}</p>
                       <p className="text-xs text-amber-400 font-semibold mt-0.5">{d.position || "Delegate"}</p>
+                    </td>
+                    <td className="px-6 py-4">
+                      <p className="font-mono text-ivory text-xs font-semibold">{d.cin || "—"}</p>
+                      <span className="text-[0.65rem] uppercase tracking-wider text-amber-400 font-bold">{d.gender || "N/A"}</span>
                     </td>
                     <td className="px-6 py-4 text-ivory-muted font-light">{d.organization || "—"}</td>
                     <td className="px-6 py-4">
