@@ -9,13 +9,13 @@ import Button from "./ui/Button";
 const navItems = [
   { label: "Home", href: "#home" },
   { label: "About", href: "#about" },
-  { label: "Masquerade", href: "#masquerade" },
-  { label: "Experience", href: "#experience" },
+  { label: "Pillars", href: "#pillars" },
+  { label: "Highlights", href: "#highlights" },
   { label: "Program", href: "#program" },
   { label: "Speakers", href: "#speakers" },
   { label: "Venue", href: "#venue" },
-  { label: "Partners", href: "#partners" },
   { label: "Gallery", href: "#gallery" },
+  { label: "Partners", href: "#partners" },
 ];
 
 export function Navbar() {
@@ -110,7 +110,7 @@ export function Navbar() {
               size="sm"
               className="hidden sm:inline-flex"
             >
-              Join Experience
+              Register as Delegate
             </Button>
 
             <button

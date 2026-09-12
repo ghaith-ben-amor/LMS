@@ -32,11 +32,11 @@ export default function RegistrationPage() {
               </Badge>
 
               <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-extrabold text-ivory leading-tight">
-                JOIN THE <span className="text-gradient-gold">EXPERIENCE.</span>
+                JOIN THE <span className="text-gradient-gold">SUMMIT.</span>
               </h1>
 
               <p className="text-sm sm:text-base text-ivory-muted font-light leading-relaxed">
-                Reserve your place behind the mask. Meet bold young minds, explore your leadership potential, and step into an unforgettable conference in Hammamet.
+                Reserve your place at LMS 2K26. Meet bold young minds, explore your leadership potential, and step into an unforgettable conference in Hammamet.
               </p>
             </div>
 
@@ -61,8 +61,8 @@ export default function RegistrationPage() {
               <div className="flex items-center gap-3">
                 <Sparkles className="w-5 h-5 text-gold flex-shrink-0" />
                 <div>
-                  <span className="font-bold text-ivory block">Thematic Masquerade</span>
-                  <span className="text-ivory-dark text-[0.7rem]">Behind the Mask, Discover Yourself</span>
+                  <span className="font-bold text-ivory block">Leadership Development</span>
+                  <span className="text-ivory-dark text-[0.7rem]">Empowerment & Strategic Impact</span>
                 </div>
               </div>
             </div>

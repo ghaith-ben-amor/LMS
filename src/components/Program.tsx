@@ -80,7 +80,7 @@ export const Program = () => {
           <div className="w-20 h-1 bg-gradient-to-r from-rose-900 via-amber-400 to-rose-900 mx-auto rounded-full mb-6" />
 
           <p className="text-sm sm:text-base text-ivory-muted leading-relaxed font-light">
-            Three immersive days packed with workshops, keynotes, social masquerade galas, and self-discovery sessions.
+            Three immersive days packed with interactive workshops, inspiring keynotes, leadership challenges, and networking sessions.
           </p>
         </div>
 

@@ -4,15 +4,14 @@ import React from "react";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import About from "@/components/About";
-import Masquerade from "@/components/Masquerade";
-import Experience from "@/components/Experience";
+import Pillars from "@/components/Pillars";
+import Highlights from "@/components/Highlights";
 import Program from "@/components/Program";
 import Speakers from "@/components/Speakers";
 import Venue from "@/components/Venue";
 import Partners from "@/components/Partners";
 import Gallery from "@/components/Gallery";
 import Legacy from "@/components/Legacy";
-import FinalReveal from "@/components/FinalReveal";
 import Footer from "@/components/Footer";
 
 export default function Home() {
@@ -21,15 +20,14 @@ export default function Home() {
       <Navbar />
       <Hero />
       <About />
-      <Masquerade />
-      <Experience />
+      <Pillars />
+      <Highlights />
       <Program />
       <Speakers />
       <Venue />
       <Partners />
       <Gallery />
       <Legacy />
-      <FinalReveal />
       <Footer />
     </main>
   );

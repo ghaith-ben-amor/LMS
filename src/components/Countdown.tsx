@@ -65,7 +65,7 @@ export const Countdown = () => {
       <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-96 bg-amber-500/10 rounded-full blur-[100px] pointer-events-none" />
 
       <h3 className="font-serif text-xl sm:text-2xl md:text-3xl text-ivory mb-2 tracking-wide font-bold">
-        {isExpired ? "LMS 2K26 Has Concluded" : "The Masquerade Experience Begins In"}
+        {isExpired ? "LMS 2K26 Has Concluded" : "The LMS 2K26 Leadership Summit Begins In"}
       </h3>
       <p className="text-xs sm:text-sm text-ivory-muted uppercase tracking-[0.25em] mb-8">
         {eventConfig.event.location} • March 15, 2026

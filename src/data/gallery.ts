@@ -12,7 +12,7 @@ export interface GalleryImage {
 export const galleryImages: GalleryImage[] = [
   {
     id: "img-1",
-    title: "Masquerade Gala Night",
+    title: "Networking Gala Night",
     image: "/images/gallery/image-01.jpg",
     category: "social",
   },
@@ -30,7 +30,7 @@ export const galleryImages: GalleryImage[] = [
   },
   {
     id: "img-4",
-    title: "The Reveal Moment",
+    title: "Grand Opening Ceremony",
     image: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1200&q=80",
     category: "ceremonies",
   },

@@ -4,9 +4,8 @@ import React from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { eventConfig } from "@/data/event-config";
-import { ArrowDown, Calendar, MapPin, Sparkles } from "lucide-react";
+import { ArrowDown, Calendar, MapPin, Sparkles, Award } from "lucide-react";
 import Button from "./ui/Button";
-import Badge from "./ui/Badge";
 
 export const Hero = () => {
   return (
@@ -48,7 +47,7 @@ export const Hero = () => {
 
       {/* Main Hero Container */}
       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex flex-col items-center">
-        {/* AIESEC & Event Badge Header */}
+        {/* AIESEC Badge Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -61,26 +60,26 @@ export const Hero = () => {
           </span>
           <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
           <span className="text-xs font-bold tracking-widest text-amber-400">
-            LMS 2K26
+            LMS 2K26 DELEGATE PORTAL
           </span>
         </motion.div>
 
-        {/* Floating 3D Venetian Mask Visual */}
+        {/* Floating 3D Leadership Emblem */}
         <motion.div
           initial={{ opacity: 0, scale: 0.85 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.9, delay: 0.2 }}
-          className="relative w-44 h-44 sm:w-56 sm:h-56 md:w-64 md:h-64 my-2 flex items-center justify-center"
+          className="relative w-44 h-44 sm:w-56 sm:h-56 md:w-60 md:h-60 my-2 flex items-center justify-center"
         >
-          <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-rose-950/40 via-amber-500/20 to-transparent blur-2xl animate-pulse-subtle" />
+          <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-amber-500/30 via-rose-950/20 to-transparent blur-2xl animate-pulse-subtle" />
           <motion.div
-            animate={{ y: [0, -12, 0], rotate: [0, 1.5, 0] }}
+            animate={{ y: [0, -10, 0], rotate: [0, 1, 0] }}
             transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-            className="relative w-full h-full drop-shadow-[0_20px_50px_rgba(122,28,40,0.5)]"
+            className="relative w-full h-full drop-shadow-[0_20px_50px_rgba(212,175,55,0.35)]"
           >
             <Image
-              src="/images/hero_mask.png"
-              alt="LMS 2K26 Masquerade Mask"
+              src="/images/hero_emblem.png"
+              alt="LMS 2K26 Leadership Emblem"
               fill
               className="object-contain"
               priority
@@ -96,13 +95,13 @@ export const Hero = () => {
           className="space-y-4 max-w-4xl"
         >
           <h1 className="font-serif text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold tracking-wider leading-[1.05] text-ivory">
-            ENTER THE UNKNOWN.
+            LEAD WITH PURPOSE.
             <br />
-            <span className="text-gradient-gold">REVEAL YOURSELF.</span>
+            <span className="text-gradient-gold">DISCOVER YOUR POTENTIAL.</span>
           </h1>
 
           <p className="text-sm sm:text-base md:text-lg lg:text-xl text-ivory-muted font-light max-w-2xl mx-auto leading-relaxed tracking-wide pt-2">
-            Behind the mask lies your authentic leadership power. Join 200+ delegates in Hammamet for the flagship Local Motivation Seminar.
+            Join 200+ delegates in Hammamet for LMS 2K26 — the flagship Local Motivation Seminar featuring high-impact workshops, inspiring keynotes, and transformative networking.
           </p>
         </motion.div>
 
@@ -121,6 +120,10 @@ export const Hero = () => {
             <MapPin className="w-4 h-4 text-gold" />
             <span className="font-semibold text-ivory">Hammamet, Tunisia</span>
           </div>
+          <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-obsidian-card border border-amber-500/15">
+            <Award className="w-4 h-4 text-gold" />
+            <span className="font-semibold text-ivory">Official Delegate Portal</span>
+          </div>
         </motion.div>
 
         {/* Action Buttons */}
@@ -131,10 +134,10 @@ export const Hero = () => {
           className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto"
         >
           <Button href="/registration" variant="primary" size="lg" className="w-full sm:w-auto min-w-[200px]">
-            Join The Experience
+            Register as Delegate
           </Button>
           <Button href="#about" variant="secondary" size="lg" className="w-full sm:w-auto min-w-[200px]">
-            Discover LMS
+            Explore Conference
           </Button>
         </motion.div>
 

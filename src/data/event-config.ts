@@ -1,15 +1,15 @@
 /**
  * LMS 2K26 Event Configuration
- * All event-related data is centralized here for easy updates
+ * Centralized Delegate Portal Configuration
  */
 
 export const eventConfig = {
   // Event Info
   event: {
     name: "LMS 2K26",
-    tagline: "Behind the Mask, Discover Yourself.",
-    taglineAlt: "Behind the Mask, Discover Yourself.",
-    description: "A leadership and personal development experience where connection, discovery and transformation come together.",
+    tagline: "Empowering Tomorrow's Leaders.",
+    taglineAlt: "Lead With Purpose. Discover Your Potential.",
+    description: "The premier Local Motivation Seminar where delegates connect, develop strategic leadership capabilities, and drive impactful change.",
     year: 2026,
     location: "Hammamet, Tunisia",
   },
@@ -33,73 +33,76 @@ export const eventConfig = {
   // Hero Section
   hero: {
     title: "LMS 2K26",
-    subtitle: "BEHIND THE MASK,\nDISCOVER YOURSELF.",
+    subtitle: "LEAD WITH PURPOSE.\nDISCOVER YOUR POTENTIAL.",
     location: "Hammamet, Tunisia",
-    cta: "JOIN THE EXPERIENCE",
+    cta: "REGISTER AS DELEGATE",
   },
 
   // Statistics
   stats: [
-    { number: 200, label: "Participants" },
-    { number: 20, label: "Activities" },
-    { number: 10, label: "Speakers" },
-    { number: 1, label: "Unforgettable Experience" },
+    { number: 200, label: "Delegates" },
+    { number: 20, label: "Workshops & Sessions" },
+    { number: 10, label: "Keynote Speakers" },
+    { number: 3, label: "Days of Growth" },
   ],
 
   // About Section
   about: {
-    title: "MORE THAN AN EVENT.",
-    subtitle: "A MOMENT TO DISCOVER.",
-    description: "LMS 2K26 is more than just a conference. It's an invitation to step behind the mask and discover the leader within. Through carefully designed activities, meaningful connections, and transformative experiences, we create a space where every participant finds their voice and embraces their potential.",
+    title: "MORE THAN A SEMINAR.",
+    subtitle: "A PLATFORM FOR GROWTH.",
+    description: "LMS 2K26 is AIESEC University's flagship Local Motivation Seminar. Designed specifically for ambitious delegates, it provides a high-energy environment filled with actionable leadership workshops, expert keynotes, interactive team challenges, and invaluable networking opportunities in Hammamet, Tunisia.",
   },
 
-  // Masquerade Stages
-  masqueradeStages: [
+  // Conference Pillars
+  pillars: [
     {
       number: "01",
-      title: "THE MASK",
-      description: "Who we show to the world. The identity we present, the roles we play, the expectations we meet.",
+      title: "LEADERSHIP & VISION",
+      subtitle: "Strategic Growth & Mindset",
+      description: "Understand your personal leadership style, refine your core values, and gain strategic tools to drive positive impact in your community.",
     },
     {
       number: "02",
-      title: "THE MIRROR",
-      description: "Who we discover within ourselves. The reflection of our true values, hidden strengths, and authentic desires.",
+      title: "COLLABORATION & SYNERGY",
+      subtitle: "Networking & Team Dynamics",
+      description: "Connect with 200+ driven delegates, exchange perspective with youth leaders, and master high-performance team collaboration.",
     },
     {
       number: "03",
-      title: "THE REVEAL",
-      description: "Who we become through the experience. The transformation that occurs when we embrace our full selves.",
+      title: "ACTION & EXCELLENCE",
+      subtitle: "Execution & Real World Impact",
+      description: "Translate inspiration into tangible results through interactive workshops, case simulations, and goal-oriented execution plans.",
     },
   ],
 
-  // Experience Sections
-  experiences: [
+  // Summit Highlights
+  highlights: [
     {
-      id: "ballroom",
-      title: "THE BALLROOM",
-      subtitle: "Networking & Connection",
-      description: "A space for meaningful connections. Meet fellow leaders, share ideas, and build lasting relationships in an atmosphere of elegance and openness.",
-      icon: "Users",
-    },
-    {
-      id: "mirror",
-      title: "THE MIRROR ROOM",
-      subtitle: "Self-Discovery & Reflection",
-      description: "Dive deep into self-awareness. Through guided workshops and introspection, discover your values, strengths, and the leader you're meant to be.",
-      icon: "Eye",
-    },
-    {
-      id: "stage",
-      title: "THE STAGE",
-      subtitle: "Leadership & Expression",
-      description: "Express your voice. Share your perspectives, present ideas, and develop the communication skills that define great leaders.",
+      id: "keynotes",
+      title: "KEYNOTE ARENA",
+      subtitle: "Inspiring Visionaries",
+      description: "Hear from industry experts, entrepreneurs, and senior AIESEC alumni sharing pivotal lessons on modern leadership and global impact.",
       icon: "Megaphone",
     },
     {
-      id: "secret",
-      title: "THE SECRET ROOM",
-      subtitle: "Challenges & Surprises",
-      description: "Embrace the unexpected. Participate in unique challenges and experiences designed to push your boundaries and reveal new capabilities.",
+      id: "workshops",
+      title: "INTERACTIVE WORKSHOPS",
+      subtitle: "Skill Building & Strategy",
+      description: "Hands-on masterclasses covering communication, emotional intelligence, project management, and strategic problem-solving.",
+      icon: "Eye",
+    },
+    {
+      id: "networking",
+      title: "DELEGATE LOUNGE",
+      subtitle: "Networking & Synergy",
+      description: "Dedicated networking spaces to meet peer delegates, form lifelong friendships, and collaborate on future initiatives.",
+      icon: "Users",
+    },
+    {
+      id: "challenges",
+      title: "LEADERSHIP CHALLENGES",
+      subtitle: "Team Simulations & Growth",
+      description: "Engaging group competitions and real-time case challenges designed to test resilience, creativity, and team leadership.",
       icon: "Sparkles",
     },
   ],

@@ -2,7 +2,6 @@
 
 import React from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { eventConfig } from "@/data/event-config";
 import { Mail, Phone, MapPin, Globe, Share2, Heart, Sparkles, ArrowUp } from "lucide-react";
 
@@ -57,8 +56,13 @@ export const Footer = () => {
                 </a>
               </li>
               <li>
-                <a href="#masquerade" className="hover:text-gold transition-colors">
-                  The Masquerade
+                <a href="#pillars" className="hover:text-gold transition-colors">
+                  Pillars
+                </a>
+              </li>
+              <li>
+                <a href="#highlights" className="hover:text-gold transition-colors">
+                  Summit Highlights
                 </a>
               </li>
               <li>

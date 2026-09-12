@@ -38,13 +38,13 @@ export const Gallery = () => {
           </Badge>
 
           <h2 className="font-serif text-4xl sm:text-6xl font-extrabold text-ivory tracking-wider mb-6">
-            MEMORIES <span className="text-gradient-gold">BEHIND THE MASK</span>
+            MEMORIES <span className="text-gradient-gold">OF EXCELLENCE</span>
           </h2>
 
           <div className="w-20 h-1 bg-gradient-to-r from-rose-900 via-amber-400 to-rose-900 mx-auto rounded-full mb-6" />
 
           <p className="text-sm sm:text-base text-ivory-muted leading-relaxed font-light">
-            Moments of passion, keynotes, masquerade celebrations, and lifelong bonds forged during LMS editions.
+            Moments of passion, keynotes, gala celebrations, and lifelong bonds forged during LMS editions.
           </p>
         </div>
 
