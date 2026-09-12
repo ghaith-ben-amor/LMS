@@ -1,11 +1,11 @@
 "use client";
 
 import React from "react";
-import Image from "next/image";
 import { motion } from "framer-motion";
 import { eventConfig } from "@/data/event-config";
 import { ArrowDown, Calendar, MapPin, Sparkles, Award } from "lucide-react";
 import Button from "./ui/Button";
+import LmsAnimation from "./LmsAnimation";
 
 export const Hero = () => {
   return (
@@ -64,27 +64,14 @@ export const Hero = () => {
           </span>
         </motion.div>
 
-        {/* Floating 3D Leadership Emblem */}
+        {/* Animated LMS 2K26 Emblem */}
         <motion.div
           initial={{ opacity: 0, scale: 0.85 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.9, delay: 0.2 }}
-          className="relative w-44 h-44 sm:w-56 sm:h-56 md:w-60 md:h-60 my-2 flex items-center justify-center"
+          className="my-4 flex items-center justify-center"
         >
-          <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-amber-500/30 via-rose-950/20 to-transparent blur-2xl animate-pulse-subtle" />
-          <motion.div
-            animate={{ y: [0, -10, 0], rotate: [0, 1, 0] }}
-            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-            className="relative w-full h-full drop-shadow-[0_20px_50px_rgba(212,175,55,0.35)]"
-          >
-            <Image
-              src="/images/hero_emblem.png"
-              alt="LMS 2K26 Leadership Emblem"
-              fill
-              className="object-contain"
-              priority
-            />
-          </motion.div>
+          <LmsAnimation />
         </motion.div>
 
         {/* Main Title */}
