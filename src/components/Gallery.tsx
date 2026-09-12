@@ -79,14 +79,14 @@ export const Gallery = () => {
         </div>
       </div>
 
-      {/* ─── Animated Sliding Track 1: Left to Right Translation ─── */}
-      <div className="w-full overflow-hidden py-4 mb-6">
+      {/* ─── Animated Sliding Track 1: Left to Right Translation (Ultra Slow Marquee) ─── */}
+      <div className="w-full overflow-hidden py-3 mb-4">
         <motion.div
-          className="flex items-center gap-6 w-max"
-          animate={{ x: ["-50%", "0%"] }}
+          className="flex items-center gap-5 sm:gap-6 w-max"
+          animate={{ x: ["-33.333%", "0%"] }}
           transition={{
             ease: "linear",
-            duration: 38,
+            duration: 85,
             repeat: Infinity,
           }}
           whileHover={{ animationPlayState: "paused" }}
@@ -94,42 +94,42 @@ export const Gallery = () => {
           {track1Images.map((img, idx) => (
             <motion.div
               key={`tr1-${img.id}-${idx}`}
-              whileHover={{ y: -8, scale: 1.03 }}
+              whileHover={{ y: -6, scale: 1.02 }}
               onClick={() => setSelectedImage(img)}
-              className="group relative w-72 h-80 sm:w-80 sm:h-96 rounded-[32px] overflow-hidden bg-gradient-to-b from-[#181222] via-[#0E0B14] to-[#07050A] border-2 border-amber-500/30 hover:border-amber-400 p-2.5 shadow-[0_12px_40px_rgba(0,0,0,0.8)] hover:shadow-[0_16px_50px_rgba(212,175,55,0.25)] transition-all duration-500 cursor-pointer flex-shrink-0"
+              className="group relative w-[310px] h-[200px] sm:w-[420px] sm:h-[260px] rounded-[28px] overflow-hidden bg-[#0e0c14] border border-amber-500/20 hover:border-amber-400/80 p-2 shadow-[0_10px_30px_rgba(0,0,0,0.7)] hover:shadow-[0_15px_40px_rgba(212,175,55,0.2)] transition-all duration-500 cursor-pointer flex-shrink-0"
             >
               {/* Inner Curved Image Mask */}
-              <div className="relative w-full h-full rounded-[24px] overflow-hidden">
+              <div className="relative w-full h-full rounded-[22px] overflow-hidden">
                 <Image
                   src={img.image}
                   alt={img.title}
                   fill
-                  className="object-cover group-hover:scale-110 transition-transform duration-700"
+                  className="object-cover group-hover:scale-108 transition-transform duration-700"
                 />
 
                 {/* Dark Vignette Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0D0B10] via-black/30 to-transparent opacity-70 group-hover:opacity-90 transition-opacity" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#09070D]/90 via-black/20 to-transparent opacity-60 group-hover:opacity-85 transition-opacity" />
 
                 {/* Card Header Tag */}
-                <div className="absolute top-4 left-4 z-10">
-                  <span className="px-3 py-1 rounded-full text-[0.65rem] font-extrabold uppercase tracking-widest bg-obsidian-surface/90 text-amber-300 border border-amber-500/40 backdrop-blur-md">
+                <div className="absolute top-3 left-3 z-10">
+                  <span className="px-2.5 py-1 rounded-full text-[0.65rem] font-extrabold uppercase tracking-wider bg-obsidian-surface/80 text-amber-300 border border-amber-500/30 backdrop-blur-md">
                     {img.category}
                   </span>
                 </div>
 
                 {/* Card Title & Lightbox Action */}
-                <div className="absolute inset-x-0 bottom-0 p-5 flex items-end justify-between translate-y-1 group-hover:translate-y-0 transition-transform z-10">
+                <div className="absolute inset-x-0 bottom-0 p-4 flex items-end justify-between z-10">
                   <div>
-                    <h4 className="font-serif text-lg sm:text-xl font-bold text-ivory drop-shadow-md">
+                    <h4 className="font-serif text-base sm:text-lg font-bold text-ivory drop-shadow-md line-clamp-1">
                       {img.title}
                     </h4>
-                    <p className="text-[0.7rem] text-ivory-dark font-medium mt-0.5">
+                    <p className="text-[0.65rem] text-ivory-dark font-medium mt-0.5">
                       LMS 2K26 Memory
                     </p>
                   </div>
 
-                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 text-obsidian flex items-center justify-center font-bold shadow-lg shadow-amber-500/30 group-hover:scale-110 transition-transform">
-                    <Maximize2 size={15} />
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 text-obsidian flex items-center justify-center font-bold shadow-lg shadow-amber-500/30 group-hover:scale-110 transition-transform">
+                    <Maximize2 size={14} />
                   </div>
                 </div>
               </div>
@@ -138,14 +138,14 @@ export const Gallery = () => {
         </motion.div>
       </div>
 
-      {/* ─── Animated Sliding Track 2: Right to Left Translation ─── */}
-      <div className="w-full overflow-hidden py-4">
+      {/* ─── Animated Sliding Track 2: Right to Left Translation (Ultra Slow Marquee) ─── */}
+      <div className="w-full overflow-hidden py-3">
         <motion.div
-          className="flex items-center gap-6 w-max"
-          animate={{ x: ["0%", "-50%"] }}
+          className="flex items-center gap-5 sm:gap-6 w-max"
+          animate={{ x: ["0%", "-33.333%"] }}
           transition={{
             ease: "linear",
-            duration: 32,
+            duration: 80,
             repeat: Infinity,
           }}
           whileHover={{ animationPlayState: "paused" }}
@@ -153,42 +153,42 @@ export const Gallery = () => {
           {track2Doubled.map((img, idx) => (
             <motion.div
               key={`tr2-${img.id}-${idx}`}
-              whileHover={{ y: -8, scale: 1.03 }}
+              whileHover={{ y: -6, scale: 1.02 }}
               onClick={() => setSelectedImage(img)}
-              className="group relative w-72 h-80 sm:w-80 sm:h-96 rounded-[32px] overflow-hidden bg-gradient-to-b from-[#181222] via-[#0E0B14] to-[#07050A] border-2 border-amber-500/30 hover:border-amber-400 p-2.5 shadow-[0_12px_40px_rgba(0,0,0,0.8)] hover:shadow-[0_16px_50px_rgba(212,175,55,0.25)] transition-all duration-500 cursor-pointer flex-shrink-0"
+              className="group relative w-[310px] h-[200px] sm:w-[420px] sm:h-[260px] rounded-[28px] overflow-hidden bg-[#0e0c14] border border-amber-500/20 hover:border-amber-400/80 p-2 shadow-[0_10px_30px_rgba(0,0,0,0.7)] hover:shadow-[0_15px_40px_rgba(212,175,55,0.2)] transition-all duration-500 cursor-pointer flex-shrink-0"
             >
               {/* Inner Curved Image Mask */}
-              <div className="relative w-full h-full rounded-[24px] overflow-hidden">
+              <div className="relative w-full h-full rounded-[22px] overflow-hidden">
                 <Image
                   src={img.image}
                   alt={img.title}
                   fill
-                  className="object-cover group-hover:scale-110 transition-transform duration-700"
+                  className="object-cover group-hover:scale-108 transition-transform duration-700"
                 />
 
                 {/* Dark Vignette Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0D0B10] via-black/30 to-transparent opacity-70 group-hover:opacity-90 transition-opacity" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#09070D]/90 via-black/20 to-transparent opacity-60 group-hover:opacity-85 transition-opacity" />
 
                 {/* Card Header Tag */}
-                <div className="absolute top-4 left-4 z-10">
-                  <span className="px-3 py-1 rounded-full text-[0.65rem] font-extrabold uppercase tracking-widest bg-obsidian-surface/90 text-amber-300 border border-amber-500/40 backdrop-blur-md">
+                <div className="absolute top-3 left-3 z-10">
+                  <span className="px-2.5 py-1 rounded-full text-[0.65rem] font-extrabold uppercase tracking-wider bg-obsidian-surface/80 text-amber-300 border border-amber-500/30 backdrop-blur-md">
                     {img.category}
                   </span>
                 </div>
 
                 {/* Card Title & Lightbox Action */}
-                <div className="absolute inset-x-0 bottom-0 p-5 flex items-end justify-between translate-y-1 group-hover:translate-y-0 transition-transform z-10">
+                <div className="absolute inset-x-0 bottom-0 p-4 flex items-end justify-between z-10">
                   <div>
-                    <h4 className="font-serif text-lg sm:text-xl font-bold text-ivory drop-shadow-md">
+                    <h4 className="font-serif text-base sm:text-lg font-bold text-ivory drop-shadow-md line-clamp-1">
                       {img.title}
                     </h4>
-                    <p className="text-[0.7rem] text-ivory-dark font-medium mt-0.5">
+                    <p className="text-[0.65rem] text-ivory-dark font-medium mt-0.5">
                       LMS 2K26 Memory
                     </p>
                   </div>
 
-                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 text-obsidian flex items-center justify-center font-bold shadow-lg shadow-amber-500/30 group-hover:scale-110 transition-transform">
-                    <Maximize2 size={15} />
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 text-obsidian flex items-center justify-center font-bold shadow-lg shadow-amber-500/30 group-hover:scale-110 transition-transform">
+                    <Maximize2 size={14} />
                   </div>
                 </div>
               </div>
