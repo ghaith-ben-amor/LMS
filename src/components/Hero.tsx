@@ -101,7 +101,7 @@ export const Hero = () => {
         >
           <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-obsidian-card border border-amber-500/15">
             <Calendar className="w-4 h-4 text-gold" />
-            <span className="font-semibold text-ivory">15–17 March 2026</span>
+            <span className="font-semibold text-ivory">2–4 October 2026</span>
           </div>
           <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-obsidian-card border border-amber-500/15">
             <MapPin className="w-4 h-4 text-gold" />

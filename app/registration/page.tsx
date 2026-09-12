@@ -45,7 +45,7 @@ export default function RegistrationPage() {
               <div className="flex items-center gap-3">
                 <Calendar className="w-5 h-5 text-gold flex-shrink-0" />
                 <div>
-                  <span className="font-bold text-ivory block">15–17 March 2026</span>
+                  <span className="font-bold text-ivory block">2–4 October 2026</span>
                   <span className="text-ivory-dark text-[0.7rem]">3 Days of Conference & Galas</span>
                 </div>
               </div>

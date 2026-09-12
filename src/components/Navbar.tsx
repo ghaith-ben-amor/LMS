@@ -70,7 +70,7 @@ export function Navbar() {
                 LMS <span className="text-amber-400">2K26</span>
               </span>
               <span className="text-[0.65rem] tracking-[0.25em] text-gray-400 uppercase font-sans">
-                AIESEC University
+                OC METANOIA
               </span>
             </div>
           </Link>

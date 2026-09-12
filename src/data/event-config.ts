@@ -15,7 +15,7 @@ export const eventConfig = {
   },
 
   // Countdown Date (ISO string format)
-  countdownDate: "2026-03-15T08:00:00Z",
+  countdownDate: "2026-10-02T08:00:00Z",
 
   // Social Media
   social: {

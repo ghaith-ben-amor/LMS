@@ -22,7 +22,7 @@ export interface DaySchedule {
 export const programSchedule: DaySchedule[] = [
   {
     day: "DAY 01",
-    date: "March 15, 2026",
+    date: "October 2, 2026",
     events: [
       {
         id: "d1-1",
@@ -85,7 +85,7 @@ export const programSchedule: DaySchedule[] = [
   },
   {
     day: "DAY 02",
-    date: "March 16, 2026",
+    date: "October 3, 2026",
     events: [
       {
         id: "d2-1",
@@ -150,7 +150,7 @@ export const programSchedule: DaySchedule[] = [
   },
   {
     day: "DAY 03",
-    date: "March 17, 2026",
+    date: "October 4, 2026",
     events: [
       {
         id: "d3-1",

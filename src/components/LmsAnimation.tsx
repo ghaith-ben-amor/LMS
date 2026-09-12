@@ -108,7 +108,7 @@ export const LmsAnimation = () => {
 
           {/* Subtitle Header */}
           <span className="text-[0.6rem] sm:text-[0.65rem] font-bold tracking-[0.25em] uppercase text-amber-300/80 mb-0.5">
-            AIESEC Leadership
+            OC METANOIA
           </span>
 
           {/* LMS Title */}

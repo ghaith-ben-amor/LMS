@@ -68,7 +68,7 @@ export const Countdown = () => {
         {isExpired ? "LMS 2K26 Has Concluded" : "The LMS 2K26 Leadership Summit Begins In"}
       </h3>
       <p className="text-xs sm:text-sm text-ivory-muted uppercase tracking-[0.25em] mb-8">
-        {eventConfig.event.location} • March 15, 2026
+        {eventConfig.event.location} • October 2, 2026
       </p>
 
       {isExpired ? (
