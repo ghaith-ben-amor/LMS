@@ -93,14 +93,13 @@ export async function POST(request: Request) {
     } satisfies RegistrationFormData);
 
     
-    // Dispatch email notifications asynchronously in background so registration completes instantly
-    void sendInvitationEmail(delegate).catch((err) => {
-      console.error("[Mailer] Delegate invitation email error:", err);
-    });
+    // Dispatch email notifications and await completion on Vercel Serverless
+    const emailResults = await Promise.allSettled([
+      sendInvitationEmail(delegate),
+      sendAdminNotificationEmail(delegate),
+    ]);
 
-    void sendAdminNotificationEmail(delegate).catch((err) => {
-      console.error("[Mailer] Admin notification email error:", err);
-    });
+    const mailSuccess = emailResults[0].status === "fulfilled" && emailResults[0].value.success;
 
     return NextResponse.json(
       { 
@@ -111,7 +110,7 @@ export async function POST(request: Request) {
           email: delegate.email,
           created_at: delegate.created_at,
         },
-        email_sent: true,
+        email_sent: mailSuccess,
       },
       { status: 201 }
     );
