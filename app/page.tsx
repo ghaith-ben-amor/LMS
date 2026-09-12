@@ -3,6 +3,7 @@
 import React from "react";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
+import Countdown from "@/components/Countdown";
 import About from "@/components/About";
 import Pillars from "@/components/Pillars";
 import Highlights from "@/components/Highlights";
@@ -19,6 +20,12 @@ export default function Home() {
     <main className="w-full min-h-screen bg-black">
       <Navbar />
       <Hero />
+      
+      {/* Live Countdown Section */}
+      <section className="py-12 sm:py-16 bg-[#050507] px-4 relative z-10">
+        <Countdown />
+      </section>
+
       <About />
       <Pillars />
       <Highlights />
