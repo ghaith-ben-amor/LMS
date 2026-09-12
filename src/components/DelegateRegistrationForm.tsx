@@ -4,7 +4,8 @@ import { FormEvent, useState } from "react";
 import Button from "./ui/Button";
 import { CheckCircle2, AlertCircle } from "lucide-react";
 
-const POSITIONS = ["Newbie", "Oldie", "MM", "LCVP", "LCP"];
+const POSITIONS = ["Newbie", "Oldie", "MM"];
+const MM_ROLES = ["Team Leader", "Manager"];
 const DEPARTMENTS = ["OGT", "OGV", "IGT", "IGV", "MKT", "TM", "F&L", "BD&EWA"];
 
 const initialForm = {
@@ -12,6 +13,7 @@ const initialForm = {
   email: "",
   organization: "",
   position: "",
+  mm_role: "",
   department: "",
   phone: "",
   dietary_restrictions: "",
@@ -28,10 +30,8 @@ export default function DelegateRegistrationForm() {
   const updateField = (name: string, value: string) =>
     setFormData((current) => ({ ...current, [name]: value }));
 
-  const showDepartment =
-    formData.position !== "" &&
-    formData.position !== "Newbie" &&
-    formData.position !== "LCP";
+  const showMmRole = formData.position === "MM";
+  const showDepartment = formData.position === "Oldie" || formData.position === "MM";
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -39,8 +39,27 @@ export default function DelegateRegistrationForm() {
     setMessage("");
 
     try {
+      if (!formData.position) {
+        throw new Error("Please select your Role / Position.");
+      }
+
+      if (formData.position === "MM" && !formData.mm_role) {
+        throw new Error("Please select whether you are a Team Leader or Manager.");
+      }
+
+      if (showDepartment && !formData.department) {
+        throw new Error("Please select your AIESEC Department.");
+      }
+
+      const finalPosition =
+        formData.position === "MM" && formData.mm_role
+          ? `MM (${formData.mm_role})`
+          : formData.position;
+
       const finalOrg = showDepartment
-        ? (formData.department ? `Department: ${formData.department}` : "")
+        ? formData.department
+          ? `Department: ${formData.department}`
+          : ""
         : "";
 
       const response = await fetch("/api/registration", {
@@ -50,7 +69,7 @@ export default function DelegateRegistrationForm() {
           full_name: formData.full_name,
           email: formData.email,
           phone: formData.phone,
-          position: formData.position,
+          position: finalPosition,
           organization: finalOrg,
           dietary_restrictions: formData.dietary_restrictions,
           emergency_contact_name: formData.emergency_contact_name,
@@ -76,7 +95,6 @@ export default function DelegateRegistrationForm() {
       setIsSubmitting(false);
     }
   };
-
 
   const inputClass =
     "w-full rounded-xl border border-amber-500/20 bg-obsidian-surface/80 px-4 py-3.5 text-sm text-ivory placeholder:text-ivory-dark outline-none transition focus:border-gold focus:ring-2 focus:ring-amber-500/20";
@@ -156,7 +174,7 @@ export default function DelegateRegistrationForm() {
           <label className={labelClass}>
             Role / Position *
           </label>
-          <div className="flex items-center gap-2 overflow-x-auto scrollbar-none pb-1">
+          <div className="grid grid-cols-3 gap-3">
             {POSITIONS.map((pos) => {
               const isSelected = formData.position === pos;
               return (
@@ -165,11 +183,14 @@ export default function DelegateRegistrationForm() {
                   type="button"
                   onClick={() => {
                     updateField("position", pos);
-                    if (pos === "Newbie" || pos === "LCP") {
+                    if (pos !== "MM") {
+                      updateField("mm_role", "");
+                    }
+                    if (pos === "Newbie") {
                       updateField("department", "");
                     }
                   }}
-                  className={`flex-1 min-w-[75px] rounded-xl border py-3 text-xs font-bold transition-all cursor-pointer text-center ${
+                  className={`rounded-xl border py-3 text-xs font-bold transition-all cursor-pointer text-center ${
                     isSelected
                       ? "border-amber-400 bg-gradient-to-r from-amber-500 to-amber-600 text-obsidian shadow-md shadow-amber-500/20 font-extrabold"
                       : "border-amber-500/20 bg-obsidian-surface/60 text-ivory-muted hover:border-amber-500/50 hover:text-ivory"
@@ -182,7 +203,36 @@ export default function DelegateRegistrationForm() {
           </div>
         </div>
 
-        {/* Dynamic Department Selector (shown when position is not Newbie and not LCP) */}
+        {/* MM Specific Role Selector (Team Leader or Manager) */}
+        {showMmRole && (
+          <div className="sm:col-span-2">
+            <label className={`${labelClass} flex items-center justify-between`}>
+              <span>MM Level / Designation *</span>
+              <span className="text-[0.65rem] text-amber-400 font-normal">Select your Middle Management role</span>
+            </label>
+            <div className="grid grid-cols-2 gap-3">
+              {MM_ROLES.map((role) => {
+                const isSelected = formData.mm_role === role;
+                return (
+                  <button
+                    key={role}
+                    type="button"
+                    onClick={() => updateField("mm_role", isSelected ? "" : role)}
+                    className={`rounded-xl border py-3 text-xs font-bold transition-all cursor-pointer text-center ${
+                      isSelected
+                        ? "border-amber-400 bg-amber-500 text-obsidian shadow-md shadow-amber-500/30 font-extrabold"
+                        : "border-amber-500/20 bg-obsidian-surface/60 text-ivory-muted hover:border-amber-500/50 hover:text-ivory"
+                    }`}
+                  >
+                    {role}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Dynamic Department Selector (shown for Oldie and MM) */}
         {showDepartment && (
           <div className="sm:col-span-2">
             <label className={`${labelClass} flex items-center justify-between`}>
@@ -210,7 +260,6 @@ export default function DelegateRegistrationForm() {
             </div>
           </div>
         )}
-
 
         <div className="sm:col-span-2">
           <label htmlFor="dietary_restrictions" className={labelClass}>
@@ -256,7 +305,6 @@ export default function DelegateRegistrationForm() {
           />
         </div>
       </div>
-
 
       {/* Submit Button */}
       <div className="pt-4">
