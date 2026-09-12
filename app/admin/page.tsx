@@ -938,6 +938,23 @@ function AgendaTab() {
     }
   };
 
+  const handleClearAll = async () => {
+    if (!window.confirm("Are you sure you want to delete ALL agenda sessions? This will give you a completely clean slate.")) return;
+    try {
+      const res = await fetch("/api/program", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ clear_all: true }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Clear failed");
+      setItems([]);
+      showMessage("All agenda items cleared. You can now build your custom sessions!");
+    } catch (e) {
+      showMessage(e instanceof Error ? e.message : "Clear failed", true);
+    }
+  };
+
   const moveItem = async (item: AgendaItem, direction: "up" | "down") => {
     const dayItems = items
       .filter((i) => i.day_label === item.day_label)
@@ -986,6 +1003,16 @@ function AgendaTab() {
           </p>
         </div>
         <div className="flex gap-3">
+          {items.length > 0 && (
+            <button
+              type="button"
+              onClick={handleClearAll}
+              className="px-3.5 py-2 rounded-xl border border-red-500/30 bg-red-500/10 text-red-300 hover:bg-red-500/20 hover:text-red-200 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer"
+            >
+              <Trash2 size={14} />
+              <span>Clear All Sessions</span>
+            </button>
+          )}
           <Button variant="outline" size="sm" onClick={() => void loadAgenda()} leftIcon={<RefreshCw size={14} className={isLoading ? "animate-spin" : ""} />}>
             Refresh
           </Button>

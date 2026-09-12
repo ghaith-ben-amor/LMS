@@ -7,6 +7,7 @@ import {
   createAgendaItem,
   updateAgendaItem,
   deleteAgendaItem,
+  clearAllAgendaItems,
   reorderAgendaItems,
   AgendaItemInput,
 } from "@/src/data/agenda";
@@ -108,7 +109,7 @@ export async function PUT(request: Request) {
 }
 
 // ─── DELETE /api/program ──────────────────────────────────────────────────
-// Body: { id }
+// Body: { id } OR { clear_all: true }
 export async function DELETE(request: Request) {
   try {
     if (!(await isAuthorizedAdmin())) {
@@ -116,6 +117,12 @@ export async function DELETE(request: Request) {
     }
 
     const body = await request.json();
+
+    if (body.clear_all === true) {
+      await clearAllAgendaItems();
+      return NextResponse.json({ success: true, cleared: true });
+    }
+
     const id = Number(body.id);
 
     if (!Number.isInteger(id) || id < 1) {

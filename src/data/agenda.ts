@@ -3,13 +3,15 @@
  * Supports:
  * 1. Persistent Cloud KV Storage (Upstash Redis / Vercel KV) for Vercel Serverless deployments
  * 2. Local SQLite database (better-sqlite3) for local development
- * 3. In-memory fallback seeded from static program.ts data
+ * 3. In-memory fallback
+ *
+ * NOTE: Auto-seeding of static items has been disabled per user request.
+ * The agenda is 100% dynamic and fully managed by the Admin.
  */
 
 import path from "path";
 import { getRedisClient, UnifiedRedis } from "@/lib/redis-client";
 import { getPostgresPool } from "@/lib/postgres";
-import { programSchedule } from "./program";
 
 let pgAgendaSeeded = false;
 async function ensurePgAgendaTable() {
@@ -33,17 +35,6 @@ async function ensurePgAgendaTable() {
       );
     `);
     await pool.query(`ALTER TABLE agenda_items ALTER COLUMN sort_order TYPE BIGINT;`).catch(() => {});
-    const countRes = await pool.query("SELECT COUNT(*) as c FROM agenda_items");
-    if (parseInt(countRes.rows[0].c, 10) === 0) {
-      const seedItems = buildSeedItems();
-      for (const item of seedItems) {
-        await pool.query(
-          `INSERT INTO agenda_items (day_label, day_date, time, activity, description, location, duration, speaker, sort_order)
-           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
-          [item.day_label, item.day_date, item.time, item.activity, item.description, item.location, item.duration || null, item.speaker || null, item.sort_order]
-        );
-      }
-    }
   } catch (err) {
     console.warn("[Agenda] Postgres table init error:", err);
   }
@@ -52,7 +43,7 @@ async function ensurePgAgendaTable() {
 export interface AgendaItem {
   id: number;
   day_label: string; // e.g. "DAY 01"
-  day_date: string;  // e.g. "March 15, 2026"
+  day_date: string;  // e.g. "October 2, 2026"
   time: string;      // e.g. "08:00"
   activity: string;
   description: string;
@@ -80,47 +71,17 @@ function getRedis(): UnifiedRedis | null {
   return getRedisClient();
 }
 
-// ─── Seed Data Helper ──────────────────────────────────────────────────────
-function buildSeedItems(): AgendaItem[] {
-  const items: AgendaItem[] = [];
-  let order = 0;
-  programSchedule.forEach((day) => {
-    day.events.forEach((ev) => {
-      items.push({
-        id: order + 1,
-        day_label: day.day,
-        day_date: day.date,
-        time: ev.time,
-        activity: ev.activity,
-        description: ev.description,
-        location: ev.location,
-        duration: ev.duration,
-        speaker: ev.speaker,
-        sort_order: order,
-        created_at: new Date().toISOString(),
-      });
-      order++;
-    });
-  });
-  return items;
-}
-
 // ─── In-memory fallback ────────────────────────────────────────────────────
-let memoryIdCounter = 1000;
-let memoryItems: AgendaItem[] | null = null;
+let memoryIdCounter = 1;
+let memoryItems: AgendaItem[] = [];
 
 function getMemoryItems(): AgendaItem[] {
-  if (!memoryItems) {
-    memoryItems = buildSeedItems();
-    memoryIdCounter = memoryItems.length + 100;
-  }
   return memoryItems;
 }
 
 // ─── SQLite singleton ──────────────────────────────────────────────────────
 let agendaDb: any = null;
 let useMemory = false;
-let seeded = false;
 
 function getDb() {
   if (agendaDb || useMemory) return agendaDb;
@@ -153,28 +114,6 @@ function getDb() {
     `);
 
     agendaDb = db;
-
-    // Seed from static data on first run (only if table is empty)
-    if (!seeded) {
-      seeded = true;
-      const count = (db.prepare("SELECT COUNT(*) as c FROM agenda_items").get() as { c: number }).c;
-      if (count === 0) {
-        const insert = db.prepare(`
-          INSERT INTO agenda_items (day_label, day_date, time, activity, description, location, duration, speaker, sort_order)
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `);
-        let order = 0;
-        const seedAll = db.transaction(() => {
-          programSchedule.forEach((day) => {
-            day.events.forEach((ev) => {
-              insert.run(day.day, day.date, ev.time, ev.activity, ev.description, ev.location, ev.duration || null, ev.speaker || null, order++);
-            });
-          });
-        });
-        seedAll();
-      }
-    }
-
     return agendaDb;
   } catch (err) {
     console.warn("[Agenda] SQLite init failed, using memory/cloud:", err);
@@ -217,8 +156,8 @@ export async function getAllAgendaItems(): Promise<AgendaItem[]> {
   if (redis) {
     try {
       let items = await redis.get<AgendaItem[]>("lms_2026:agenda");
-      if (!items || items.length === 0) {
-        items = buildSeedItems();
+      if (items === null || items === undefined) {
+        items = [];
         await redis.set("lms_2026:agenda", items);
       }
       const sorted = items.sort((a, b) => a.sort_order - b.sort_order);
@@ -282,7 +221,7 @@ export async function createAgendaItem(data: AgendaItemInput): Promise<AgendaIte
   const redis = getRedis();
   if (redis) {
     try {
-      let items = agendaCache?.items || (await redis.get<AgendaItem[]>("lms_2026:agenda")) || buildSeedItems();
+      let items = agendaCache?.items || (await redis.get<AgendaItem[]>("lms_2026:agenda")) || [];
       const maxId = items.length > 0 ? Math.max(...items.map((i) => i.id)) : 0;
       const newId = maxId + 1;
 
@@ -377,7 +316,7 @@ export async function updateAgendaItem(id: number, data: Partial<AgendaItemInput
   const redis = getRedis();
   if (redis) {
     try {
-      let items = agendaCache?.items || (await redis.get<AgendaItem[]>("lms_2026:agenda")) || buildSeedItems();
+      let items = agendaCache?.items || (await redis.get<AgendaItem[]>("lms_2026:agenda")) || [];
       const idx = items.findIndex((i) => i.id === id);
       if (idx === -1) return null;
 
@@ -439,7 +378,7 @@ export async function deleteAgendaItem(id: number): Promise<boolean> {
   const redis = getRedis();
   if (redis) {
     try {
-      let items = agendaCache?.items || (await redis.get<AgendaItem[]>("lms_2026:agenda")) || buildSeedItems();
+      let items = agendaCache?.items || (await redis.get<AgendaItem[]>("lms_2026:agenda")) || [];
       const idx = items.findIndex((i) => i.id === id);
       if (idx === -1) return false;
 
@@ -473,6 +412,42 @@ export async function deleteAgendaItem(id: number): Promise<boolean> {
   return false;
 }
 
+export async function clearAllAgendaItems(): Promise<void> {
+  // 1. PostgreSQL
+  const pg = getPostgresPool();
+  if (pg) {
+    try {
+      await ensurePgAgendaTable();
+      await pg.query("TRUNCATE TABLE agenda_items RESTART IDENTITY");
+    } catch (err) {
+      console.error("[Agenda] PostgreSQL clear error:", err);
+    }
+  }
+
+  // 2. Redis
+  const redis = getRedis();
+  if (redis) {
+    try {
+      await redis.set("lms_2026:agenda", []);
+    } catch (err) {
+      console.error("[Agenda] Redis clear error:", err);
+    }
+  }
+
+  // 3. SQLite
+  const db = getDb();
+  if (db) {
+    try {
+      db.exec("DELETE FROM agenda_items");
+    } catch (err) {
+      console.error("[Agenda] SQLite clear error:", err);
+    }
+  }
+
+  memoryItems = [];
+  invalidateAgendaCache();
+}
+
 export async function reorderAgendaItems(orderedIds: number[]): Promise<void> {
   // 1. PostgreSQL
   const pg = getPostgresPool();
@@ -493,7 +468,7 @@ export async function reorderAgendaItems(orderedIds: number[]): Promise<void> {
   const redis = getRedis();
   if (redis) {
     try {
-      let items = agendaCache?.items || (await redis.get<AgendaItem[]>("lms_2026:agenda")) || buildSeedItems();
+      let items = agendaCache?.items || (await redis.get<AgendaItem[]>("lms_2026:agenda")) || [];
       orderedIds.forEach((id, index) => {
         const item = items.find((i) => i.id === id);
         if (item) item.sort_order = index;
