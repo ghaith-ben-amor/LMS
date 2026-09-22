@@ -35,7 +35,7 @@ export const Venue = () => {
   return (
     <section id="venue" className="py-24 sm:py-32 bg-[#050507] relative overflow-hidden">
       {/* Ambient background lighting */}
-      <div className="absolute top-1/2 right-0 w-[500px] h-[500px] bg-rose-950/20 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute top-1/2 right-0 w-72 h-72 sm:w-[500px] sm:h-[500px] bg-rose-950/20 rounded-full blur-3xl sm:blur-[140px] pointer-events-none" />
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}

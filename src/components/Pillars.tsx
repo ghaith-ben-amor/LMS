@@ -30,8 +30,8 @@ export const Pillars = () => {
       className="py-24 sm:py-32 bg-gradient-to-b from-[#050507] via-[#09070D] to-[#050507] relative overflow-hidden"
     >
       {/* Ambient background lighting */}
-      <div className="absolute top-1/3 right-0 w-[500px] h-[500px] bg-amber-500/10 rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute bottom-10 left-10 w-[400px] h-[400px] bg-rose-950/20 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute top-1/3 right-0 w-72 h-72 sm:w-[500px] sm:h-[500px] bg-amber-500/10 rounded-full blur-3xl sm:blur-[140px] pointer-events-none" />
+      <div className="absolute bottom-10 left-10 w-60 h-60 sm:w-[400px] sm:h-[400px] bg-rose-950/20 rounded-full blur-2xl sm:blur-[120px] pointer-events-none" />
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}

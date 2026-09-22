@@ -161,8 +161,8 @@ export function Navbar({ settings: propsSettings }: NavbarProps) {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="lg:hidden overflow-hidden bg-[#0A080F]/95 backdrop-blur-2xl border-b border-amber-500/20 shadow-2xl"
+            transition={{ duration: 0.25, ease: "easeInOut" }}
+            className="lg:hidden overflow-hidden bg-[#0A080F]/95 backdrop-blur-xl border-b border-amber-500/20 shadow-2xl transform-gpu"
           >
             <div className="max-w-7xl mx-auto px-6 py-8 space-y-6">
               <nav className="grid grid-cols-2 gap-3">

@@ -57,7 +57,7 @@ export const Partners = () => {
   return (
     <section id="partners" className="py-24 sm:py-32 bg-[#050507] relative overflow-hidden">
       {/* Background Lighting */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-rose-950/15 rounded-full blur-[160px] pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 sm:w-[600px] sm:h-[600px] bg-rose-950/15 rounded-full blur-3xl sm:blur-[160px] pointer-events-none" />
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}

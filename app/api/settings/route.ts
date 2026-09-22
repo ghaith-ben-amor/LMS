@@ -37,6 +37,14 @@ export async function POST(request: Request) {
       show_partners: typeof body.show_partners === "boolean" ? body.show_partners : undefined,
     });
 
+    // Broadcast real-time update via WebSocket to all connected clients
+    if (typeof (global as any).wssBroadcast === "function") {
+      (global as any).wssBroadcast({
+        type: "SETTINGS_UPDATED",
+        settings: updated,
+      });
+    }
+
     return NextResponse.json({ success: true, settings: updated });
   } catch (error) {
     console.error("Settings POST error:", error);

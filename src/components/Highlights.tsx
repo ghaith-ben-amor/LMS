@@ -17,7 +17,7 @@ export const Highlights = () => {
   return (
     <section id="highlights" className="py-24 sm:py-32 bg-[#050507] relative overflow-hidden">
       {/* Background Lighting */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-amber-500/5 rounded-full blur-[160px] pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 sm:w-[700px] sm:h-[700px] bg-amber-500/5 rounded-full blur-3xl sm:blur-[160px] pointer-events-none" />
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}

@@ -14,6 +14,7 @@ import Partners from "@/components/Partners";
 import Gallery from "@/components/Gallery";
 import Legacy from "@/components/Legacy";
 import Footer from "@/components/Footer";
+import { useWebSocket } from "@/lib/use-websocket";
 
 export default function Home() {
   const [settings, setSettings] = React.useState<{ show_speakers: boolean; show_partners: boolean }>({
@@ -21,7 +22,7 @@ export default function Home() {
     show_partners: false,
   });
 
-  React.useEffect(() => {
+  const loadSettings = React.useCallback(() => {
     fetch("/api/settings")
       .then((res) => res.json())
       .then((data) => {
@@ -32,6 +33,22 @@ export default function Home() {
       })
       .catch(() => {});
   }, []);
+
+  React.useEffect(() => {
+    loadSettings();
+  }, [loadSettings]);
+
+  // Real-time WebSocket synchronization
+  useWebSocket(
+    React.useCallback((data: any) => {
+      if (data?.type === "SETTINGS_UPDATED" && data.settings) {
+        setSettings({
+          show_speakers: Boolean(data.settings.show_speakers),
+          show_partners: Boolean(data.settings.show_partners),
+        });
+      }
+    }, [])
+  );
 
   return (
     <main className="w-full min-h-screen bg-black">

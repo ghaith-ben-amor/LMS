@@ -15,30 +15,30 @@ export const Hero = () => {
     >
       {/* Ambient Velvet Lighting Effects */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-rose-950/20 rounded-full blur-[140px]" />
-        <div className="absolute top-1/3 right-10 w-[400px] h-[400px] bg-amber-500/10 rounded-full blur-[120px]" />
-        <div className="absolute bottom-10 left-10 w-[500px] h-[500px] bg-amber-700/10 rounded-full blur-[150px]" />
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 sm:w-[600px] sm:h-[600px] bg-rose-950/20 rounded-full blur-3xl sm:blur-[140px]" />
+        <div className="absolute top-1/3 right-10 w-60 h-60 sm:w-[400px] sm:h-[400px] bg-amber-500/10 rounded-full blur-2xl sm:blur-[120px]" />
+        <div className="absolute bottom-10 left-10 w-72 h-72 sm:w-[500px] sm:h-[500px] bg-amber-700/10 rounded-full blur-3xl sm:blur-[150px]" />
 
-        {/* Ambient Gold Particles */}
+        {/* Ambient Gold Particles (Optimized for Mobile) */}
         <div className="absolute inset-0 opacity-40">
-          {[...Array(24)].map((_, i) => (
+          {[...Array(12)].map((_, i) => (
             <motion.div
               key={i}
-              className="absolute w-1 h-1 bg-amber-300 rounded-full shadow-[0_0_8px_#D4AF37]"
+              className="absolute w-1 h-1 bg-amber-300 rounded-full shadow-[0_0_8px_#D4AF37] transform-gpu"
               animate={{
-                y: [0, -35, 0],
+                y: [0, -30, 0],
                 opacity: [0.1, 0.7, 0.1],
-                scale: [1, 1.3, 1],
+                scale: [1, 1.2, 1],
               }}
               transition={{
-                duration: 4 + (i % 5),
+                duration: 4 + (i % 4),
                 repeat: Infinity,
-                delay: (i * 0.2) % 3,
+                delay: (i * 0.3) % 3,
                 ease: "easeInOut",
               }}
               style={{
-                left: `${(i * 17 + 5) % 95}%`,
-                top: `${(i * 23 + 10) % 90}%`,
+                left: `${(i * 21 + 5) % 95}%`,
+                top: `${(i * 27 + 10) % 90}%`,
               }}
             />
           ))}
@@ -52,15 +52,15 @@ export const Hero = () => {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-obsidian-surface/80 border border-amber-500/30 text-gold shadow-lg shadow-black/50 mb-8"
+          className="inline-flex items-center gap-2 px-3 py-1 sm:px-4 sm:py-1.5 rounded-full bg-obsidian-surface/80 border border-amber-500/30 text-gold shadow-lg shadow-black/50 mb-6 sm:mb-8 max-w-full overflow-hidden"
         >
-          <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-          <span className="text-xs font-bold tracking-[0.2em] uppercase text-ivory">
+          <Sparkles className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
+          <span className="text-[0.65rem] sm:text-xs font-bold tracking-[0.15em] sm:tracking-[0.2em] uppercase text-ivory truncate">
             AIESEC University Presents
           </span>
-          <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-          <span className="text-xs font-bold tracking-widest text-amber-400">
-            LMS 2K26 DELEGATE PORTAL
+          <span className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0" />
+          <span className="text-[0.65rem] sm:text-xs font-bold tracking-widest text-amber-400 truncate">
+            LMS 2K26 PORTAL
           </span>
         </motion.div>
 
@@ -69,7 +69,7 @@ export const Hero = () => {
           initial={{ opacity: 0, scale: 0.85 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.9, delay: 0.2 }}
-          className="my-4 flex items-center justify-center"
+          className="my-2 sm:my-4 flex items-center justify-center transform-gpu"
         >
           <LmsAnimation />
         </motion.div>
@@ -79,16 +79,16 @@ export const Hero = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.4 }}
-          className="space-y-4 max-w-4xl"
+          className="space-y-3 sm:space-y-4 max-w-4xl"
         >
-          <h1 className="font-serif text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold tracking-wider leading-[1.05] text-ivory">
+          <h1 className="font-serif text-3xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold tracking-wider leading-[1.08] text-ivory">
             LEAD WITH PURPOSE.
             <br />
             <span className="text-gradient-gold">DISCOVER YOUR POTENTIAL.</span>
           </h1>
 
-          <p className="text-sm sm:text-base md:text-lg lg:text-xl text-ivory-muted font-light max-w-2xl mx-auto leading-relaxed tracking-wide pt-2">
-            Join 200+ delegates in Hammamet for LMS 2K26 — the flagship Local Motivation Seminar featuring high-impact workshops, inspiring keynotes, and transformative networking.
+          <p className="text-xs sm:text-base md:text-lg lg:text-xl text-ivory-muted font-light max-w-2xl mx-auto leading-relaxed tracking-wide pt-1 sm:pt-2">
+            Join 200+ delegates for LMS 2K26 — the flagship Local Motivation Seminar featuring high-impact workshops, inspiring keynotes, and transformative networking.
           </p>
         </motion.div>
 
@@ -97,19 +97,19 @@ export const Hero = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.6 }}
-          className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 mt-8 mb-10 text-xs sm:text-sm text-ivory-muted"
+          className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-6 mt-6 sm:mt-8 mb-8 sm:mb-10 text-xs sm:text-sm text-ivory-muted"
         >
-          <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-obsidian-card border border-amber-500/15">
-            <Calendar className="w-4 h-4 text-gold" />
-            <span className="font-semibold text-ivory">2–4 October 2026</span>
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-obsidian-card border border-amber-500/15">
+            <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gold" />
+            <span className="font-semibold text-ivory text-xs sm:text-sm">2–4 October 2026</span>
           </div>
-          <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-obsidian-card border border-amber-500/15">
-            <MapPin className="w-4 h-4 text-gold" />
-            <span className="font-semibold text-ivory">Hammamet, Tunisia</span>
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-obsidian-card border border-amber-500/15">
+            <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gold" />
+            <span className="font-semibold text-ivory text-xs sm:text-sm">{eventConfig.event.location}</span>
           </div>
-          <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-obsidian-card border border-amber-500/15">
-            <Award className="w-4 h-4 text-gold" />
-            <span className="font-semibold text-ivory">Official Delegate Portal</span>
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-obsidian-card border border-amber-500/15">
+            <Award className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gold" />
+            <span className="font-semibold text-ivory text-xs sm:text-sm">Official Delegate Portal</span>
           </div>
         </motion.div>
 

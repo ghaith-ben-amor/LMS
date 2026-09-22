@@ -15,7 +15,7 @@ export const Speakers = () => {
   return (
     <section id="speakers" className="py-24 sm:py-32 bg-[#050507] relative overflow-hidden">
       {/* Background Ambient Lighting */}
-      <div className="absolute top-1/3 left-10 w-[450px] h-[450px] bg-rose-950/20 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute top-1/3 left-10 w-72 h-72 sm:w-[450px] sm:h-[450px] bg-rose-950/20 rounded-full blur-3xl sm:blur-[140px] pointer-events-none" />
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}

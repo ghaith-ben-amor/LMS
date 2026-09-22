@@ -5,15 +5,15 @@ import { motion } from "framer-motion";
 
 export const LmsAnimation = () => {
   return (
-    <div className="relative w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 flex items-center justify-center select-none">
+    <div className="relative w-52 h-52 sm:w-80 sm:h-80 md:w-96 md:h-96 flex items-center justify-center select-none transform-gpu">
       {/* 1. Deep Core Ambient Glow */}
-      <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-amber-500/25 via-rose-900/30 to-amber-300/10 blur-3xl animate-pulse-subtle" />
+      <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-amber-500/25 via-rose-900/30 to-amber-300/10 blur-2xl sm:blur-3xl animate-pulse-subtle" />
 
       {/* 2. Expanding Radar Energy Waves */}
       {[0, 1.5, 3].map((delay, idx) => (
         <motion.div
           key={idx}
-          className="absolute inset-4 rounded-full border border-amber-400/20"
+          className="absolute inset-4 rounded-full border border-amber-400/20 transform-gpu"
           initial={{ scale: 0.6, opacity: 0.8 }}
           animate={{ scale: 1.4, opacity: 0 }}
           transition={{
@@ -27,7 +27,7 @@ export const LmsAnimation = () => {
 
       {/* 3. Outer Celestial Orbiting Ring (Clockwise) */}
       <motion.div
-        className="absolute inset-2 rounded-full border border-amber-500/25 border-dashed"
+        className="absolute inset-2 rounded-full border border-amber-500/25 border-dashed transform-gpu"
         animate={{ rotate: 360 }}
         transition={{ duration: 35, repeat: Infinity, ease: "linear" }}
       >
