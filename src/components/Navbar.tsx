@@ -6,22 +6,53 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Sparkles } from "lucide-react";
 import Button from "./ui/Button";
 
-const navItems = [
-  { label: "Home", href: "#home" },
-  { label: "About", href: "#about" },
-  { label: "Pillars", href: "#pillars" },
-  { label: "Highlights", href: "#highlights" },
-  { label: "Program", href: "#program" },
-  { label: "Speakers", href: "#speakers" },
-  { label: "Venue", href: "#venue" },
-  { label: "Gallery", href: "#gallery" },
-  { label: "Partners", href: "#partners" },
-];
+export interface NavbarProps {
+  settings?: {
+    show_speakers?: boolean;
+    show_partners?: boolean;
+  };
+}
 
-export function Navbar() {
+export function Navbar({ settings: propsSettings }: NavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
+  const [fetchedSettings, setFetchedSettings] = useState<{ show_speakers: boolean; show_partners: boolean }>({
+    show_speakers: false,
+    show_partners: false,
+  });
+
+  useEffect(() => {
+    if (propsSettings?.show_speakers !== undefined || propsSettings?.show_partners !== undefined) {
+      setFetchedSettings({
+        show_speakers: Boolean(propsSettings?.show_speakers),
+        show_partners: Boolean(propsSettings?.show_partners),
+      });
+      return;
+    }
+
+    fetch("/api/settings")
+      .then((res) => res.json())
+      .then((data) => {
+        setFetchedSettings({
+          show_speakers: Boolean(data.show_speakers),
+          show_partners: Boolean(data.show_partners),
+        });
+      })
+      .catch(() => {});
+  }, [propsSettings]);
+
+  const navItems = [
+    { label: "Home", href: "#home" },
+    { label: "About", href: "#about" },
+    { label: "Pillars", href: "#pillars" },
+    { label: "Highlights", href: "#highlights" },
+    { label: "Program", href: "#program" },
+    ...(fetchedSettings.show_speakers ? [{ label: "Speakers", href: "#speakers" }] : []),
+    { label: "Venue", href: "#venue" },
+    { label: "Gallery", href: "#gallery" },
+    ...(fetchedSettings.show_partners ? [{ label: "Partners", href: "#partners" }] : []),
+  ];
 
   useEffect(() => {
     const handleScroll = () => {
@@ -46,7 +77,7 @@ export function Navbar() {
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [fetchedSettings]);
 
   return (
     <header
@@ -68,9 +99,6 @@ export function Navbar() {
             <div className="flex flex-col">
               <span className="font-serif text-lg sm:text-xl font-bold tracking-widest text-ivory group-hover:text-gold transition-colors">
                 LMS <span className="text-amber-400">2K26</span>
-              </span>
-              <span className="text-[0.65rem] tracking-[0.25em] text-gray-400 uppercase font-sans">
-                OC METANOIA
               </span>
             </div>
           </Link>

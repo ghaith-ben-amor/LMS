@@ -11,7 +11,7 @@ export const eventConfig = {
     taglineAlt: "Lead With Purpose. Discover Your Potential.",
     description: "The premier Local Motivation Seminar where delegates connect, develop strategic leadership capabilities, and drive impactful change.",
     year: 2026,
-    location: "Hammamet, Tunisia",
+    location: "Secret Location (To Be Revealed)",
   },
 
   // Countdown Date (ISO string format)
@@ -34,7 +34,7 @@ export const eventConfig = {
   hero: {
     title: "LMS 2K26",
     subtitle: "LEAD WITH PURPOSE.\nDISCOVER YOUR POTENTIAL.",
-    location: "Hammamet, Tunisia",
+    location: "Secret Location (To Be Revealed)",
     cta: "REGISTER AS DELEGATE",
   },
 

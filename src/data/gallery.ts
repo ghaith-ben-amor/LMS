@@ -11,6 +11,36 @@ export interface GalleryImage {
 
 export const galleryImages: GalleryImage[] = [
   {
+    id: "img-uploaded-1",
+    title: "Delegates Synergy & Team Spirit",
+    image: "/images/gallery/gallery-01.jpg",
+    category: "social",
+  },
+  {
+    id: "img-uploaded-2",
+    title: "Interactive Assembly & Sessions",
+    image: "/images/gallery/gallery-02.jpg",
+    category: "workshops",
+  },
+  {
+    id: "img-uploaded-3",
+    title: "Leadership Address & Keynote",
+    image: "/images/gallery/gallery-03.jpg",
+    category: "ceremonies",
+  },
+  {
+    id: "img-uploaded-4",
+    title: "Delegate Celebration & Energy",
+    image: "/images/gallery/gallery-04.jpg",
+    category: "social",
+  },
+  {
+    id: "img-uploaded-5",
+    title: "Atmospheric Main Stage Session",
+    image: "/images/gallery/gallery-05.jpg",
+    category: "networking",
+  },
+  {
     id: "img-1",
     title: "Networking Gala Night",
     image: "/images/gallery/image-01.jpg",
@@ -39,23 +69,5 @@ export const galleryImages: GalleryImage[] = [
     title: "Delegate Networking Session",
     image: "https://images.unsplash.com/photo-1515187029135-18ee286d815b?auto=format&fit=crop&w=800&q=80",
     category: "networking",
-  },
-  {
-    id: "img-6",
-    title: "Keynote Leadership Panel",
-    image: "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?auto=format&fit=crop&w=800&q=80",
-    category: "workshops",
-  },
-  {
-    id: "img-7",
-    title: "Celebration Dinner",
-    image: "https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?auto=format&fit=crop&w=800&q=80",
-    category: "social",
-  },
-  {
-    id: "img-8",
-    title: "Closing Ceremony & Awards",
-    image: "https://images.unsplash.com/photo-1469488865564-c2de10f69f96?auto=format&fit=crop&w=800&q=80",
-    category: "ceremonies",
   },
 ];

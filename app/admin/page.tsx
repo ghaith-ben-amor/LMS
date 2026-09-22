@@ -6,7 +6,7 @@ import {
   RefreshCw, Search, Trash2, Users, Utensils, Download,
   ArrowLeft, Calendar, Plus, Pencil, Check, X, GripVertical,
   ChevronDown, ChevronUp, Clock, MapPin, User as UserIcon, ChevronLeft, ChevronRight,
-  Lock, LogOut, Eye, EyeOff, ShieldCheck, Building, UtensilsCrossed, TrendingUp,
+  Lock, LogOut, Eye, EyeOff, ShieldCheck, Building, UtensilsCrossed, TrendingUp, Sliders,
 } from "lucide-react";
 
 
@@ -55,7 +55,7 @@ const EMPTY_FORM: AgendaForm = {
   speaker: "",
 };
 
-type Tab = "delegates" | "agenda";
+type Tab = "delegates" | "agenda" | "settings";
 
 // ─── Picker helpers ──────────────────────────────────────────────────────────
 
@@ -535,8 +535,8 @@ export default function AdminPage() {
         </header>
 
         {/* Tab Navigation */}
-        <nav className="flex gap-2 border-b border-white/10">
-          {(["delegates", "agenda"] as Tab[]).map((tab) => (
+        <nav className="flex gap-2 border-b border-white/10 overflow-x-auto">
+          {(["delegates", "agenda", "settings"] as Tab[]).map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -546,14 +546,30 @@ export default function AdminPage() {
                   : "border-transparent text-ivory-muted hover:text-ivory"
               }`}
             >
-              {tab === "delegates" ? <Users size={15} /> : <Calendar size={15} />}
-              {tab === "delegates" ? "Delegate Registrations" : "Agenda Manager"}
+              {tab === "delegates" ? (
+                <Users size={15} />
+              ) : tab === "agenda" ? (
+                <Calendar size={15} />
+              ) : (
+                <Sliders size={15} />
+              )}
+              {tab === "delegates"
+                ? "Delegate Registrations"
+                : tab === "agenda"
+                ? "Agenda Manager"
+                : "Site Visibility Controls"}
             </button>
           ))}
         </nav>
 
         {/* Tab Content */}
-        {activeTab === "delegates" ? <DelegatesTab /> : <AgendaTab />}
+        {activeTab === "delegates" ? (
+          <DelegatesTab />
+        ) : activeTab === "agenda" ? (
+          <AgendaTab />
+        ) : (
+          <SettingsTab />
+        )}
       </div>
     </main>
   );
@@ -1317,6 +1333,173 @@ function Field({ label, hint, children }: { label: string; hint?: string; childr
         {hint && <span className="ml-2 text-ivory-dark font-normal normal-case tracking-normal">({hint})</span>}
       </label>
       {children}
+    </div>
+  );
+}
+
+// ─── Settings Tab ────────────────────────────────────────────────────────────
+
+function SettingsTab() {
+  const [settings, setSettings] = useState<{ show_speakers: boolean; show_partners: boolean }>({
+    show_speakers: false,
+    show_partners: false,
+  });
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [message, setMessage] = useState<{ text: string; isError?: boolean } | null>(null);
+
+  useEffect(() => {
+    setIsLoading(true);
+    fetch("/api/settings")
+      .then((res) => res.json())
+      .then((data) => {
+        setSettings({
+          show_speakers: Boolean(data.show_speakers),
+          show_partners: Boolean(data.show_partners),
+        });
+      })
+      .catch(() => {
+        setMessage({ text: "Failed to fetch visibility settings", isError: true });
+      })
+      .finally(() => setIsLoading(false));
+  }, []);
+
+  const toggleSetting = async (key: "show_speakers" | "show_partners") => {
+    const newValue = !settings[key];
+    const updated = { ...settings, [key]: newValue };
+    setSettings(updated);
+    setIsSaving(true);
+    setMessage(null);
+
+    try {
+      const res = await fetch("/api/settings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updated),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Save failed");
+      setMessage({ text: `${key === "show_speakers" ? "Speakers" : "Partners"} section visibility updated successfully!` });
+    } catch (err) {
+      setSettings(settings); // rollback
+      setMessage({ text: err instanceof Error ? err.message : "Failed to update settings", isError: true });
+    } finally {
+      setIsSaving(false);
+      setTimeout(() => setMessage(null), 4000);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center py-20">
+        <RefreshCw className="animate-spin text-amber-400" size={28} />
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-8 max-w-4xl">
+      <div>
+        <h2 className="font-serif text-3xl text-ivory font-bold">Public Site Visibility Controls</h2>
+        <p className="text-xs text-ivory-muted mt-1">
+          Control which sections are visible on the public LMS 2K26 website. By default, sections are hidden until you choose to make them appear.
+        </p>
+      </div>
+
+      {message && (
+        <div className={`p-4 rounded-xl border text-xs font-semibold flex items-center gap-2 ${
+          message.isError
+            ? "border-red-500/40 bg-red-950/40 text-red-200"
+            : "border-emerald-500/40 bg-emerald-950/40 text-emerald-300"
+        }`}>
+          {message.isError ? <X size={16} /> : <Check size={16} />}
+          <span>{message.text}</span>
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Speakers Visibility Card */}
+        <div className="rounded-3xl border border-amber-500/20 bg-[#0e0c14]/90 p-6 backdrop-blur-xl space-y-5 shadow-xl">
+          <div className="flex items-center justify-between">
+            <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-400/30 flex items-center justify-center text-amber-400">
+              {settings.show_speakers ? <Eye size={22} /> : <EyeOff size={22} />}
+            </div>
+            <Badge variant={settings.show_speakers ? "gold" : "outline"}>
+              {settings.show_speakers ? "Published & Visible" : "Hidden"}
+            </Badge>
+          </div>
+
+          <div>
+            <h3 className="font-serif text-xl font-bold text-ivory mb-1">Keynote Speakers Section</h3>
+            <p className="text-xs text-ivory-muted leading-relaxed">
+              When hidden, the &quot;Speakers&quot; section and menu link will not appear on the homepage. Enable this when admin chooses to publish speaker profiles.
+            </p>
+          </div>
+
+          <div className="pt-2">
+            <button
+              onClick={() => toggleSetting("show_speakers")}
+              disabled={isSaving}
+              className={`w-full py-3 px-4 rounded-xl text-xs font-extrabold uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                settings.show_speakers
+                  ? "bg-amber-500 text-obsidian shadow-lg shadow-amber-500/20 hover:bg-amber-400"
+                  : "bg-obsidian-surface text-ivory-muted border border-amber-500/20 hover:border-amber-500/50 hover:text-ivory"
+              }`}
+            >
+              {settings.show_speakers ? (
+                <>
+                  <EyeOff size={16} /> Hide Speakers Section
+                </>
+              ) : (
+                <>
+                  <Eye size={16} /> Make Speakers Section Appear
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Partners Visibility Card */}
+        <div className="rounded-3xl border border-amber-500/20 bg-[#0e0c14]/90 p-6 backdrop-blur-xl space-y-5 shadow-xl">
+          <div className="flex items-center justify-between">
+            <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-400/30 flex items-center justify-center text-amber-400">
+              {settings.show_partners ? <Eye size={22} /> : <EyeOff size={22} />}
+            </div>
+            <Badge variant={settings.show_partners ? "gold" : "outline"}>
+              {settings.show_partners ? "Published & Visible" : "Hidden"}
+            </Badge>
+          </div>
+
+          <div>
+            <h3 className="font-serif text-xl font-bold text-ivory mb-1">Partners & Sponsors Section</h3>
+            <p className="text-xs text-ivory-muted leading-relaxed">
+              When hidden, the &quot;Partners&quot; section and menu link will not appear on the homepage. Enable this when admin chooses to display partners.
+            </p>
+          </div>
+
+          <div className="pt-2">
+            <button
+              onClick={() => toggleSetting("show_partners")}
+              disabled={isSaving}
+              className={`w-full py-3 px-4 rounded-xl text-xs font-extrabold uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                settings.show_partners
+                  ? "bg-amber-500 text-obsidian shadow-lg shadow-amber-500/20 hover:bg-amber-400"
+                  : "bg-obsidian-surface text-ivory-muted border border-amber-500/20 hover:border-amber-500/50 hover:text-ivory"
+              }`}
+            >
+              {settings.show_partners ? (
+                <>
+                  <EyeOff size={16} /> Hide Partners Section
+                </>
+              ) : (
+                <>
+                  <Eye size={16} /> Make Partners Section Appear
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

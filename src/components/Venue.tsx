@@ -6,28 +6,28 @@ import { motion } from "framer-motion";
 import { eventConfig } from "@/data/event-config";
 import Badge from "./ui/Badge";
 import Button from "./ui/Button";
-import { Home, Utensils, Wifi, MapPin, Compass, ShieldCheck } from "lucide-react";
+import { Home, Utensils, Wifi, Lock, Sparkles, EyeOff } from "lucide-react";
 
 const venueFeatures = [
   {
+    icon: Lock,
+    title: "Secret Destination",
+    description: "Kept strictly confidential to offer an exclusive, immersive experience.",
+  },
+  {
     icon: Home,
-    title: "Luxury Accommodation",
-    description: "5-star Mediterranean resort rooms designed for comfort and privacy.",
+    title: "5-Star Resort Experience",
+    description: "World-class rooms and luxury amenities tailored for LMS 2K26 delegates.",
   },
   {
     icon: Utensils,
     title: "Gourmet Catering",
-    description: "Chef-prepared dining sessions & networking evening receptions.",
+    description: "Chef-prepared dining sessions & evening networking receptions.",
   },
   {
     icon: Wifi,
     title: "State-of-the-Art Facilities",
     description: "High-speed optical Wi-Fi, audio-visual halls, and breakout rooms.",
-  },
-  {
-    icon: MapPin,
-    title: "Coastal Hammamet",
-    description: "Conveniently accessible via Tunis-Carthage Airport shuttle.",
   },
 ];
 
@@ -41,15 +41,16 @@ export const Venue = () => {
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-20">
           <Badge variant="gold" size="md" className="mb-4">
-            Exclusive Destination
+            Confidential Destination
           </Badge>
 
           <h2 className="font-serif text-4xl sm:text-6xl font-extrabold text-ivory tracking-wider mb-4">
             THE <span className="text-gradient-gold">VENUE</span>
           </h2>
 
-          <p className="font-serif text-2xl sm:text-3xl text-amber-200/90 font-light mb-6">
-            {eventConfig.event.location}
+          <p className="font-serif text-2xl sm:text-3xl text-amber-200/90 font-light mb-6 flex items-center justify-center gap-3">
+            <Lock className="w-6 h-6 text-amber-400" />
+            <span>{eventConfig.event.location}</span>
           </p>
 
           <div className="w-20 h-1 bg-gradient-to-r from-rose-900 via-amber-400 to-rose-900 mx-auto rounded-full" />
@@ -57,7 +58,7 @@ export const Venue = () => {
 
         {/* Venue Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          {/* Venue Image Card */}
+          {/* Venue Image Card with Secret Vignette */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -67,24 +68,37 @@ export const Venue = () => {
           >
             <Image
               src="/images/venue/venue-main.jpg"
-              alt="Hammamet Tunisia Resort Venue"
+              alt="Secret LMS 2K26 Venue"
               fill
-              className="object-cover group-hover:scale-105 transition-transform duration-700"
+              className="object-cover filter blur-[4px] brightness-75 group-hover:scale-105 transition-transform duration-700"
             />
 
-            {/* Dark Gradient Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0D0B10] via-black/30 to-transparent" />
+            {/* Dark Blur Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0D0B10] via-black/60 to-black/30" />
+
+            {/* Secret Center Emblem */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center z-10">
+              <div className="w-20 h-20 rounded-full bg-amber-500/10 border-2 border-amber-400/50 backdrop-blur-xl flex items-center justify-center mb-4 shadow-xl shadow-amber-500/20 animate-pulse">
+                <EyeOff className="w-10 h-10 text-amber-400" />
+              </div>
+              <h3 className="font-serif text-2xl sm:text-3xl font-extrabold text-ivory tracking-widest uppercase">
+                LOCATION TOP SECRET
+              </h3>
+              <p className="text-xs sm:text-sm text-amber-300 font-medium max-w-xs mt-2">
+                Revealed exclusively to registered delegates prior to departure.
+              </p>
+            </div>
 
             {/* Floating Location Badge */}
-            <div className="absolute bottom-6 left-6 right-6 p-6 rounded-2xl glass-card border border-amber-500/30 backdrop-blur-xl">
-              <div className="flex items-center gap-3 mb-2">
-                <Compass className="w-5 h-5 text-gold animate-spin-slow" />
-                <span className="font-serif text-lg font-bold text-ivory">
-                  Hammamet Coastal Resort
+            <div className="absolute bottom-6 left-6 right-6 p-5 rounded-2xl glass-card border border-amber-500/30 backdrop-blur-xl z-20">
+              <div className="flex items-center gap-3 mb-1">
+                <Sparkles className="w-5 h-5 text-gold" />
+                <span className="font-serif text-base font-bold text-ivory">
+                  Secret Venue Unveiling Soon
                 </span>
               </div>
               <p className="text-xs text-ivory-muted font-light">
-                An intimate seaside setting designed to foster deep reflection and transformative connections.
+                An extraordinary setting handpicked to inspire leadership, synergy, and transformative impact.
               </p>
             </div>
           </motion.div>
@@ -98,7 +112,7 @@ export const Venue = () => {
             className="space-y-8"
           >
             <p className="text-base sm:text-lg text-ivory-muted font-light leading-relaxed">
-              Nestled along the Mediterranean coast in Hammamet, our selected venue combines elegance, privacy, and world-class facilities to create an unforgettable environment for LMS 2K26 delegates.
+              The exact venue location for LMS 2K26 is currently kept top-secret to create an unforgettable sense of excitement and prestige. Confirmed delegates will receive their exclusive venue access pass and directions ahead of the event.
             </p>
 
             {/* Amenities Grid */}
@@ -128,7 +142,7 @@ export const Venue = () => {
 
             <div className="pt-4">
               <Button href="/registration" variant="primary" size="lg">
-                Reserve Your Place
+                Register To Unlock Venue Details
               </Button>
             </div>
           </motion.div>
