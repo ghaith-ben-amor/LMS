@@ -58,10 +58,6 @@ export const Hero = () => {
           <span className="text-[0.65rem] sm:text-xs font-bold tracking-[0.15em] sm:tracking-[0.2em] uppercase text-ivory truncate">
             AIESEC University Presents
           </span>
-          <span className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0" />
-          <span className="text-[0.65rem] sm:text-xs font-bold tracking-widest text-amber-400 truncate">
-            LMS 2K26 PORTAL
-          </span>
         </motion.div>
 
         {/* Animated LMS 2K26 Emblem */}
@@ -79,9 +75,9 @@ export const Hero = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.4 }}
-          className="space-y-3 sm:space-y-4 max-w-4xl"
+          className="space-y-3 sm:space-y-4 max-w-3xl"
         >
-          <h1 className="font-serif text-3xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold tracking-wider leading-[1.08] text-ivory">
+          <h1 className="font-serif text-xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-wider leading-snug text-ivory">
             LEAD WITH PURPOSE.
             <br />
             <span className="text-gradient-gold">DISCOVER YOUR POTENTIAL.</span>
@@ -95,13 +91,9 @@ export const Hero = () => {
           transition={{ duration: 0.6, delay: 0.6 }}
           className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-6 mt-6 sm:mt-8 mb-8 sm:mb-10 text-xs sm:text-sm text-ivory-muted"
         >
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-obsidian-card border border-amber-500/15">
+          <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-obsidian-card border border-amber-500/15">
             <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gold" />
             <span className="font-semibold text-ivory text-xs sm:text-sm">2–4 October 2026</span>
-          </div>
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-obsidian-card border border-amber-500/15">
-            <Award className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gold" />
-            <span className="font-semibold text-ivory text-xs sm:text-sm">Official Delegate Portal</span>
           </div>
         </motion.div>
 
@@ -110,13 +102,10 @@ export const Hero = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.8 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto"
+          className="flex items-center justify-center gap-4 w-full sm:w-auto"
         >
-          <Button href="/registration" variant="primary" size="lg" className="w-full sm:w-auto min-w-[200px]">
+          <Button href="/registration" variant="primary" size="lg" className="w-full sm:w-auto min-w-[220px]">
             Register as Delegate
-          </Button>
-          <Button href="#about" variant="secondary" size="lg" className="w-full sm:w-auto min-w-[200px]">
-            Explore Conference
           </Button>
         </motion.div>
 
