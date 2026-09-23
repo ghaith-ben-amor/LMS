@@ -57,11 +57,6 @@ export const Footer = () => {
                 </a>
               </li>
               <li>
-                <a href="#highlights" className="hover:text-gold transition-colors">
-                  Summit Highlights
-                </a>
-              </li>
-              <li>
                 <a href="#program" className="hover:text-gold transition-colors">
                   Program Schedule
                 </a>

@@ -32,7 +32,7 @@ export default function RegistrationPage() {
               </Badge>
 
               <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-extrabold text-ivory leading-tight">
-                JOIN THE <span className="text-gradient-gold">SUMMIT.</span>
+                JOIN THE <span className="text-gradient-gold">CONFERENCE.</span>
               </h1>
             </div>
 

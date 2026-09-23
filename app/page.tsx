@@ -6,7 +6,6 @@ import Hero from "@/components/Hero";
 import Countdown from "@/components/Countdown";
 import About from "@/components/About";
 import Pillars from "@/components/Pillars";
-import Highlights from "@/components/Highlights";
 import Program from "@/components/Program";
 import Speakers from "@/components/Speakers";
 import Venue from "@/components/Venue";
@@ -61,7 +60,6 @@ export default function Home() {
 
       <About />
       <Pillars />
-      <Highlights />
       <Program />
       {settings.show_speakers && <Speakers />}
       <Venue />

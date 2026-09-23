@@ -46,7 +46,6 @@ export function Navbar({ settings: propsSettings }: NavbarProps) {
     { label: "Home", href: "#home" },
     { label: "About", href: "#about" },
     { label: "Pillars", href: "#pillars" },
-    { label: "Highlights", href: "#highlights" },
     { label: "Program", href: "#program" },
     ...(fetchedSettings.show_speakers ? [{ label: "Speakers", href: "#speakers" }] : []),
     { label: "Venue", href: "#venue" },
