@@ -75,21 +75,10 @@ export function generateInvitationHtml(delegate: Delegate): string {
         <!-- Main Container -->
         <table role="presentation" width="100%" style="max-width: 600px; background-color: #0D0B10; border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 24px; overflow: hidden; box-shadow: 0 25px 60px rgba(0,0,0,0.8), 0 0 40px rgba(122, 28, 40, 0.25);">
           
-          <!-- Banner Header (LMS 2K26 Delegate Portal) -->
+          <!-- Banner Header (LMS 2K26 Official Image Banner) -->
           <tr>
-            <td style="background: linear-gradient(135deg, #1f070b 0%, #4a0e17 50%, #0d0b10 100%); padding: 40px 30px; text-align: center; border-bottom: 1px solid rgba(212, 175, 55, 0.4);">
-              <table role="presentation" width="100%">
-                <tr>
-                  <td align="center">
-                    <div style="font-size: 36px; line-height: 1; margin-bottom: 10px; filter: drop-shadow(0 0 10px rgba(212,175,55,0.4));">🏆</div>
-                    <span style="display: inline-block; background: linear-gradient(135deg, rgba(212,175,55,0.2) 0%, rgba(122,28,40,0.4) 100%); border: 1px solid rgba(212, 175, 55, 0.5); padding: 5px 18px; border-radius: 20px; font-size: 11px; font-weight: 700; letter-spacing: 2.5px; color: #F7E4BE; text-transform: uppercase; margin-bottom: 14px;">Official Delegate Pass</span>
-                    <h1 style="margin: 8px 0 0 0; font-family: Georgia, 'Times New Roman', serif; font-size: 36px; font-weight: 900; letter-spacing: 4px; color: #F7E4BE; text-shadow: 0 2px 15px rgba(212, 175, 55, 0.4);">
-                      LMS <span style="color: #D4AF37;">2K26</span>
-                    </h1>
-                    <p style="margin: 8px 0 0 0; font-size: 12px; color: #C5C0B6; letter-spacing: 2px; text-transform: uppercase;">LOCAL MOTIVATION SEMINAR • DELEGATE SUMMIT 2K26</p>
-                  </td>
-                </tr>
-              </table>
+            <td style="padding: 0; text-align: center; border-bottom: 1px solid rgba(212, 175, 55, 0.4); background-color: #0D0B10;">
+              <img src="https://lms-2k26.vercel.app/images/email-header.png" alt="LMS 2K26 Local Motivation Seminar" style="width: 100%; max-width: 600px; height: auto; display: block; border: 0;" />
             </td>
           </tr>
 
@@ -191,7 +180,7 @@ export function generateInvitationHtml(delegate: Delegate): string {
           <!-- CALL TO ACTION BUTTON -->
           <tr>
             <td align="center" style="padding: 10px 35px 35px 35px;">
-              <a href="https://lms-xi-liard.vercel.app" target="_blank" style="display: inline-block; background: linear-gradient(135deg, #D4AF37 0%, #A88726 100%); color: #050507; text-decoration: none; font-weight: 800; font-size: 14px; padding: 16px 40px; border-radius: 14px; box-shadow: 0 10px 30px rgba(212,175,55,0.35); text-transform: uppercase; letter-spacing: 1.5px; border: 1px solid #F7E4BE;">
+              <a href="https://lms-2k26.vercel.app/#home" target="_blank" style="display: inline-block; background: linear-gradient(135deg, #D4AF37 0%, #A88726 100%); color: #050507; text-decoration: none; font-weight: 800; font-size: 14px; padding: 16px 40px; border-radius: 14px; box-shadow: 0 10px 30px rgba(212,175,55,0.35); text-transform: uppercase; letter-spacing: 1.5px; border: 1px solid #F7E4BE;">
                 Explore Event Website →
               </a>
             </td>
@@ -369,7 +358,7 @@ export function generateAdminNotificationHtml(delegate: Delegate): string {
               </div>
 
               <div style="text-align: center; margin-top: 28px;">
-                <a href="https://lms-xi-liard.vercel.app/admin" target="_blank" style="display: inline-block; background: linear-gradient(135deg, #D4AF37 0%, #A88726 100%); color: #050507; font-weight: 800; text-decoration: none; padding: 14px 34px; border-radius: 12px; font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; border: 1px solid #F7E4BE; box-shadow: 0 8px 25px rgba(212,175,55,0.3);">
+                <a href="https://lms-2k26.vercel.app/admin" target="_blank" style="display: inline-block; background: linear-gradient(135deg, #D4AF37 0%, #A88726 100%); color: #050507; font-weight: 800; text-decoration: none; padding: 14px 34px; border-radius: 12px; font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; border: 1px solid #F7E4BE; box-shadow: 0 8px 25px rgba(212,175,55,0.3);">
                   Open Admin Dashboard →
                 </a>
               </div>
@@ -406,7 +395,7 @@ export async function sendAdminNotificationEmail(delegate: Delegate): Promise<Ma
       to: adminEmail,
       subject: `🚨 New Registration Alert: ${delegate.full_name} (#LMS-2026-${String(delegate.id).padStart(4, "0")})`,
       html: htmlContent,
-      text: `New Registration Alert!\n\nName: ${delegate.full_name}\nEmail: ${delegate.email}\nOrganization: ${delegate.organization || "N/A"}\n\nView at https://lms-2026.vercel.app/admin`,
+      text: `New Registration Alert!\n\nName: ${delegate.full_name}\nEmail: ${delegate.email}\nOrganization: ${delegate.organization || "N/A"}\n\nView at https://lms-2k26.vercel.app/admin`,
     });
 
     console.log(`[Mailer] Admin notification email successfully sent to ${adminEmail}. Message ID: ${info.messageId}`);
