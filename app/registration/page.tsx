@@ -31,8 +31,8 @@ export default function RegistrationPage() {
                 Official Registration
               </Badge>
 
-              <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-extrabold text-ivory leading-tight">
-                JOIN THE <span className="text-gradient-gold">CONFERENCE.</span>
+              <h1 className="font-serif text-3xl sm:text-4xl lg:text-4xl xl:text-5xl font-extrabold text-ivory leading-tight tracking-tight">
+                JOIN THE <span className="text-gradient-gold block mt-1">CONFERENCE.</span>
               </h1>
             </div>
 
