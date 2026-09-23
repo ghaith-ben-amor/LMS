@@ -125,11 +125,11 @@ export const LmsAnimation = () => {
 
           {/* Bottom Star Accent */}
           <div className="mt-2 flex items-center justify-center gap-1.5 text-amber-400/70 text-[0.65rem]">
-            <span>★</span>
+            <span></span>
             <span className="font-semibold tracking-wider text-ivory-dark uppercase text-[0.55rem]">
-              Summit
+              
             </span>
-            <span>★</span>
+            <span></span>
           </div>
 
         </div>
