@@ -86,10 +86,6 @@ export const Hero = () => {
             <br />
             <span className="text-gradient-gold">DISCOVER YOUR POTENTIAL.</span>
           </h1>
-
-          <p className="text-xs sm:text-base md:text-lg lg:text-xl text-ivory-muted font-light max-w-2xl mx-auto leading-relaxed tracking-wide pt-1 sm:pt-2">
-            Join 200+ delegates for LMS 2K26 — the flagship Local Motivation Seminar featuring high-impact workshops, inspiring keynotes, and transformative networking.
-          </p>
         </motion.div>
 
         {/* Location & Date Bar */}
@@ -102,10 +98,6 @@ export const Hero = () => {
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-obsidian-card border border-amber-500/15">
             <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gold" />
             <span className="font-semibold text-ivory text-xs sm:text-sm">2–4 October 2026</span>
-          </div>
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-obsidian-card border border-amber-500/15">
-            <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gold" />
-            <span className="font-semibold text-ivory text-xs sm:text-sm">{eventConfig.event.location}</span>
           </div>
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-obsidian-card border border-amber-500/15">
             <Award className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gold" />

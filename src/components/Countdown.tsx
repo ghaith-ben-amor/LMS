@@ -67,14 +67,14 @@ export const Countdown = () => {
       <h3 className="font-serif text-xl sm:text-2xl md:text-3xl text-ivory mb-2 tracking-wide font-bold">
         {isExpired ? "LMS 2K26 Has Concluded" : "The LMS 2K26 Leadership Summit Begins In"}
       </h3>
-      <p className="text-xs sm:text-sm text-ivory-muted uppercase tracking-[0.25em] mb-8">
-        {eventConfig.event.location} • October 2, 2026
-      </p>
+      <div className="text-xs sm:text-sm text-ivory-muted uppercase tracking-[0.25em] mb-8">
+        October 2, 2026
+      </div>
 
       {isExpired ? (
-        <p className="text-ivory-muted text-base leading-relaxed">
+        <div className="text-ivory-muted text-base leading-relaxed">
           Thank you to all delegates, speakers, and organizers who made LMS 2K26 unforgettable.
-        </p>
+        </div>
       ) : (
         <div className="flex items-center justify-center gap-3 sm:gap-6 md:gap-8">
           <CountdownBox value={time.days} label="Days" />

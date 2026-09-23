@@ -43,10 +43,6 @@ export const Pillars = () => {
           <h2 className="font-serif text-4xl sm:text-6xl font-extrabold text-ivory tracking-wider mb-6">
             THE THREE PILLARS OF <span className="text-gradient-gold">LMS 2K26</span>
           </h2>
-
-          <p className="text-sm sm:text-base text-ivory-muted leading-relaxed font-light">
-            Designed to empower delegates with strategic leadership skills, collaborative synergy, and actionable growth tools.
-          </p>
         </div>
 
         {/* Pillar Cards */}
@@ -92,13 +88,9 @@ export const Pillars = () => {
                 <h3 className="font-serif text-xl sm:text-2xl font-bold text-ivory mb-2">
                   {pillar.title}
                 </h3>
-                <p className="text-xs font-mono text-amber-400/90 tracking-wider uppercase mb-3">
+                <span className="block text-xs font-mono text-amber-400/90 tracking-wider uppercase">
                   {pillar.subtitle}
-                </p>
-
-                <p className="text-xs sm:text-sm text-ivory-muted leading-relaxed font-light">
-                  {pillar.description}
-                </p>
+                </span>
               </motion.div>
             );
           })}
@@ -121,9 +113,6 @@ export const Pillars = () => {
               <h4 className="font-serif text-3xl sm:text-4xl text-ivory font-extrabold">
                 {current.title}
               </h4>
-              <p className="text-sm sm:text-base text-ivory-muted leading-relaxed">
-                {current.description}
-              </p>
             </div>
 
             <div className="flex flex-col items-center gap-4">

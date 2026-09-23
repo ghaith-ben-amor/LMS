@@ -51,11 +51,7 @@ export const Gallery = () => {
             MEMORIES <span className="text-gradient-gold">OF EXCELLENCE</span>
           </h2>
 
-          <div className="w-20 h-1 bg-gradient-to-r from-rose-900 via-amber-400 to-rose-900 mx-auto rounded-full mb-4 sm:mb-6" />
-
-          <p className="text-xs sm:text-base text-ivory-muted leading-relaxed font-light">
-            An animated gallery of moments, keynotes, gala celebrations, and lifelong bonds forged during LMS editions.
-          </p>
+          <div className="w-20 h-1 bg-gradient-to-r from-rose-900 via-amber-400 to-rose-900 mx-auto rounded-full" />
         </div>
 
         {/* Filter Category Pills */}
@@ -124,9 +120,9 @@ export const Gallery = () => {
                     <h4 className="font-serif text-sm sm:text-xl font-bold text-ivory drop-shadow-md line-clamp-1">
                       {img.title}
                     </h4>
-                    <p className="text-[0.6rem] sm:text-[0.65rem] text-ivory-dark font-medium mt-0.5">
+                    <span className="block text-[0.6rem] sm:text-[0.65rem] text-ivory-dark font-medium mt-0.5">
                       LMS 2K26 Memory
-                    </p>
+                    </span>
                   </div>
 
                   <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 text-obsidian flex items-center justify-center font-bold shadow-lg shadow-amber-500/30 group-hover:scale-110 transition-transform">
@@ -185,9 +181,9 @@ export const Gallery = () => {
                     <h4 className="font-serif text-sm sm:text-xl font-bold text-ivory drop-shadow-md line-clamp-1">
                       {img.title}
                     </h4>
-                    <p className="text-[0.6rem] sm:text-[0.65rem] text-ivory-dark font-medium mt-0.5">
+                    <span className="block text-[0.6rem] sm:text-[0.65rem] text-ivory-dark font-medium mt-0.5">
                       LMS 2K26 Memory
-                    </p>
+                    </span>
                   </div>
 
                   <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 text-obsidian flex items-center justify-center font-bold shadow-lg shadow-amber-500/30 group-hover:scale-110 transition-transform">
@@ -223,10 +219,10 @@ export const Gallery = () => {
                 <h4 className="font-serif text-2xl sm:text-3xl font-bold text-ivory">
                   {selectedImage.title}
                 </h4>
-                <p className="text-xs text-amber-400 font-semibold uppercase tracking-wider mt-1 flex items-center gap-1.5">
+                <div className="text-xs text-amber-400 font-semibold uppercase tracking-wider mt-1 flex items-center gap-1.5">
                   <Sparkles size={14} />
                   Category: {selectedImage.category}
-                </p>
+                </div>
               </div>
               <Badge variant="gold">LMS Archive</Badge>
             </div>

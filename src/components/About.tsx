@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { eventConfig } from "@/data/event-config";
-import Countdown from "./Countdown";
 import Badge from "./ui/Badge";
 
 const StatCounter = ({ end, label }: { end: number; label: string }) => {
@@ -40,9 +39,9 @@ const StatCounter = ({ end, label }: { end: number; label: string }) => {
       <div className="font-serif text-4xl sm:text-5xl md:text-6xl font-extrabold text-gradient-gold mb-2 group-hover:scale-105 transition-transform">
         {count}+
       </div>
-      <p className="text-xs sm:text-sm text-ivory-muted uppercase tracking-[0.2em] font-semibold">
+      <div className="text-xs sm:text-sm text-ivory-muted uppercase tracking-[0.2em] font-semibold">
         {label}
-      </p>
+      </div>
     </motion.div>
   );
 };
@@ -66,22 +65,15 @@ export const About = () => {
             <span className="text-gradient-gold">A MOMENT TO DISCOVER.</span>
           </h2>
 
-          <div className="w-20 h-1 bg-gradient-to-r from-rose-900 via-amber-400 to-rose-900 mx-auto rounded-full mb-8" />
-
-          <p className="text-sm sm:text-base md:text-lg text-ivory-muted leading-relaxed font-light">
-            {eventConfig.about.description}
-          </p>
+          <div className="w-20 h-1 bg-gradient-to-r from-rose-900 via-amber-400 to-rose-900 mx-auto rounded-full" />
         </div>
 
         {/* Statistics Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 mb-20">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
           {eventConfig.stats.map((stat, index) => (
             <StatCounter key={index} end={stat.number} label={stat.label} />
           ))}
         </div>
-
-        {/* Live Countdown Component */}
-        <Countdown />
       </div>
     </section>
   );

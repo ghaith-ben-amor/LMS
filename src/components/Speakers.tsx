@@ -28,11 +28,7 @@ export const Speakers = () => {
             MEET THE <span className="text-gradient-gold">VOICES</span>
           </h2>
 
-          <div className="w-20 h-1 bg-gradient-to-r from-rose-900 via-amber-400 to-rose-900 mx-auto rounded-full mb-6" />
-
-          <p className="text-sm sm:text-base text-ivory-muted leading-relaxed font-light">
-            Inspiring visionaries, seasoned coaches, and industry disruptors sharing actionable insights on leadership and self-mastery.
-          </p>
+          <div className="w-20 h-1 bg-gradient-to-r from-rose-900 via-amber-400 to-rose-900 mx-auto rounded-full" />
         </div>
 
         {/* Speakers Grid */}
@@ -74,21 +70,14 @@ export const Speakers = () => {
                   <h3 className="font-serif text-2xl font-bold text-ivory group-hover:text-gold transition-colors mb-1">
                     {speaker.name}
                   </h3>
-                  <p className="text-xs font-bold uppercase tracking-wider text-amber-400 mb-1">
+                  <span className="block text-xs font-bold uppercase tracking-wider text-amber-400 mb-1">
                     {speaker.position}
-                  </p>
-                  <p className="text-xs text-ivory-dark font-medium">
-                    {speaker.organization}
-                  </p>
+                  </span>
                 </div>
-
-                <p className="text-xs sm:text-sm text-ivory-muted line-clamp-2 font-light">
-                  {speaker.description}
-                </p>
 
                 {/* Quick Bio Trigger Link */}
                 <div className="pt-4 border-t border-white/10 flex items-center justify-between text-xs font-bold uppercase tracking-wider text-gold">
-                  <span>View Full Profile</span>
+                  <span>View Profile</span>
                   <ExternalLink size={14} />
                 </div>
               </div>
@@ -121,20 +110,10 @@ export const Speakers = () => {
                   <h4 className="font-serif text-2xl font-bold text-ivory">
                     {selectedSpeaker.name}
                   </h4>
-                  <p className="text-sm font-bold text-amber-400">
+                  <div className="text-sm font-bold text-amber-400">
                     {selectedSpeaker.position}
-                  </p>
-                  <p className="text-xs text-ivory-muted">{selectedSpeaker.organization}</p>
+                  </div>
                 </div>
-              </div>
-
-              <div className="pt-4 border-t border-white/10 space-y-3">
-                <h5 className="text-xs font-bold uppercase tracking-widest text-gold">
-                  Biography & Expertise
-                </h5>
-                <p className="text-sm text-ivory-muted leading-relaxed font-light">
-                  {selectedSpeaker.description}
-                </p>
               </div>
 
               {selectedSpeaker.social && (

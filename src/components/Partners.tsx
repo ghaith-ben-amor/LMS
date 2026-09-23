@@ -70,11 +70,7 @@ export const Partners = () => {
             OUR <span className="text-gradient-gold">PARTNERS</span>
           </h2>
 
-          <div className="w-20 h-1 bg-gradient-to-r from-rose-900 via-amber-400 to-rose-900 mx-auto rounded-full mb-6" />
-
-          <p className="text-sm sm:text-base text-ivory-muted leading-relaxed font-light">
-            We are proud to collaborate with global institutions and forward-thinking organizations empowering youth leadership.
-          </p>
+          <div className="w-20 h-1 bg-gradient-to-r from-rose-900 via-amber-400 to-rose-900 mx-auto rounded-full" />
         </div>
 
         {/* Main Organizer Highlight */}
@@ -141,9 +137,6 @@ export const Partners = () => {
           <h3 className="font-serif text-2xl sm:text-3xl font-extrabold text-ivory">
             Partner With LMS 2K26
           </h3>
-          <p className="text-sm text-ivory-muted max-w-xl mx-auto font-light">
-            Connect your brand with 200+ top Tunisian and international youth leaders. Join our partner ecosystem today.
-          </p>
           <div className="pt-2">
             <Button href="mailto:contact@lms2k26.tn" variant="outline" size="md">
               Become a Partner

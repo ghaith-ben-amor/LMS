@@ -30,11 +30,7 @@ export const Highlights = () => {
             DELEGATE <span className="text-gradient-gold">SUMMIT HIGHLIGHTS</span>
           </h2>
 
-          <div className="w-20 h-1 bg-gradient-to-r from-amber-600 via-amber-400 to-amber-600 mx-auto rounded-full mb-8" />
-
-          <p className="text-sm sm:text-base md:text-lg text-ivory-muted leading-relaxed font-light">
-            Every moment at LMS 2K26 is designed to foster growth, critical thinking, and lifelong connections among delegates.
-          </p>
+          <div className="w-20 h-1 bg-gradient-to-r from-amber-600 via-amber-400 to-amber-600 mx-auto rounded-full" />
         </div>
 
         {/* Highlights Grid */}
@@ -63,9 +59,6 @@ export const Highlights = () => {
                     <h3 className="font-serif text-xl sm:text-2xl font-bold text-ivory group-hover:text-gold transition-colors">
                       {item.title}
                     </h3>
-                    <p className="text-xs sm:text-sm text-ivory-muted leading-relaxed font-light pt-1">
-                      {item.description}
-                    </p>
                   </div>
                 </div>
               </motion.div>

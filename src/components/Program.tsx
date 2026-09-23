@@ -77,11 +77,7 @@ export const Program = () => {
             THE <span className="text-gradient-gold">JOURNEY</span>
           </h2>
 
-          <div className="w-20 h-1 bg-gradient-to-r from-rose-900 via-amber-400 to-rose-900 mx-auto rounded-full mb-6" />
-
-          <p className="text-sm sm:text-base text-ivory-muted leading-relaxed font-light">
-            Three immersive days packed with interactive workshops, inspiring keynotes, leadership challenges, and networking sessions.
-          </p>
+          <div className="w-20 h-1 bg-gradient-to-r from-rose-900 via-amber-400 to-rose-900 mx-auto rounded-full" />
         </div>
 
         {isLoading ? (
@@ -168,9 +164,6 @@ export const Program = () => {
                         <h4 className="font-serif text-xl sm:text-2xl font-bold text-ivory group-hover:text-gold transition-colors">
                           {item.activity}
                         </h4>
-                        <p className="text-xs sm:text-sm text-ivory-muted font-light leading-relaxed">
-                          {item.description}
-                        </p>
 
                         <div className="flex flex-wrap gap-4 pt-2 text-xs font-semibold">
                           {item.location && (

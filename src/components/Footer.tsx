@@ -30,10 +30,6 @@ export const Footer = () => {
               </span>
             </div>
 
-            <p className="text-xs sm:text-sm text-ivory-muted leading-relaxed font-light">
-              {eventConfig.event.description}
-            </p>
-
             <span className="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-amber-400 block pt-2">
               Organized by AIESEC University
             </span>
@@ -90,10 +86,6 @@ export const Footer = () => {
             </h4>
             <ul className="space-y-3 text-xs sm:text-sm text-ivory-muted">
               <li className="flex items-start gap-2.5">
-                <MapPin size={16} className="text-gold flex-shrink-0 mt-0.5" />
-                <span>Hammamet, Tunisia</span>
-              </li>
-              <li className="flex items-start gap-2.5">
                 <Mail size={16} className="text-gold flex-shrink-0 mt-0.5" />
                 <a href={`mailto:${eventConfig.contact.email}`} className="hover:text-gold transition-colors">
                   {eventConfig.contact.email}
@@ -113,9 +105,6 @@ export const Footer = () => {
             <h4 className="text-xs font-bold uppercase tracking-[0.25em] text-gold">
               Follow LMS 2K26
             </h4>
-            <p className="text-xs text-ivory-muted font-light">
-              Join the official conversation on social media.
-            </p>
 
             <div className="flex gap-3 pt-2">
               <a
@@ -159,7 +148,7 @@ export const Footer = () => {
 
         {/* Bottom Rights & Links */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-ivory-dark font-light">
-          <p>© {currentYear} LMS 2K26 — Local Motivation Seminar. All rights reserved.</p>
+          <div>© {currentYear} LMS 2K26 — Local Motivation Seminar. All rights reserved.</div>
           <div className="flex gap-6">
             <Link href="/" className="hover:text-gold transition-colors">
               Privacy Policy

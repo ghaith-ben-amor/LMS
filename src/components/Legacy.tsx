@@ -24,11 +24,7 @@ export const Legacy = () => {
             THE <span className="text-gradient-gold">LEGACY</span>
           </h2>
 
-          <div className="w-20 h-1 bg-gradient-to-r from-rose-900 via-amber-400 to-rose-900 mx-auto rounded-full mb-6" />
-
-          <p className="text-sm sm:text-base text-ivory-muted leading-relaxed font-light">
-            A tradition of transformational leadership conferences hosted by AIESEC University, impacting hundreds of youth leaders.
-          </p>
+          <div className="w-20 h-1 bg-gradient-to-r from-rose-900 via-amber-400 to-rose-900 mx-auto rounded-full" />
         </div>
 
         {/* Edition Cards Timeline Grid */}
@@ -77,9 +73,6 @@ export const Legacy = () => {
                     <h3 className="font-serif text-2xl font-bold text-ivory mb-2">
                       {edition.edition}
                     </h3>
-                    <p className="text-xs text-ivory-muted leading-relaxed font-light">
-                      {edition.description}
-                    </p>
                   </div>
 
                   <div className="pt-4 border-t border-white/10 flex items-center justify-between text-xs text-ivory-dark font-medium">

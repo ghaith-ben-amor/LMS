@@ -34,10 +34,6 @@ export default function RegistrationPage() {
               <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-extrabold text-ivory leading-tight">
                 JOIN THE <span className="text-gradient-gold">SUMMIT.</span>
               </h1>
-
-              <p className="text-sm sm:text-base text-ivory-muted font-light leading-relaxed">
-                Reserve your place at LMS 2K26. Meet bold young minds, explore your leadership potential, and step into an unforgettable conference in Hammamet.
-              </p>
             </div>
 
             {/* Event Info Summary */}
@@ -47,14 +43,6 @@ export default function RegistrationPage() {
                 <div>
                   <span className="font-bold text-ivory block">2–4 October 2026</span>
                   <span className="text-ivory-dark text-[0.7rem]">3 Days of Conference & Galas</span>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <MapPin className="w-5 h-5 text-gold flex-shrink-0" />
-                <div>
-                  <span className="font-bold text-ivory block">Hammamet, Tunisia</span>
-                  <span className="text-ivory-dark text-[0.7rem]">Luxury Seaside Resort</span>
                 </div>
               </div>
 
@@ -77,9 +65,9 @@ export default function RegistrationPage() {
               <h2 className="font-serif text-3xl sm:text-4xl font-extrabold text-ivory">
                 Make Your Entrance
               </h2>
-              <p className="text-xs text-ivory-dark pt-1">
+              <div className="text-xs text-ivory-dark pt-1">
                 Fields marked with * are required to secure your registration.
-              </p>
+              </div>
             </div>
 
             <DelegateRegistrationForm />

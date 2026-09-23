@@ -48,11 +48,6 @@ export const Venue = () => {
             THE <span className="text-gradient-gold">VENUE</span>
           </h2>
 
-          <p className="font-serif text-2xl sm:text-3xl text-amber-200/90 font-light mb-6 flex items-center justify-center gap-3">
-            <Lock className="w-6 h-6 text-amber-400" />
-            <span>{eventConfig.event.location}</span>
-          </p>
-
           <div className="w-20 h-1 bg-gradient-to-r from-rose-900 via-amber-400 to-rose-900 mx-auto rounded-full" />
         </div>
 
@@ -84,22 +79,16 @@ export const Venue = () => {
               <h3 className="font-serif text-2xl sm:text-3xl font-extrabold text-ivory tracking-widest uppercase">
                 LOCATION TOP SECRET
               </h3>
-              <p className="text-xs sm:text-sm text-amber-300 font-medium max-w-xs mt-2">
-                Revealed exclusively to registered delegates prior to departure.
-              </p>
             </div>
 
             {/* Floating Location Badge */}
             <div className="absolute bottom-6 left-6 right-6 p-5 rounded-2xl glass-card border border-amber-500/30 backdrop-blur-xl z-20">
-              <div className="flex items-center gap-3 mb-1">
+              <div className="flex items-center gap-3">
                 <Sparkles className="w-5 h-5 text-gold" />
                 <span className="font-serif text-base font-bold text-ivory">
                   Secret Venue Unveiling Soon
                 </span>
               </div>
-              <p className="text-xs text-ivory-muted font-light">
-                An extraordinary setting handpicked to inspire leadership, synergy, and transformative impact.
-              </p>
             </div>
           </motion.div>
 
@@ -111,10 +100,6 @@ export const Venue = () => {
             viewport={{ once: true }}
             className="space-y-8"
           >
-            <p className="text-base sm:text-lg text-ivory-muted font-light leading-relaxed">
-              The exact venue location for LMS 2K26 is currently kept top-secret to create an unforgettable sense of excitement and prestige. Confirmed delegates will receive their exclusive venue access pass and directions ahead of the event.
-            </p>
-
             {/* Amenities Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {venueFeatures.map((feature, idx) => {
@@ -128,12 +113,9 @@ export const Venue = () => {
                       <IconComp className="w-5 h-5 text-gold" />
                     </div>
                     <div>
-                      <h4 className="font-serif text-base font-bold text-ivory mb-1">
+                      <h4 className="font-serif text-base font-bold text-ivory">
                         {feature.title}
                       </h4>
-                      <p className="text-xs text-ivory-muted leading-relaxed">
-                        {feature.description}
-                      </p>
                     </div>
                   </div>
                 );
