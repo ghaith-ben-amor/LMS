@@ -158,18 +158,11 @@ export function generateInvitationHtml(delegate: Delegate): string {
               
               <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
                 <tr>
-                  <td width="50%" style="padding-right: 8px;">
-                    <div style="background: rgba(21, 18, 26, 0.8); border: 1px solid rgba(212, 175, 55, 0.2); border-radius: 14px; padding: 16px;">
+                  <td width="100%">
+                    <div style="background: rgba(21, 18, 26, 0.8); border: 1px solid rgba(212, 175, 55, 0.2); border-radius: 14px; padding: 16px; text-align: center;">
                       <div style="font-size: 11px; color: #D4AF37; font-weight: 700; text-transform: uppercase; margin-bottom: 4px;">📅 Dates</div>
-                      <div style="font-size: 13px; color: #F9F6F0; font-weight: 700;">October 2 – 4, 2026</div>
+                      <div style="font-size: 14px; color: #F9F6F0; font-weight: 700;">October 2 – 4, 2026</div>
                       <div style="font-size: 11px; color: #8E887D; margin-top: 2px;">3 Unforgettable Days</div>
-                    </div>
-                  </td>
-                  <td width="50%" style="padding-left: 8px;">
-                    <div style="background: rgba(21, 18, 26, 0.8); border: 1px solid rgba(212, 175, 55, 0.2); border-radius: 14px; padding: 16px;">
-                      <div style="font-size: 11px; color: #D4AF37; font-weight: 700; text-transform: uppercase; margin-bottom: 4px;">📍 Venue</div>
-                      <div style="font-size: 13px; color: #F9F6F0; font-weight: 700;">Hasdrubal Hall</div>
-                      <div style="font-size: 11px; color: #8E887D; margin-top: 2px;">Golden Tulip Resort</div>
                     </div>
                   </td>
                 </tr>
@@ -245,7 +238,7 @@ export async function sendInvitationEmail(delegate: Delegate): Promise<MailResul
       to: delegate.email,
       subject: `🎉 Confirmation & Official Invitation Pass - LMS 2K26 (#LMS-2026-${String(delegate.id).padStart(4, "0")})`,
       html: htmlContent,
-      text: `Hello ${delegate.full_name},\n\nYour registration for LMS 2K26 (Local Motivation Seminar) has been confirmed!\n\nPass Code: LMS-2026-${String(delegate.id).padStart(4, "0")}\nDates: October 2 - 4, 2026\nVenue: Hasdrubal Hall & Golden Tulip Resort\n\nThank you for registering!`,
+      text: `Hello ${delegate.full_name},\n\nYour registration for LMS 2K26 (Local Motivation Seminar) has been confirmed!\n\nPass Code: LMS-2026-${String(delegate.id).padStart(4, "0")}\nDates: October 2 - 4, 2026\n\nThank you for registering!`,
     });
 
     console.log(`[Mailer] Invitation email successfully sent to ${delegate.email}. Message ID: ${info.messageId}`);
