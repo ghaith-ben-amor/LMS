@@ -71,15 +71,9 @@ export const galleryImages: GalleryImage[] = [
     category: "networking",
   },
   {
-    id: "img-1",
-    title: "Networking Gala Night",
-    image: "/images/gallery/image-01.jpg",
+    id: "img-uploaded-11",
+    title: "Delegates Atmosphere & Moments",
+    image: "/images/gallery/gallery-11.jpg",
     category: "social",
-  },
-  {
-    id: "img-2",
-    title: "Opening Ceremony Address",
-    image: "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=1200&q=80",
-    category: "ceremonies",
   },
 ];

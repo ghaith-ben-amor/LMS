@@ -120,9 +120,6 @@ export const Gallery = () => {
                     <h4 className="font-serif text-sm sm:text-xl font-bold text-ivory drop-shadow-md line-clamp-1">
                       {img.title}
                     </h4>
-                    <span className="block text-[0.6rem] sm:text-[0.65rem] text-ivory-dark font-medium mt-0.5">
-                      LMS 2K26 Memory
-                    </span>
                   </div>
 
                   <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 text-obsidian flex items-center justify-center font-bold shadow-lg shadow-amber-500/30 group-hover:scale-110 transition-transform">
@@ -181,9 +178,6 @@ export const Gallery = () => {
                     <h4 className="font-serif text-sm sm:text-xl font-bold text-ivory drop-shadow-md line-clamp-1">
                       {img.title}
                     </h4>
-                    <span className="block text-[0.6rem] sm:text-[0.65rem] text-ivory-dark font-medium mt-0.5">
-                      LMS 2K26 Memory
-                    </span>
                   </div>
 
                   <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 text-obsidian flex items-center justify-center font-bold shadow-lg shadow-amber-500/30 group-hover:scale-110 transition-transform">
