@@ -12,7 +12,6 @@ import Speakers from "@/components/Speakers";
 import Venue from "@/components/Venue";
 import Partners from "@/components/Partners";
 import Gallery from "@/components/Gallery";
-import Legacy from "@/components/Legacy";
 import Footer from "@/components/Footer";
 import { useWebSocket } from "@/lib/use-websocket";
 
@@ -68,7 +67,6 @@ export default function Home() {
       <Venue />
       {settings.show_partners && <Partners />}
       <Gallery />
-      <Legacy />
       <Footer />
     </main>
   );
