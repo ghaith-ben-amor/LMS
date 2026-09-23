@@ -1340,9 +1340,25 @@ function Field({ label, hint, children }: { label: string; hint?: string; childr
 // ─── Settings Tab ────────────────────────────────────────────────────────────
 
 function SettingsTab() {
-  const [settings, setSettings] = useState<{ show_speakers: boolean; show_partners: boolean }>({
+  type SettingKey =
+    | "show_countdown"
+    | "show_about"
+    | "show_pillars"
+    | "show_program"
+    | "show_speakers"
+    | "show_venue"
+    | "show_partners"
+    | "show_gallery";
+
+  const [settings, setSettings] = useState<Record<SettingKey, boolean>>({
+    show_countdown: false,
+    show_about: false,
+    show_pillars: false,
+    show_program: false,
     show_speakers: false,
+    show_venue: false,
     show_partners: false,
+    show_gallery: false,
   });
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -1354,8 +1370,14 @@ function SettingsTab() {
       .then((res) => res.json())
       .then((data) => {
         setSettings({
+          show_countdown: Boolean(data.show_countdown),
+          show_about: Boolean(data.show_about),
+          show_pillars: Boolean(data.show_pillars),
+          show_program: Boolean(data.show_program),
           show_speakers: Boolean(data.show_speakers),
+          show_venue: Boolean(data.show_venue),
           show_partners: Boolean(data.show_partners),
+          show_gallery: Boolean(data.show_gallery),
         });
       })
       .catch(() => {
@@ -1364,7 +1386,7 @@ function SettingsTab() {
       .finally(() => setIsLoading(false));
   }, []);
 
-  const toggleSetting = async (key: "show_speakers" | "show_partners") => {
+  const toggleSetting = async (key: SettingKey) => {
     const newValue = !settings[key];
     const updated = { ...settings, [key]: newValue };
     setSettings(updated);
@@ -1379,7 +1401,7 @@ function SettingsTab() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Save failed");
-      setMessage({ text: `${key === "show_speakers" ? "Speakers" : "Partners"} section visibility updated successfully!` });
+      setMessage({ text: `Section visibility updated successfully!` });
     } catch (err) {
       setSettings(settings); // rollback
       setMessage({ text: err instanceof Error ? err.message : "Failed to update settings", isError: true });
@@ -1397,8 +1419,19 @@ function SettingsTab() {
     );
   }
 
+  const sectionsConfig: { key: SettingKey; label: string; desc: string }[] = [
+    { key: "show_countdown", label: "Countdown Timer", desc: "Live countdown timer section." },
+    { key: "show_about", label: "About LMS", desc: "Conference statistics and overview section." },
+    { key: "show_pillars", label: "Pillars", desc: "Three pillars of LMS 2K26 section." },
+    { key: "show_program", label: "Program Agenda", desc: "3-day conference schedule and sessions." },
+    { key: "show_speakers", label: "Keynote Speakers", desc: "Speaker profiles and modal cards." },
+    { key: "show_venue", label: "Venue & Destination", desc: "Venue details and features section." },
+    { key: "show_partners", label: "Partners & Sponsors", desc: "Partner ecosystems and sponsor logos." },
+    { key: "show_gallery", label: "Memories & Gallery", desc: "Photo gallery slider and lightboxes." },
+  ];
+
   return (
-    <div className="space-y-8 max-w-4xl">
+    <div className="space-y-8 max-w-5xl">
       <div>
         <h2 className="font-serif text-3xl text-ivory font-bold">Public Site Visibility Controls</h2>
         <p className="text-xs text-ivory-muted mt-1">
@@ -1417,88 +1450,53 @@ function SettingsTab() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Speakers Visibility Card */}
-        <div className="rounded-3xl border border-amber-500/20 bg-[#0e0c14]/90 p-6 backdrop-blur-xl space-y-5 shadow-xl">
-          <div className="flex items-center justify-between">
-            <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-400/30 flex items-center justify-center text-amber-400">
-              {settings.show_speakers ? <Eye size={22} /> : <EyeOff size={22} />}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {sectionsConfig.map((sec) => {
+          const isVisible = settings[sec.key];
+          return (
+            <div key={sec.key} className="rounded-3xl border border-amber-500/20 bg-[#0e0c14]/90 p-6 backdrop-blur-xl space-y-5 shadow-xl flex flex-col justify-between">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="w-10 h-10 rounded-2xl bg-amber-500/10 border border-amber-400/30 flex items-center justify-center text-amber-400">
+                    {isVisible ? <Eye size={20} /> : <EyeOff size={20} />}
+                  </div>
+                  <Badge variant={isVisible ? "gold" : "outline"}>
+                    {isVisible ? "Visible" : "Hidden"}
+                  </Badge>
+                </div>
+
+                <div>
+                  <h3 className="font-serif text-lg font-bold text-ivory mb-1">{sec.label}</h3>
+                  <p className="text-xs text-ivory-muted leading-relaxed">
+                    {sec.desc}
+                  </p>
+                </div>
+              </div>
+
+              <div className="pt-2">
+                <button
+                  onClick={() => toggleSetting(sec.key)}
+                  disabled={isSaving}
+                  className={`w-full py-2.5 px-4 rounded-xl text-xs font-extrabold uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                    isVisible
+                      ? "bg-amber-500 text-obsidian shadow-lg shadow-amber-500/20 hover:bg-amber-400"
+                      : "bg-obsidian-surface text-ivory-muted border border-amber-500/20 hover:border-amber-500/50 hover:text-ivory"
+                  }`}
+                >
+                  {isVisible ? (
+                    <>
+                      <EyeOff size={15} /> Hide Section
+                    </>
+                  ) : (
+                    <>
+                      <Eye size={15} /> Make Section Appear
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
-            <Badge variant={settings.show_speakers ? "gold" : "outline"}>
-              {settings.show_speakers ? "Published & Visible" : "Hidden"}
-            </Badge>
-          </div>
-
-          <div>
-            <h3 className="font-serif text-xl font-bold text-ivory mb-1">Keynote Speakers Section</h3>
-            <p className="text-xs text-ivory-muted leading-relaxed">
-              When hidden, the &quot;Speakers&quot; section and menu link will not appear on the homepage. Enable this when admin chooses to publish speaker profiles.
-            </p>
-          </div>
-
-          <div className="pt-2">
-            <button
-              onClick={() => toggleSetting("show_speakers")}
-              disabled={isSaving}
-              className={`w-full py-3 px-4 rounded-xl text-xs font-extrabold uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer ${
-                settings.show_speakers
-                  ? "bg-amber-500 text-obsidian shadow-lg shadow-amber-500/20 hover:bg-amber-400"
-                  : "bg-obsidian-surface text-ivory-muted border border-amber-500/20 hover:border-amber-500/50 hover:text-ivory"
-              }`}
-            >
-              {settings.show_speakers ? (
-                <>
-                  <EyeOff size={16} /> Hide Speakers Section
-                </>
-              ) : (
-                <>
-                  <Eye size={16} /> Make Speakers Section Appear
-                </>
-              )}
-            </button>
-          </div>
-        </div>
-
-        {/* Partners Visibility Card */}
-        <div className="rounded-3xl border border-amber-500/20 bg-[#0e0c14]/90 p-6 backdrop-blur-xl space-y-5 shadow-xl">
-          <div className="flex items-center justify-between">
-            <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-400/30 flex items-center justify-center text-amber-400">
-              {settings.show_partners ? <Eye size={22} /> : <EyeOff size={22} />}
-            </div>
-            <Badge variant={settings.show_partners ? "gold" : "outline"}>
-              {settings.show_partners ? "Published & Visible" : "Hidden"}
-            </Badge>
-          </div>
-
-          <div>
-            <h3 className="font-serif text-xl font-bold text-ivory mb-1">Partners & Sponsors Section</h3>
-            <p className="text-xs text-ivory-muted leading-relaxed">
-              When hidden, the &quot;Partners&quot; section and menu link will not appear on the homepage. Enable this when admin chooses to display partners.
-            </p>
-          </div>
-
-          <div className="pt-2">
-            <button
-              onClick={() => toggleSetting("show_partners")}
-              disabled={isSaving}
-              className={`w-full py-3 px-4 rounded-xl text-xs font-extrabold uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer ${
-                settings.show_partners
-                  ? "bg-amber-500 text-obsidian shadow-lg shadow-amber-500/20 hover:bg-amber-400"
-                  : "bg-obsidian-surface text-ivory-muted border border-amber-500/20 hover:border-amber-500/50 hover:text-ivory"
-              }`}
-            >
-              {settings.show_partners ? (
-                <>
-                  <EyeOff size={16} /> Hide Partners Section
-                </>
-              ) : (
-                <>
-                  <Eye size={16} /> Make Partners Section Appear
-                </>
-              )}
-            </button>
-          </div>
-        </div>
+          );
+        })}
       </div>
     </div>
   );

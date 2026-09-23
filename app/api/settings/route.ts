@@ -33,8 +33,14 @@ export async function POST(request: Request) {
 
     const body = await request.json();
     const updated = await updateSiteSettings({
+      show_countdown: typeof body.show_countdown === "boolean" ? body.show_countdown : undefined,
+      show_about: typeof body.show_about === "boolean" ? body.show_about : undefined,
+      show_pillars: typeof body.show_pillars === "boolean" ? body.show_pillars : undefined,
+      show_program: typeof body.show_program === "boolean" ? body.show_program : undefined,
       show_speakers: typeof body.show_speakers === "boolean" ? body.show_speakers : undefined,
+      show_venue: typeof body.show_venue === "boolean" ? body.show_venue : undefined,
       show_partners: typeof body.show_partners === "boolean" ? body.show_partners : undefined,
+      show_gallery: typeof body.show_gallery === "boolean" ? body.show_gallery : undefined,
     });
 
     // Broadcast real-time update via WebSocket to all connected clients

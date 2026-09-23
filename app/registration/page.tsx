@@ -1,7 +1,7 @@
 import Link from "next/link";
 import DelegateRegistrationForm from "@/components/DelegateRegistrationForm";
 import Badge from "@/components/ui/Badge";
-import { ArrowLeft, Calendar, MapPin, Sparkles, ShieldCheck } from "lucide-react";
+import { ArrowLeft, Calendar, MapPin, Sparkles, Tag, Bus } from "lucide-react";
 
 export default function RegistrationPage() {
   return (
@@ -47,10 +47,26 @@ export default function RegistrationPage() {
               </div>
 
               <div className="flex items-center gap-3">
-                <Sparkles className="w-5 h-5 text-gold flex-shrink-0" />
+                <MapPin className="w-5 h-5 text-gold flex-shrink-0" />
                 <div>
-                  <span className="font-bold text-ivory block">Leadership Development</span>
-                  <span className="text-ivory-dark text-[0.7rem]">Empowerment & Strategic Impact</span>
+                  <span className="font-bold text-ivory block">Hôtel Le Zénith</span>
+                  <span className="text-ivory-dark text-[0.7rem]">Official Conference Venue</span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <Tag className="w-5 h-5 text-gold flex-shrink-0" />
+                <div>
+                  <span className="font-bold text-amber-400 block">140 DT</span>
+                  <span className="text-ivory-dark text-[0.7rem]">Delegate Pass Fee</span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <Bus className="w-5 h-5 text-gold flex-shrink-0" />
+                <div>
+                  <span className="font-bold text-ivory block">Bus Transportation</span>
+                  <span className="text-amber-400/90 text-[0.7rem]">Schedules & details will be communicated soon</span>
                 </div>
               </div>
             </div>

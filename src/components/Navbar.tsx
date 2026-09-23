@@ -8,8 +8,13 @@ import Button from "./ui/Button";
 
 export interface NavbarProps {
   settings?: {
+    show_about?: boolean;
+    show_pillars?: boolean;
+    show_program?: boolean;
     show_speakers?: boolean;
+    show_venue?: boolean;
     show_partners?: boolean;
+    show_gallery?: boolean;
   };
 }
 
@@ -17,16 +22,34 @@ export function Navbar({ settings: propsSettings }: NavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
-  const [fetchedSettings, setFetchedSettings] = useState<{ show_speakers: boolean; show_partners: boolean }>({
+  const [fetchedSettings, setFetchedSettings] = useState<{
+    show_about: boolean;
+    show_pillars: boolean;
+    show_program: boolean;
+    show_speakers: boolean;
+    show_venue: boolean;
+    show_partners: boolean;
+    show_gallery: boolean;
+  }>({
+    show_about: false,
+    show_pillars: false,
+    show_program: false,
     show_speakers: false,
+    show_venue: false,
     show_partners: false,
+    show_gallery: false,
   });
 
   useEffect(() => {
-    if (propsSettings?.show_speakers !== undefined || propsSettings?.show_partners !== undefined) {
+    if (propsSettings) {
       setFetchedSettings({
-        show_speakers: Boolean(propsSettings?.show_speakers),
-        show_partners: Boolean(propsSettings?.show_partners),
+        show_about: Boolean(propsSettings.show_about),
+        show_pillars: Boolean(propsSettings.show_pillars),
+        show_program: Boolean(propsSettings.show_program),
+        show_speakers: Boolean(propsSettings.show_speakers),
+        show_venue: Boolean(propsSettings.show_venue),
+        show_partners: Boolean(propsSettings.show_partners),
+        show_gallery: Boolean(propsSettings.show_gallery),
       });
       return;
     }
@@ -35,8 +58,13 @@ export function Navbar({ settings: propsSettings }: NavbarProps) {
       .then((res) => res.json())
       .then((data) => {
         setFetchedSettings({
+          show_about: Boolean(data.show_about),
+          show_pillars: Boolean(data.show_pillars),
+          show_program: Boolean(data.show_program),
           show_speakers: Boolean(data.show_speakers),
+          show_venue: Boolean(data.show_venue),
           show_partners: Boolean(data.show_partners),
+          show_gallery: Boolean(data.show_gallery),
         });
       })
       .catch(() => {});
@@ -44,12 +72,12 @@ export function Navbar({ settings: propsSettings }: NavbarProps) {
 
   const navItems = [
     { label: "Home", href: "#home" },
-    { label: "About", href: "#about" },
-    { label: "Pillars", href: "#pillars" },
-    { label: "Program", href: "#program" },
+    ...(fetchedSettings.show_about ? [{ label: "About", href: "#about" }] : []),
+    ...(fetchedSettings.show_pillars ? [{ label: "Pillars", href: "#pillars" }] : []),
+    ...(fetchedSettings.show_program ? [{ label: "Program", href: "#program" }] : []),
     ...(fetchedSettings.show_speakers ? [{ label: "Speakers", href: "#speakers" }] : []),
-    { label: "Venue", href: "#venue" },
-    { label: "Gallery", href: "#gallery" },
+    ...(fetchedSettings.show_venue ? [{ label: "Venue", href: "#venue" }] : []),
+    ...(fetchedSettings.show_gallery ? [{ label: "Gallery", href: "#gallery" }] : []),
     ...(fetchedSettings.show_partners ? [{ label: "Partners", href: "#partners" }] : []),
   ];
 

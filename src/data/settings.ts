@@ -9,13 +9,25 @@ import { getRedisClient } from "@/lib/redis-client";
 import { getPostgresPool } from "@/lib/postgres";
 
 export interface SiteSettings {
+  show_countdown: boolean;
+  show_about: boolean;
+  show_pillars: boolean;
+  show_program: boolean;
   show_speakers: boolean;
+  show_venue: boolean;
   show_partners: boolean;
+  show_gallery: boolean;
 }
 
 const DEFAULT_SETTINGS: SiteSettings = {
+  show_countdown: false,
+  show_about: false,
+  show_pillars: false,
+  show_program: false,
   show_speakers: false,
+  show_venue: false,
   show_partners: false,
+  show_gallery: false,
 };
 
 let memorySettings: SiteSettings = { ...DEFAULT_SETTINGS };
@@ -79,8 +91,9 @@ export async function getSiteSettings(): Promise<SiteSettings> {
       if (res.rows.length > 0) {
         const settings = { ...DEFAULT_SETTINGS };
         for (const row of res.rows) {
-          if (row.key === "show_speakers") settings.show_speakers = row.value === "true";
-          if (row.key === "show_partners") settings.show_partners = row.value === "true";
+          if (row.key in settings) {
+            (settings as any)[row.key] = row.value === "true";
+          }
         }
         return settings;
       }
@@ -108,8 +121,9 @@ export async function getSiteSettings(): Promise<SiteSettings> {
       if (rows.length > 0) {
         const settings = { ...DEFAULT_SETTINGS };
         for (const row of rows) {
-          if (row.key === "show_speakers") settings.show_speakers = row.value === "true";
-          if (row.key === "show_partners") settings.show_partners = row.value === "true";
+          if (row.key in settings) {
+            (settings as any)[row.key] = row.value === "true";
+          }
         }
         return settings;
       }
@@ -124,8 +138,14 @@ export async function getSiteSettings(): Promise<SiteSettings> {
 export async function updateSiteSettings(data: Partial<SiteSettings>): Promise<SiteSettings> {
   const current = await getSiteSettings();
   const updated: SiteSettings = {
+    show_countdown: data.show_countdown !== undefined ? Boolean(data.show_countdown) : current.show_countdown,
+    show_about: data.show_about !== undefined ? Boolean(data.show_about) : current.show_about,
+    show_pillars: data.show_pillars !== undefined ? Boolean(data.show_pillars) : current.show_pillars,
+    show_program: data.show_program !== undefined ? Boolean(data.show_program) : current.show_program,
     show_speakers: data.show_speakers !== undefined ? Boolean(data.show_speakers) : current.show_speakers,
+    show_venue: data.show_venue !== undefined ? Boolean(data.show_venue) : current.show_venue,
     show_partners: data.show_partners !== undefined ? Boolean(data.show_partners) : current.show_partners,
+    show_gallery: data.show_gallery !== undefined ? Boolean(data.show_gallery) : current.show_gallery,
   };
 
   // 1. PostgreSQL
@@ -133,16 +153,13 @@ export async function updateSiteSettings(data: Partial<SiteSettings>): Promise<S
   if (pg) {
     try {
       await ensurePgSettingsTable();
-      await pg.query(
-        `INSERT INTO site_settings (key, value) VALUES ('show_speakers', $1)
-         ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value`,
-        [String(updated.show_speakers)]
-      );
-      await pg.query(
-        `INSERT INTO site_settings (key, value) VALUES ('show_partners', $1)
-         ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value`,
-        [String(updated.show_partners)]
-      );
+      for (const [key, value] of Object.entries(updated)) {
+        await pg.query(
+          `INSERT INTO site_settings (key, value) VALUES ($1, $2)
+           ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value`,
+          [key, String(value)]
+        );
+      }
     } catch (err) {
       console.error("[Settings] Postgres update error:", err);
     }
@@ -165,8 +182,9 @@ export async function updateSiteSettings(data: Partial<SiteSettings>): Promise<S
       const stmt = db.prepare(
         "INSERT INTO site_settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value"
       );
-      stmt.run("show_speakers", String(updated.show_speakers));
-      stmt.run("show_partners", String(updated.show_partners));
+      for (const [key, value] of Object.entries(updated)) {
+        stmt.run(key, String(value));
+      }
     } catch (err) {
       console.error("[Settings] SQLite update error:", err);
     }

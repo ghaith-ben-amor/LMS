@@ -11,7 +11,7 @@ export const eventConfig = {
     taglineAlt: "Lead With Purpose. Discover Your Potential.",
     description: "The premier Local Motivation Seminar where delegates connect, develop strategic leadership capabilities, and drive impactful change.",
     year: 2026,
-    location: "Secret Location (To Be Revealed)",
+    location: "Hôtel Le Zénith",
   },
 
   // Countdown Date (ISO string format)
@@ -34,7 +34,7 @@ export const eventConfig = {
   hero: {
     title: "LMS 2K26",
     subtitle: "LEAD WITH PURPOSE.\nDISCOVER YOUR POTENTIAL.",
-    location: "Secret Location (To Be Revealed)",
+    location: "Hôtel Le Zénith",
     cta: "REGISTER AS DELEGATE",
   },
 
