@@ -21,13 +21,13 @@ export interface SiteSettings {
 
 const DEFAULT_SETTINGS: SiteSettings = {
   show_countdown: false,
-  show_about: false,
-  show_pillars: false,
-  show_program: false,
-  show_speakers: false,
-  show_venue: false,
-  show_partners: false,
-  show_gallery: false,
+  show_about: true,
+  show_pillars: true,
+  show_program: true,
+  show_speakers: true,
+  show_venue: true,
+  show_partners: true,
+  show_gallery: true,
 };
 
 let memorySettings: SiteSettings = { ...DEFAULT_SETTINGS };
