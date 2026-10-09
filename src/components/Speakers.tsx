@@ -32,7 +32,7 @@ export const Speakers = () => {
         </div>
 
         {/* Speakers Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+        <div className="flex flex-wrap justify-center gap-6 sm:gap-8">
           {speakers.map((speaker, idx) => (
             <motion.div
               key={speaker.id}
@@ -42,7 +42,7 @@ export const Speakers = () => {
               viewport={{ once: true }}
               whileHover={{ y: -8 }}
               onClick={() => setSelectedSpeaker(speaker)}
-              className="group cursor-pointer rounded-3xl glass-card border border-amber-500/20 hover:border-amber-500/50 transition-all overflow-hidden flex flex-col"
+              className="w-full sm:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.4rem)] group cursor-pointer rounded-3xl glass-card border border-amber-500/20 hover:border-amber-500/50 transition-all overflow-hidden flex flex-col"
             >
               {/* Speaker Portrait Container */}
               <div className="relative h-72 sm:h-80 w-full overflow-hidden bg-obsidian-surface">
@@ -50,7 +50,7 @@ export const Speakers = () => {
                   src={speaker.image}
                   alt={speaker.name}
                   fill
-                  className="object-cover object-center group-hover:scale-105 transition-transform duration-700"
+                  className={`object-cover ${speaker.imagePosition || "object-center"} group-hover:scale-105 transition-transform duration-700`}
                 />
 
                 {/* Dark Vignette Overlay */}
@@ -100,7 +100,7 @@ export const Speakers = () => {
                     src={selectedSpeaker.image}
                     alt={selectedSpeaker.name}
                     fill
-                    className="object-cover"
+                    className={`object-cover ${selectedSpeaker.imagePosition || "object-center"}`}
                   />
                 </div>
                 <div className="text-center sm:text-left space-y-1">
