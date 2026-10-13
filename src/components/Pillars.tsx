@@ -117,12 +117,12 @@ export const Pillars = () => {
 
             <div className="flex flex-col items-center gap-4">
               <Button
-                href="/registration"
+                href="#program"
                 variant="primary"
                 size="md"
                 className="w-full sm:w-auto"
               >
-                <span>Register for LMS 2K26</span>
+                <span>Explore Program</span>
                 <ArrowRight size={16} />
               </Button>
             </div>

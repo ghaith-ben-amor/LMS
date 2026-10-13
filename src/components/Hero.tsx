@@ -104,8 +104,8 @@ export const Hero = () => {
           transition={{ duration: 0.6, delay: 0.8 }}
           className="flex items-center justify-center gap-4 w-full sm:w-auto"
         >
-          <Button href="/registration" variant="primary" size="lg" className="w-full sm:w-auto min-w-[220px]">
-            Register as Delegate
+          <Button href="#about" variant="primary" size="lg" className="w-full sm:w-auto min-w-[220px]">
+            Explore Conference
           </Button>
         </motion.div>
 

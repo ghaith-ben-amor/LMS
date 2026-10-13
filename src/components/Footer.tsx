@@ -13,7 +13,7 @@ export const Footer = () => {
   };
 
   return (
-    <footer className="bg-[#030305] border-t border-amber-500/20 pt-16 sm:pt-20 pb-12 text-ivory relative overflow-hidden">
+    <footer id="contact" className="bg-[#030305] border-t border-amber-500/20 pt-16 sm:pt-20 pb-12 text-ivory relative overflow-hidden">
       {/* Subtle top glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[1px] bg-gradient-to-r from-transparent via-amber-500/50 to-transparent" />
 

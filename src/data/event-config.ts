@@ -35,7 +35,7 @@ export const eventConfig = {
     title: "LMS 2K26",
     subtitle: "LEAD WITH PURPOSE.\nDISCOVER YOUR POTENTIAL.",
     location: "Hôtel Le Zénith",
-    cta: "REGISTER AS DELEGATE",
+    cta: "EXPLORE CONFERENCE",
   },
 
   // Statistics

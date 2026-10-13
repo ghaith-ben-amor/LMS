@@ -118,14 +118,7 @@ export const Venue = () => {
             viewport={{ once: true }}
             className="space-y-6"
           >
-            <div>
-              <h3 className="font-serif text-2xl sm:text-3xl font-bold text-ivory mb-3">
-                An Immersive Space for Growth & Synergy
-              </h3>
-              <p className="text-ivory-muted text-sm sm:text-base leading-relaxed">
-                Nestled in the tourist district of Hammamet Nord, Hôtel Le Zénith offers delegates the ideal blend of seaside Mediterranean calm, extensive workshop facilities, and communal living spaces designed to foster lifelong camaraderie throughout the 3-day conference.
-              </p>
-            </div>
+            
 
             {/* Amenities Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -153,8 +146,8 @@ export const Venue = () => {
             </div>
 
             <div className="pt-2">
-              <Button href="/registration" variant="primary" size="lg">
-                Register For LMS 2K26
+              <Button href="#contact" variant="primary" size="lg">
+                Contact Organizers
               </Button>
             </div>
           </motion.div>

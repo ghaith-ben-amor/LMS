@@ -157,17 +157,8 @@ export function Navbar({ settings: propsSettings }: NavbarProps) {
             })}
           </nav>
 
-          {/* Action CTA & Mobile Trigger */}
+          {/* Mobile Trigger */}
           <div className="flex items-center gap-3 sm:gap-4">
-            <Button
-              href="/registration"
-              variant="primary"
-              size="sm"
-              className="hidden sm:inline-flex"
-            >
-              Register as Delegate
-            </Button>
-
             <button
               type="button"
               aria-label={isOpen ? "Close menu" : "Open menu"}
@@ -205,18 +196,6 @@ export function Navbar({ settings: propsSettings }: NavbarProps) {
                   </a>
                 ))}
               </nav>
-
-              <div className="pt-4 border-t border-white/10">
-                <Button
-                  href="/registration"
-                  variant="primary"
-                  size="md"
-                  className="w-full text-center"
-                  onClick={() => setIsOpen(false)}
-                >
-                  Register as Delegate
-                </Button>
-              </div>
             </div>
           </motion.div>
         )}
